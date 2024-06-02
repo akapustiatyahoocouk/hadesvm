@@ -1,7 +1,7 @@
 //
 //  hadesvm-gui/NewVirtualMachineDialog.hpp
 //
-//  hadesvm-gui "main UI frame"new VM" dialog
+//  hadesvm-gui "New VM" dialog
 //
 //////////
 #pragma once
@@ -12,7 +12,7 @@ namespace hadesvm
     namespace gui
     {
         //////////
-        //  The "main UI frame"new VM" modal dialog
+        //  The "new VM" modal dialog
         namespace Ui { class NewVirtualApplianceDialog; }
 
         class NewVirtualApplianceDialog final : public QDialog

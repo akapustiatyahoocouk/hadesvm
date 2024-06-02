@@ -5,6 +5,8 @@ DEFINES += HADESVM_CORE_LIBRARY
 
 SOURCES += \
     Component.cpp \
+    ComponentAdaptor.cpp \
+    ComponentAdaptorType.cpp \
     ComponentCategory.cpp \
     ComponentType.cpp \
     Exceptions.cpp \
@@ -23,6 +25,8 @@ HEADERS += \
     API.hpp \
     Classes.hpp \
     Component.hpp \
+    ComponentAdaptor.hpp \
+    ComponentAdaptorType.hpp \
     ComponentCategory.hpp \
     ComponentType.hpp \
     Exceptions.hpp \

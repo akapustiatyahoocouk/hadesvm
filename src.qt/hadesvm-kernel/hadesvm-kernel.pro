@@ -5,6 +5,8 @@ DEFINES += HADESVM_KERNEL_LIBRARY
 
 SOURCES += \
     Architecture.cpp \
+    Kernel.Type.cpp \
+    Kernel.cpp \
     Plugins.cpp
 
 HEADERS += \

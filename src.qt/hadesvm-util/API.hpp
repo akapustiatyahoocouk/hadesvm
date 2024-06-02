@@ -40,6 +40,8 @@
     #include <QTextEdit>
     #include <QThread>
     #include <QTimer>
+    #include <QTreeWidget>
+    #include <QTreeWidgetItem>
     #include <QVariant>
     #include <QVersionNumber>
     #include <QWidget>

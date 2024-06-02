@@ -42,6 +42,8 @@ namespace
     void Plugin::initialise()
     {
         hadesvm::core::VirtualArchitecture::register(Architecture::instance());
+
+        hadesvm::core::ComponentType::register(Kernel::Type::instance());
     }
 }
 

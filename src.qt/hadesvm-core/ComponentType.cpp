@@ -18,6 +18,15 @@ ComponentType::~ComponentType()
 }
 
 //////////
+//  Operations
+bool ComponentType::isAdaptableTo(VirtualArchitecture * architecture) const
+{
+    Q_ASSERT(architecture != nullptr);
+
+    return ComponentAdaptorType::find(const_cast<ComponentType*>(this), architecture) != nullptr;
+}
+
+//////////
 //  Registry
 namespace
 {

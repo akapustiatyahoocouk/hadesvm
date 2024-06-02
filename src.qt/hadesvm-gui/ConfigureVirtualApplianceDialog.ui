@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::gui::ConfigureVirtualApplianceDialog</class>
+ <widget class="QDialog" name="hadesvm::gui::ConfigureVirtualApplianceDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>455</width>
+    <height>383</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configure VM</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="nameLabel">
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="nameLineEdit"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="locationLabel">
+     <property name="text">
+      <string>Location:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="locationLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="architectureLabel">
+     <property name="text">
+      <string>Architecture:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="architectureLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QFrame" name="configurationFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="addComponentPushButton">
+        <property name="text">
+         <string>Add component</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="removeComponentPushButton">
+        <property name="text">
+         <string>Remove component</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QTreeWidget" name="configurationTreeWidget">
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="2">
+       <widget class="QFrame" name="editorsFrame">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>160</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>378</width>
+       <height>8</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onOk()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onCancel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>configurationTreeWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onConfigurationTreeWidgetSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addComponentPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onAddComponentPushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>removeComponentPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onRemoveComponentPushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::gui::ConfigureVirtualApplianceDialog</receiver>
+   <slot>_onNameChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onOk()</slot>
+  <slot>_onCancel()</slot>
+  <slot>_onConfigurationTreeWidgetSelectionChanged()</slot>
+  <slot>_onAddComponentPushButtonClicked()</slot>
+  <slot>_onRemoveComponentPushButtonClicked()</slot>
+  <slot>_onNameChanged(QString)</slot>
+ </slots>
+</ui>

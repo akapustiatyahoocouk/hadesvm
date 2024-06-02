@@ -28,16 +28,18 @@ QString VirtualMachineType::displayName() const
 
 //////////
 //  VirtualApplianceType
-VirtualAppliance * VirtualMachineType::createVirtualAppliance(const QString & name, const QString & location)
+VirtualAppliance * VirtualMachineType::createVirtualAppliance(const QString & name, const QString & location,
+                                                              VirtualArchitecture * architecture)
 {
-    return createVirtualMachine(name, location);
+    return createVirtualMachine(name, location, architecture);
 }
 
 //////////
 //  Operations
-VirtualMachine * VirtualMachineType::createVirtualMachine(const QString & name, const QString & location)
+VirtualMachine * VirtualMachineType::createVirtualMachine(const QString & name, const QString & location,
+                                                          VirtualArchitecture * architecture)
 {
-    return new VirtualMachine(name, location);
+    return new VirtualMachine(name, location, architecture);
 }
 
 //////////

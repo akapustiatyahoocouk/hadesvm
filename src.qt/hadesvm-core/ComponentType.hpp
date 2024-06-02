@@ -32,6 +32,13 @@ namespace hadesvm
             //  Checks if a component of this type can be "suspended".
             virtual bool        suspendable() const = 0;
 
+            //  TODO document
+            virtual bool        isCompatibleWith(VirtualArchitecture * architecture) const = 0;
+            virtual bool        isCompatibleWith(VirtualApplianceType * type) const = 0;
+            virtual bool        isAdaptableTo(VirtualArchitecture * architecture) const;
+
+            virtual Component * createComponent() = 0;
+
             //////////
             //  Registry
         public:

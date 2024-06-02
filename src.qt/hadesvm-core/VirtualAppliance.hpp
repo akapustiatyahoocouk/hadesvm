@@ -33,7 +33,8 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            VirtualAppliance(const QString & name, const QString & location);
+            VirtualAppliance(const QString & name, const QString & location,
+                             VirtualArchitecture * architecture);
             virtual ~VirtualAppliance();
 
             //////////
@@ -47,15 +48,24 @@ namespace hadesvm
 
             //  TODO document
             //  Must only be called from the QApplication's main thread
-            QString         name() const;
-            QString         location() const;
-            QString         directory() const;
             static bool     isValidName(const QString & name);
             static bool     isValidLocation(const QString & location);
+            QString         name() const;
+            void            setName(const QString & name);
+            QString         location() const;
+            QString         directory() const;
+            VirtualArchitecture * architecture() const;
 
-            //  An unordered list of all components of this VM.
+            //  TODO document
+            ComponentList   compatibleComponents() const;
+            ComponentList   adaptedComponents() const;
+
+            //  An unordered list of all components of this VM, compatible and adapted.
             //  Must only be called from the QApplication's main thread
             ComponentList   components() const;
+
+            //  TODO document
+            ComponentAdaptorList    componentAdaptors() const;
 
             //  Adds the specified component to this VM.
             //  Throws if the component cannot be added to the VM (e.g. it is
@@ -99,14 +109,17 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
-            State           _state = State::Stopped;
-            mutable QMutex  _stateGuard;
+            State                   _state = State::Stopped;
+            mutable QMutex          _stateGuard;
 
-            QString         _name;
-            QString         _location;  //  full path to VM configuration file
-            QString         _directory; //  full path to VM configuration file's containg dir
+            QString                 _name;
+            const QString           _location;  //  full path to VM configuration file
+            const QString           _directory; //  full path to VM configuration file's containg dir
+            VirtualArchitecture *const  _architecture;
 
-            ComponentList   _components;    //  ...bound to this VM
+            ComponentList           _compatibleComponents = {}; //  ...bound to this VM
+            ComponentList           _adaptedComponents = {};    //  ...bound to this VM
+            ComponentAdaptorList    _componentAdaptors = {};    //  ...bound to this VM
         };
 
         //////////
@@ -118,7 +131,8 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            VirtualMachine(const QString & name, const QString & location);
+            VirtualMachine(const QString & name, const QString & location,
+                           VirtualArchitecture * architecture);
             virtual ~VirtualMachine();
 
             //////////
@@ -136,7 +150,8 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            RemoteTerminal(const QString & name, const QString & location);
+            RemoteTerminal(const QString & name, const QString & location,
+                           VirtualArchitecture * architecture);
             virtual ~RemoteTerminal();
 
             //////////

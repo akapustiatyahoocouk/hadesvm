@@ -34,19 +34,22 @@ namespace hadesvm
             //  Operations
         public:
             //  The type of this component
-            virtual ComponentType *     type() const = 0;
+            virtual ComponentType * type() const = 0;
 
             //  Checks if this component can be "suspended".
-            bool                suspendable() const { return type()->suspendable(); }
+            bool                    suspendable() const { return type()->suspendable(); }
 
             //  The VM to which this component is bound; nullptr if this
             //  is a free component
-            VirtualAppliance *  virtualAppliance() const { return _virtualAppliance; }
+            VirtualAppliance *      virtualAppliance() const { return _virtualAppliance; }
+
+            //  The short descriptive name of this component
+            virtual QString         displayName() const = 0;
 
             //////////
             //  Implementation
         private:
-            VirtualAppliance *  _virtualAppliance = nullptr;  //  nullptr == free, else bound
+            VirtualAppliance *      _virtualAppliance = nullptr;  //  nullptr == free, else bound
         };
     }
 }

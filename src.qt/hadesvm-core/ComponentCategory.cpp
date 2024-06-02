@@ -18,6 +18,21 @@ ComponentCategory::~ComponentCategory()
 }
 
 //////////
+//  Operations
+ComponentTypeList ComponentCategory::componentTypes() const
+{
+    ComponentTypeList result;
+    for (auto ct : ComponentType::all())
+    {
+        if (ct->category() == this)
+        {
+            result.append(ct);
+        }
+    }
+    return result;
+}
+
+//////////
 //  Registry
 namespace
 {

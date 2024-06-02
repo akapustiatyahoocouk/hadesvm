@@ -9,8 +9,9 @@
 
 //////////
 //  Construction/destruction
-VirtualMachine::VirtualMachine(const QString & name, const QString & location)
-        :   VirtualAppliance(name, location)
+VirtualMachine::VirtualMachine(const QString & name, const QString & location,
+                               VirtualArchitecture * architecture)
+        :   VirtualAppliance(name, location, architecture)
 {
 }
 

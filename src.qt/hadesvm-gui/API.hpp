@@ -16,5 +16,6 @@
 //  hadesvm-gui components
 #include "hadesvm-gui/MainWindow.hpp"
 #include "hadesvm-gui/NewVirtualApplianceDialog.hpp"
+#include "hadesvm-gui/ConfigureVirtualApplianceDialog.hpp"
 
 //  End of hadesvm-gui/API.hpp

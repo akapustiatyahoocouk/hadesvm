@@ -28,16 +28,18 @@ QString RemoteTerminalType::displayName() const
 
 //////////
 //  VirtualApplianceType
-VirtualAppliance * RemoteTerminalType::createVirtualAppliance(const QString & name, const QString & location)
+VirtualAppliance * RemoteTerminalType::createVirtualAppliance(const QString & name, const QString & location,
+                                                              VirtualArchitecture * architecture)
 {
-    return createRemoteTerminal(name, location);
+    return createRemoteTerminal(name, location, architecture);
 }
 
 //////////
 //  Operations
-RemoteTerminal * RemoteTerminalType::createRemoteTerminal(const QString & name, const QString & location)
+RemoteTerminal * RemoteTerminalType::createRemoteTerminal(const QString & name, const QString & location,
+                                                          VirtualArchitecture * architecture)
 {
-    return new RemoteTerminal(name, location);
+    return new RemoteTerminal(name, location, architecture);
 }
 
 //////////

@@ -56,7 +56,9 @@ namespace hadesvm
             static ComponentCategory *const Processors;     //  CPUs
             static ComponentCategory *const Memory;         //  Internal memory
             static ComponentCategory *const Storage;        //  External storage
-            static ComponentCategory *const Devices;        //  Onboard devices
+            static ComponentCategory *const InternalDevices;//  Onboard devices
+            static ComponentCategory *const UiDevices;      //  UI devices
+            static ComponentCategory *const IoControllers;  //  I/O controllers
             static ComponentCategory *const Software;       //  Software emulation
             static ComponentCategory *const Miscellaneous;  //  All others
 

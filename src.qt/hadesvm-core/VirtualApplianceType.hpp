@@ -25,7 +25,8 @@ namespace hadesvm
             //  Operations
         public:
             //  Creates a new VA of this type, initially without any components
-            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location) = 0;
+            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location,
+                                                               VirtualArchitecture * architecture) = 0;
 
             //////////
             //  Registry
@@ -57,7 +58,8 @@ namespace hadesvm
             //////////
             //  VirtualApplianceType
         public:
-            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location);
+            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location,
+                                                               VirtualArchitecture * architecture);
 
             //////////
             //  Operations
@@ -65,7 +67,8 @@ namespace hadesvm
             //  Creates a new WM of this type, initially without any components.
             //  Default implementation creates an instance of VirtualMachine, but
             //  overriding implementation may subclass VirtualMachine and return that.
-            virtual VirtualMachine *    createVirtualMachine(const QString & name, const QString & location);
+            virtual VirtualMachine *    createVirtualMachine(const QString & name, const QString & location,
+                                                             VirtualArchitecture * architecture);
 
             //////////
             //  Registry
@@ -97,7 +100,8 @@ namespace hadesvm
             //////////
             //  VirtualApplianceType
         public:
-            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location);
+            virtual VirtualAppliance *  createVirtualAppliance(const QString & name, const QString & location,
+                                                               VirtualArchitecture * architecture);
 
             //////////
             //  Operations
@@ -105,7 +109,8 @@ namespace hadesvm
             //  Creates a new RT of this type, initially without any components
             //  Default implementation creates an instance of RemoteTerminal, but
             //  overriding implementation may subclass RemoteTerminal and return that.
-            virtual RemoteTerminal *    createRemoteTerminal(const QString & name, const QString & location);
+            virtual RemoteTerminal *    createRemoteTerminal(const QString & name, const QString & location,
+                                                             VirtualArchitecture * architecture);
 
             //////////
             //  Registry

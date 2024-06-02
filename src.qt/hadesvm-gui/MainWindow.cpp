@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget * parent)
         //  Implementation
         _virtualAppliances(),
         _currentVirtualAppliance(nullptr),
+        _settings(this),
         //  Controls & resources
         _ui(new Ui::MainWindow)
 {
@@ -70,12 +71,15 @@ void MainWindow::_refresh()
         }
         while (_virtualAppliances.count() > _ui->listWidget->count())
         {   //  Too few items in the list
-            auto item = new QListWidgetItem("TODO", _ui->listWidget);
+            new QListWidgetItem("TODO", _ui->listWidget);
         }
         //  ...of proper items
         for (int i = 0; i < _virtualAppliances.count(); i++)
         {
-            _ui->listWidget->item(i)->setText(_virtualAppliances[i]->name());
+            QString text = _virtualAppliances[i]->name() +
+                           " [" + _virtualAppliances[i]->architecture()->displayName() + "]";
+            //  TODO also reflect Running/Suspended state in "text"
+            _ui->listWidget->item(i)->setText(text);
             _ui->listWidget->item(i)->setData(Qt::ItemDataRole::UserRole, QVariant::fromValue(_virtualAppliances[i]));
         }
 
@@ -88,7 +92,7 @@ void MainWindow::_refresh()
         }
         else
         {   //  Set selection
-            _ui->listWidget->setCurrentRow(currentIndex);
+            _ui->listWidget->setCurrentRow(static_cast<int>(currentIndex));
         }
 
         //  Menu items
@@ -222,7 +226,7 @@ void MainWindow::_onNewVm()
     }
     else
     {   //  Create a raw VA
-        va = type->createVirtualAppliance(name, location);
+        va = type->createVirtualAppliance(name, location, architecture);
     }
     try
     {
@@ -384,6 +388,25 @@ void MainWindow::_onResumeVm()
 
 void MainWindow::_onConfigureVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped)
+    {   //  Nothing to do
+        return;
+    }
+
+    ConfigureVirtualApplianceDialog dlg(_currentVirtualAppliance, this);
+    if (dlg.exec() == QDialog::DialogCode::Accepted)
+    {
+        try
+        {
+            _currentVirtualAppliance->save();
+        }
+        catch (const hadesvm::core::VirtualApplianceException & ex)
+        {
+            QMessageBox::critical(this, "OOPS!", ex.message());
+        }
+        _refresh();
+    }
 }
 
 void MainWindow::_onHelpAbout()

@@ -12,6 +12,8 @@ namespace hadesvm
         class HADESVM_CORE_PUBLIC ComponentCategory;
         class HADESVM_CORE_PUBLIC ComponentType;
         class HADESVM_CORE_PUBLIC Component;
+        class HADESVM_CORE_PUBLIC ComponentAdaptorType;
+        class HADESVM_CORE_PUBLIC ComponentAdaptor;
 
         class HADESVM_CORE_PUBLIC VirtualArchitecture;
         class HADESVM_CORE_PUBLIC VirtualApplianceType;
@@ -29,6 +31,8 @@ namespace hadesvm
         using ComponentCategoryList = QList<ComponentCategory*>;
         using ComponentTypeList = QList<ComponentType*>;
         using ComponentList = QList<Component*>;
+        using ComponentAdaptorTypeList = QList<ComponentAdaptorType*>;
+        using ComponentAdaptorList = QList<ComponentAdaptor*>;
 
         using VirtualArchitectureList = QList<VirtualArchitecture*>;
 

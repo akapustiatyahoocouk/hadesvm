@@ -9,8 +9,9 @@
 
 //////////
 //  Construction/destruction
-RemoteTerminal::RemoteTerminal(const QString & name, const QString & location)
-    :   VirtualAppliance(name, location)
+RemoteTerminal::RemoteTerminal(const QString & name, const QString & location,
+                               VirtualArchitecture * architecture)
+    :   VirtualAppliance(name, location, architecture)
 {
 }
 
