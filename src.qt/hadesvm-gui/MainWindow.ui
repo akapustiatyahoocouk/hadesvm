@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::gui::MainWindow</class>
+ <widget class="QMainWindow" name="hadesvm::gui::MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>408</width>
+    <height>266</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>4</number>
+    </property>
+    <property name="spacing">
+     <number>8</number>
+    </property>
+    <item row="7" column="1" colspan="2">
+     <widget class="QPushButton" name="configureVmPushButton">
+      <property name="text">
+       <string>Configure</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QPushButton" name="suspendPushButton">
+      <property name="text">
+       <string>Suspend</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="9">
+     <widget class="QListWidget" name="listWidget"/>
+    </item>
+    <item row="1" column="1" colspan="2">
+     <widget class="QPushButton" name="stopVmPushButton">
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1" rowspan="2" colspan="2">
+     <widget class="QPushButton" name="resumePushButton">
+      <property name="text">
+       <string>Resume</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2">
+     <widget class="QPushButton" name="startVmPushButton">
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>118</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>8</width>
+        <height>8</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="6" column="1">
+     <spacer name="verticalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>8</width>
+        <height>8</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>408</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionNewVm"/>
+    <addaction name="actionOpenVm"/>
+    <addaction name="separator"/>
+    <addaction name="actionCloseVm"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuVm">
+    <property name="title">
+     <string>&amp;VM</string>
+    </property>
+    <addaction name="actionStartVm"/>
+    <addaction name="actionStopVm"/>
+    <addaction name="separator"/>
+    <addaction name="actionSuspendVm"/>
+    <addaction name="actionResumeVm"/>
+    <addaction name="separator"/>
+    <addaction name="actionConfigureVm"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuVm"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionExit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionStartVm">
+   <property name="text">
+    <string>&amp;Start</string>
+   </property>
+  </action>
+  <action name="actionStopVm">
+   <property name="text">
+    <string>S&amp;top</string>
+   </property>
+  </action>
+  <action name="actionConfigureVm">
+   <property name="text">
+    <string>&amp;Configure</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>A&amp;bout...</string>
+   </property>
+  </action>
+  <action name="actionNewVm">
+   <property name="text">
+    <string>&amp;New VM</string>
+   </property>
+  </action>
+  <action name="actionOpenVm">
+   <property name="text">
+    <string>&amp;Open VM</string>
+   </property>
+  </action>
+  <action name="actionCloseVm">
+   <property name="text">
+    <string>C&amp;lose VM</string>
+   </property>
+  </action>
+  <action name="actionSuspendVm">
+   <property name="text">
+    <string>S&amp;uspend</string>
+   </property>
+  </action>
+  <action name="actionResumeVm">
+   <property name="text">
+    <string>R&amp;esume</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionNewVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onNewVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpenVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onOpenVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCloseVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onCloseVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onExit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStartVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onStartVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStopVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onStopVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionConfigureVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onConfigureVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onHelpAbout()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startVmPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onStartVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>284</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stopVmPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onStopVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>284</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>configureVmPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onConfigureVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>284</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSuspendVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onSuspendVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionResumeVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onResumeVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>suspendPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onSuspendVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resumePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onResumeVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onNewVm()</slot>
+  <slot>_onOpenVm()</slot>
+  <slot>_onCloseVm()</slot>
+  <slot>_onExit()</slot>
+  <slot>_onStartVm()</slot>
+  <slot>_onStopVm()</slot>
+  <slot>_onConfigureVm()</slot>
+  <slot>_onHelpAbout()</slot>
+  <slot>_onSuspendVm()</slot>
+  <slot>_onResumeVm()</slot>
+ </slots>
+</ui>

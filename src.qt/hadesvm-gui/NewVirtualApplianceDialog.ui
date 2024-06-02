@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::gui::NewVirtualApplianceDialog</class>
+ <widget class="QDialog" name="hadesvm::gui::NewVirtualApplianceDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>468</width>
+    <height>220</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New VM</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="architectureLabel">
+     <property name="text">
+      <string>Architecture:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="architectureComboBox"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="nameLabel">
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QLineEdit" name="nameLineEdit"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="locationLabel">
+     <property name="text">
+      <string>Location:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="locationLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="browsePushButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="typeLabel">
+     <property name="text">
+      <string>Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QComboBox" name="typeComboBox"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="templateLabel">
+     <property name="text">
+      <string>Template:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2">
+    <widget class="QComboBox" name="templateComboBox"/>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>13</width>
+       <height>13</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onOk()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onCancel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>architectureComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onArchitectureChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onNameChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>locationLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onLocationChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>229</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>typeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onTypeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browsePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onBrowse()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>418</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>templateComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::gui::NewVirtualApplianceDialog</receiver>
+   <slot>_onTemplateChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onOk()</slot>
+  <slot>_onCancel()</slot>
+  <slot>_onArchitectureChanged(int)</slot>
+  <slot>_onNameChanged(QString)</slot>
+  <slot>_onLocationChanged(QString)</slot>
+  <slot>_onTypeChanged(int)</slot>
+  <slot>_onBrowse()</slot>
+  <slot>_onTemplateChanged(int)</slot>
+ </slots>
+</ui>
