@@ -451,6 +451,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onCurrentVmChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>_onNewVm()</slot>
@@ -463,5 +479,6 @@
   <slot>_onHelpAbout()</slot>
   <slot>_onSuspendVm()</slot>
   <slot>_onResumeVm()</slot>
+  <slot>_onCurrentVmChanged(int)</slot>
  </slots>
 </ui>

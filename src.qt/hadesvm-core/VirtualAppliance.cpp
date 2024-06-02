@@ -158,4 +158,57 @@ void VirtualAppliance::save() throws(VirtualApplianceException)
     file.close();
 }
 
+VirtualAppliance * VirtualAppliance::load(const QString & location)
+{
+    QFileInfo fi(location);
+
+    //  Load as XML DOM
+    QDomDocument document;
+    QFile file(fi.absoluteFilePath());
+    if (!file.open(QIODevice::ReadOnly))
+    {   //  OOPS!
+        throw VirtualApplianceException(file.errorString());
+    }
+    if (!document.setContent(&file))
+    {   //  OOPS!
+        file.close();
+        throw VirtualApplianceException(file.errorString());
+    }
+    file.close();
+
+    //  Validate root XML element
+    QDomElement rootElement = document.documentElement();
+    VirtualApplianceType * type = nullptr;
+    for (VirtualApplianceType * vat : VirtualApplianceType::all())
+    {
+        if (vat->mnemonic() == rootElement.tagName())
+        {
+            type = vat;
+            break;
+        }
+    }
+    if (type == nullptr)
+    {
+        throw VirtualApplianceException("Invalid virtual appliance type");
+    }
+
+    QString name = rootElement.attribute("Name");
+    if (!isValidName(name))
+    {
+        throw VirtualApplianceException("Invalid virtual appliance name");
+    }
+
+    QString version = rootElement.attribute("Version");
+    if (version != "1")
+    {
+        throw VirtualApplianceException("Invalid virtual appliance version");
+    }
+
+    //  Create an initially empty VA
+    std::unique_ptr<VirtualAppliance> va{type->createVirtualAppliance(name, fi.absoluteFilePath())};
+
+    //  Done
+    return va.release();
+}
+
 //  End of hadesvm-core/VirtualAppliance.cpp

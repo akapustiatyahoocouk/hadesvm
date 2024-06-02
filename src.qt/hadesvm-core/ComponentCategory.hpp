@@ -43,6 +43,28 @@ namespace hadesvm
             //  Returns an unordered list of all registered component categories.
             static ComponentCategoryList    all();
         };
+
+        //////////
+        //  Standard predefined component categories
+        class HADESVM_CORE_PUBLIC StandardComponentCategories final
+        {
+            HADESVM_UTILITY_CLASS(StandardComponentCategories)
+
+            //////////
+            //  Constants
+        public:
+            static ComponentCategory *const Processors;     //  CPUs
+            static ComponentCategory *const Memory;         //  Internal memory
+            static ComponentCategory *const Storage;        //  External storage
+            static ComponentCategory *const Devices;        //  Onboard devices
+            static ComponentCategory *const Software;       //  Software emulation
+            static ComponentCategory *const Miscellaneous;  //  All others
+
+            //////////
+            //  Operations
+        public:
+            static ComponentCategoryList    all();
+        };
     }
 }
 

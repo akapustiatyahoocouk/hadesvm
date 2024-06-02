@@ -43,6 +43,11 @@ namespace
     {
         VirtualApplianceType::register(VirtualMachineType::instance());
         VirtualApplianceType::register(RemoteTerminalType::instance());
+
+        for (auto cc : StandardComponentCategories::all())
+        {
+            ComponentCategory::register(cc);
+        }
     }
 }
 

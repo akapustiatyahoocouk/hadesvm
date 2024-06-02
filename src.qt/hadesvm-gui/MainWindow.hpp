@@ -39,6 +39,8 @@ namespace hadesvm
             hadesvm::core::VirtualApplianceList     _virtualAppliances;
             hadesvm::core::VirtualAppliance *         _currentVirtualAppliance;
 
+            QSettings           _settings;
+
             //  Helpers
             void                _refresh();
             void                _saveVirtualAppliance();
@@ -62,6 +64,7 @@ namespace hadesvm
             void                _onResumeVm();
             void                _onConfigureVm();
             void                _onHelpAbout();
+            void                _onCurrentVmChanged(int);
         };
     }
 }

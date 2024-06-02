@@ -119,10 +119,50 @@ void MainWindow::_refresh()
 
 void MainWindow::_saveVirtualAppliance()
 {
+    _settings.setValue("MainWindow/VirtualAppliances.Count", _virtualAppliances.count());
+    for (qsizetype i = 0; i < _virtualAppliances.count(); i++)
+    {
+        _settings.setValue("MainWindow/VirtualAppliances." + QString::number(i), _virtualAppliances[i]->location());
+    }
 }
 
 void MainWindow::_loadVirtualAppliance()
 {
+    int count = _settings.value("MainWindow/VirtualAppliances.Count").toInt();
+    //  TODO kill off qDebug() << count;
+    for (int i = 0; i < count; i++)
+    {
+        QString location = _settings.value("MainWindow/VirtualAppliances." + QString::number(i)).toString();
+        //  TODO kill off qDebug() << location;
+
+        //  If the VA with the same location is already loaded, ignore the 2nd time
+        bool alreadyLoaded = false;
+        for (auto va : _virtualAppliances)
+        {
+            if (va->location() == location)
+            {   //  OOPS! This one!
+                alreadyLoaded = true;
+                break;
+            }
+        }
+        if (alreadyLoaded)
+        {
+            continue;
+        }
+
+        //  Load the VA
+        std::unique_ptr<hadesvm::core::VirtualAppliance> va;
+        try
+        {
+            va.reset(hadesvm::core::VirtualAppliance::load(location));
+        }
+        catch (const hadesvm::core::VirtualApplianceException & ex)
+        {
+            //  TODO log ? QMessageBox::critical(this, "OOPS!", ex.message());
+            continue;   //  auto-deletes "va"
+        }
+        _virtualAppliances.append(va.release());
+    }
 }
 
 //////////
@@ -150,7 +190,7 @@ void MainWindow::_onNewVm()
     for (auto va : _virtualAppliances)
     {
         if (va->location() == location)
-        {   //  OOPS! This one:
+        {   //  OOPS! This one!
             QMessageBox::warning(this,
                                  "OOPS!",
                                  "The virtual appliance " + location + " already exists");
@@ -189,17 +229,62 @@ void MainWindow::_onNewVm()
     }
 
     //  Add the newly created VA to the list of known VAs & save that list
-    _virtualAppliances.append(va);
+    _virtualAppliances.append(va);  //  TODO may throw!
     std::sort(_virtualAppliances.begin(),
               _virtualAppliances.end(),
               [](auto a, auto b) -> bool { return a->name() < b->name(); });
     _currentVirtualAppliance = va;
     _saveVirtualAppliance();
     _refresh();
+
+    //  Start configuring the newly created VA
+    //  TODO
 }
 
 void MainWindow::_onOpenVm()
 {
+    QString location = QFileDialog::getOpenFileName(
+        this,
+        "Open VM",
+        QDir::homePath(),
+        "VM Files (*" + hadesvm::core::VirtualAppliance::PreferredExtension + ")");
+    if (location.isEmpty())
+    {
+        return;
+    }
+    //  TODO kill off qDebug() << location;
+
+    //  If a VA with the same location already exists, just make it current
+    for (auto va : _virtualAppliances)
+    {
+        if (va->location() == location)
+        {   //  This one!
+            _currentVirtualAppliance = va;
+            _refresh();
+            return;
+        }
+    }
+
+    //  Load the VA
+    std::unique_ptr<hadesvm::core::VirtualAppliance> va;
+    try
+    {
+        va.reset(hadesvm::core::VirtualAppliance::load(location));
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+        return; //  auto-deletes "vaPtr"
+    }
+
+    //  Add the newly opened VA to the list of known VAs & save that list
+    _virtualAppliances.append(va.get());
+    std::sort(_virtualAppliances.begin(),
+              _virtualAppliances.end(),
+              [](auto a, auto b) -> bool { return a->name() < b->name(); });
+    _currentVirtualAppliance = va.release();
+    _saveVirtualAppliance();
+    _refresh();
 }
 
 void MainWindow::_onCloseVm()
@@ -257,6 +342,17 @@ void MainWindow::_onConfigureVm()
 
 void MainWindow::_onHelpAbout()
 {
+}
+
+void MainWindow::_onCurrentVmChanged(int)
+{
+    int index = _ui->listWidget->currentRow();
+    _currentVirtualAppliance =
+        (index >= 0 && index < _virtualAppliances.count()) ?
+            _virtualAppliances[index] :
+            nullptr;
+    _saveVirtualAppliance();
+    _refresh();
 }
 
 //  End of hadesvm-gui/MainWindow.cpp

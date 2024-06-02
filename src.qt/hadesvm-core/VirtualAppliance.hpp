@@ -89,7 +89,12 @@ namespace hadesvm
             void            resume() throws(VirtualApplianceException);
 
             //  Saves the current configuration of this VA to its "location"
+            //  Throws if a save error occurs.
             void            save() throws(VirtualApplianceException);
+
+            //  Loads a VA from the specified "location".
+            //  Throws if a load error occurs.
+            static VirtualAppliance *   load(const QString & location);
 
             //////////
             //  Implementation

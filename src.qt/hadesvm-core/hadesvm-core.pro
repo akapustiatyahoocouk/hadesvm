@@ -11,6 +11,7 @@ SOURCES += \
     Plugins.cpp \
     RemoteTerminal.cpp \
     RemoteTerminalType.cpp \
+    StandardComponentCategories.cpp \
     VirtualAppliance.cpp \
     VirtualApplianceTemplate.cpp \
     VirtualApplianceType.cpp \

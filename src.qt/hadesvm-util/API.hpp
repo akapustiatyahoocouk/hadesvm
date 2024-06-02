@@ -35,6 +35,7 @@
     #include <QMessageBox>
     #include <QRecursiveMutex>
     #include <QSet>
+    #include <QSettings>
     #include <QStatusBar>
     #include <QTextEdit>
     #include <QThread>
