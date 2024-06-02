@@ -41,6 +41,8 @@ namespace hadesvm
 
             QSettings           _settings;
 
+            bool                _refreshUnderway = false;
+
             //  Helpers
             void                _refresh();
             void                _saveVirtualAppliance();

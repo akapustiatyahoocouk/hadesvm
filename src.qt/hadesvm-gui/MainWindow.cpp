@@ -59,62 +59,69 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 //  Implementation helpers
 void MainWindow::_refresh()
 {
-    //  Refresh the list of VAs - make sure it has a proper number...
-    while (_virtualAppliances.count() < _ui->listWidget->count())
-    {   //  Too many items in the list
-        delete _ui->listWidget->takeItem(_ui->listWidget->count() - 1);
-    }
-    while (_virtualAppliances.count() > _ui->listWidget->count())
-    {   //  Too few items in the list
-        auto item = new QListWidgetItem("TODO", _ui->listWidget);
-    }
-    //  ...of proper items
-    for (int i = 0; i < _virtualAppliances.count(); i++)
+    if (!_refreshUnderway)
     {
-        _ui->listWidget->item(i)->setText(_virtualAppliances[i]->name());
-        _ui->listWidget->item(i)->setData(Qt::ItemDataRole::UserRole, QVariant::fromValue(_virtualAppliances[i]));
+        _refreshUnderway = true;
+
+        //  Refresh the list of VAs - make sure it has a proper number...
+        while (_virtualAppliances.count() < _ui->listWidget->count())
+        {   //  Too many items in the list
+            delete _ui->listWidget->takeItem(_ui->listWidget->count() - 1);
+        }
+        while (_virtualAppliances.count() > _ui->listWidget->count())
+        {   //  Too few items in the list
+            auto item = new QListWidgetItem("TODO", _ui->listWidget);
+        }
+        //  ...of proper items
+        for (int i = 0; i < _virtualAppliances.count(); i++)
+        {
+            _ui->listWidget->item(i)->setText(_virtualAppliances[i]->name());
+            _ui->listWidget->item(i)->setData(Qt::ItemDataRole::UserRole, QVariant::fromValue(_virtualAppliances[i]));
+        }
+
+        //  ...and a proper list item is selected
+        qsizetype currentIndex = _virtualAppliances.indexOf(_currentVirtualAppliance);
+        if (currentIndex == -1)
+        {   //  No selection
+            _currentVirtualAppliance = nullptr;
+            _ui->listWidget->clearSelection();
+        }
+        else
+        {   //  Set selection
+            _ui->listWidget->setCurrentRow(currentIndex);
+        }
+
+        //  Menu items
+        _ui->actionCloseVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Running);
+        _ui->actionStartVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
+        _ui->actionStopVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped);
+        _ui->actionSuspendVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
+            _currentVirtualAppliance->suspendable());
+        _ui->actionResumeVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Suspended);
+        _ui->actionConfigureVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
+
+
+        //  Action buttons
+        _ui->startVmPushButton->setEnabled(_ui->actionStartVm->isEnabled());
+        _ui->stopVmPushButton->setEnabled(_ui->actionStopVm->isEnabled());
+        _ui->suspendPushButton->setEnabled(_ui->actionSuspendVm->isEnabled());
+        _ui->resumePushButton->setEnabled(_ui->actionResumeVm->isEnabled());
+        _ui->configureVmPushButton->setEnabled(_ui->actionConfigureVm->isEnabled());
+
+        _refreshUnderway = false;
     }
-
-    //  ...and a proper list item is selected
-    qsizetype currentIndex = _virtualAppliances.indexOf(_currentVirtualAppliance);
-    if (currentIndex == -1)
-    {   //  No selection
-        _currentVirtualAppliance = nullptr;
-        _ui->listWidget->clearSelection();
-    }
-    else
-    {   //  Set selection
-        _ui->listWidget->setCurrentRow(currentIndex);
-    }
-
-    //  Menu items
-    _ui->actionCloseVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Running);
-    _ui->actionStartVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
-    _ui->actionStopVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped);
-    _ui->actionSuspendVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
-        _currentVirtualAppliance->suspendable());
-    _ui->actionResumeVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Suspended);
-    _ui->actionConfigureVm->setEnabled(
-        _currentVirtualAppliance != nullptr &&
-        _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
-
-
-    //  Action buttons
-    _ui->startVmPushButton->setEnabled(_ui->actionStartVm->isEnabled());
-    _ui->stopVmPushButton->setEnabled(_ui->actionStopVm->isEnabled());
-    _ui->suspendPushButton->setEnabled(_ui->actionSuspendVm->isEnabled());
-    _ui->resumePushButton->setEnabled(_ui->actionResumeVm->isEnabled());
-    _ui->configureVmPushButton->setEnabled(_ui->actionConfigureVm->isEnabled());
 }
 
 void MainWindow::_saveVirtualAppliance()
@@ -289,6 +296,45 @@ void MainWindow::_onOpenVm()
 
 void MainWindow::_onCloseVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance))
+    {   //  Nothing to do
+        return;
+    }
+
+    //  Confirm close
+    if (QMessageBox::question(this,
+                              "Close VM",
+                              "Really close " + _currentVirtualAppliance->name() + "?") != QMessageBox::StandardButton::Yes)
+    {   //  Don't close
+        return;
+    }
+
+    //  Suspend/stop
+    if (_currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running)
+    {
+        if (_currentVirtualAppliance->suspendable())
+        {   //  Try to suspend first...
+            try
+            {
+                _currentVirtualAppliance->suspend();
+            }
+            catch (...)
+            {   //  TODO report exception to the user?
+                _currentVirtualAppliance->stop();
+            }
+        }
+        else
+        {   //  Stop outright
+            _currentVirtualAppliance->stop();
+        }
+    }
+
+    //  Update UI
+    _virtualAppliances.removeOne(_currentVirtualAppliance);
+    delete _currentVirtualAppliance;
+    _currentVirtualAppliance = nullptr;
+    _saveVirtualAppliance();
+    _refresh();
 }
 
 void MainWindow::_onExit()
