@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VirtualMachine Architecture="HadesVM" Name="aa" Version="1">
  <Components>
-  <Component Type="HadesVM.Kernel"/>
+  <Component MountedFolder.SYSTEM="./SYSTEM" MountedFolder.USER="./USER" Name="WIN10CI-X64" Type="HadesVM.Kernel" UUID="{97c21864-8911-4312-ae2e-06c34e7fca82}"/>
  </Components>
 </VirtualMachine>

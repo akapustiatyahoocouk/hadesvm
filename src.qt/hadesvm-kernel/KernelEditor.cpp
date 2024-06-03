@@ -38,6 +38,7 @@ KernelEditor::~KernelEditor()
 //  hadesvm::core::ComponentEditor
 void KernelEditor::loadComponentConfiguration()
 {
+    _ui->nodeIdLineEdit->setText(_kernel->nodeUuid().toString());
     _ui->nodeNameLineEdit->setText(_kernel->nodeName());
 
     QStringList volumeNames = _kernel->mountedFolderVolumeNames();

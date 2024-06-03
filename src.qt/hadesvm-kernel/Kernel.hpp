@@ -41,7 +41,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Kernel(const QString & nodeName);
+            Kernel();
             virtual ~Kernel();
 
             //////////
@@ -56,6 +56,9 @@ namespace hadesvm
             //////////
             //  Operations (configuration)
         public:
+            //  Gets the node UUID for the HADES kernel instance.
+            QUuid               nodeUuid() const { return _nodeUuid; }
+
             //  Gets/sets the node name for the HADES kernel instance.
             QString             nodeName() const { return _nodeName; }
             void                setNodeName(const QString & nodeName);
@@ -87,6 +90,7 @@ namespace hadesvm
             QRecursiveMutex     _guard;     //  for synchronizing access to all kernel data
 
             //  Configuration
+            QUuid               _nodeUuid;
             QString             _nodeName;
             QMap<QString, QString>  _mountedFolders;    //  volume namd -> full host path
 

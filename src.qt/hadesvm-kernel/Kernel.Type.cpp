@@ -49,7 +49,7 @@ bool Kernel::Type::isCompatibleWith(hadesvm::core::VirtualApplianceType * type) 
 
 hadesvm::core::Component * Kernel::Type::createComponent()
 {
-    return new Kernel("LOCAL");
+    return new Kernel();
 }
 
 //  End of hadesvm-kernel/Kernel.Type.cpp

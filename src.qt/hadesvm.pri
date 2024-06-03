@@ -1,4 +1,4 @@
-QT += core gui widgets xml
+QT += core gui widgets xml network
 
 CONFIG += c++latest strict_c++
 linux-g++ {

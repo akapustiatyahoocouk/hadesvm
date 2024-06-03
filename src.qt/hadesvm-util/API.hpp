@@ -43,6 +43,7 @@
 #include <QDomElement>
 #include <QException>
 #include <QFileDialog>
+#include <QHostInfo>
 #include <QIcon>
 #include <QLibrary>
 #include <QList>
@@ -59,6 +60,7 @@
 #include <QTimer>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QUuid>
 #include <QVariant>
 #include <QVersionNumber>
 #include <QWidget>

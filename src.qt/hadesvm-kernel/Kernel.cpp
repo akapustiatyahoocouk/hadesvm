@@ -9,10 +9,11 @@ using namespace hadesvm::kernel;
 
 //////////
 //  Construction/destruction
-Kernel::Kernel(const QString & nodeName)
+Kernel::Kernel()
     :   _guard(),
         //  Configuration
-        _nodeName(nodeName),
+        _nodeUuid(QUuid::createUuid()),
+        _nodeName(QHostInfo::localHostName()),
         _mountedFolders(),
         //  Runtime state
         _objects()
@@ -38,10 +39,44 @@ QString Kernel::displayName() const
 
 void Kernel::serialiseConfiguration(QDomElement componentElement)
 {
+    componentElement.setAttribute("UUID", _nodeUuid.toString());
+    componentElement.setAttribute("Name", _nodeName);
+
+    for (QString volumeName : _mountedFolders.keys())
+    {
+        componentElement.setAttribute("MountedFolder." + volumeName, _mountedFolders[volumeName]);
+    }
 }
 
 void Kernel::deserialiseConfiguration(QDomElement componentElement)
 {
+    QUuid uuid(componentElement.attribute("UUID"));
+    if (!uuid.isNull())
+    {
+        _nodeUuid = uuid;
+    }
+
+    QString nodeName = componentElement.attribute("Name");
+    if (isValidNodeName(nodeName))
+    {
+        _nodeName = nodeName;
+    }
+
+    _mountedFolders.clear();
+    QDomNamedNodeMap attributes = componentElement.attributes();
+    for (int i = 0; i < attributes.count(); i++)
+    {
+        QDomAttr attribute = attributes.item(i).toAttr();
+        if (!attribute.isNull() && attribute.name().startsWith("MountedFolder."))
+        {
+            QString volumeName = attribute.name().mid(14);
+            QString path = attribute.value();
+            if (isValidVolumeName(volumeName))
+            {
+                _mountedFolders[volumeName] = path;
+            }
+        }
+    }
 }
 
 hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
@@ -104,7 +139,7 @@ bool Kernel::isValidVolumeName(const QString & name)
     for (QChar c : name)
     {
         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-              (c >= '0' && c <= '9') || (c == '_' || c == '.')))
+              (c >= '0' && c <= '9') || (c == '.' || c == '-')))
         {
             return false;
         }
