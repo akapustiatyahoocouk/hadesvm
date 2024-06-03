@@ -9,11 +9,15 @@ using namespace hadesvm::kernel;
 
 //////////
 //  Construction/destruction
-Kernel::Kernel()
+Kernel::Kernel(const QString & nodeName)
     :   _guard(),
-        _objects(),
-        _mountedFolders()
+        //  Configuration
+        _nodeName(nodeName),
+        _mountedFolders(),
+        //  Runtime state
+        _objects()
 {
+    Q_ASSERT(isValidNodeName(_nodeName));
 }
 
 Kernel::~Kernel()
@@ -47,6 +51,11 @@ hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
 
 //////////
 //  Operations (validation)
+bool Kernel::isValidNodeName(const QString & name)
+{
+    return isValidVolumeName(name);
+}
+
 bool Kernel::isValidVolumeName(const QString & name)
 {
     if (name.length() == 0 || name.length() > 64)
@@ -56,7 +65,7 @@ bool Kernel::isValidVolumeName(const QString & name)
     for (QChar c : name)
     {
         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-              (c >= '0' && c <= '9') || (c == '_')))
+              (c >= '0' && c <= '9') || (c == '_' || c == '.')))
         {
             return false;
         }

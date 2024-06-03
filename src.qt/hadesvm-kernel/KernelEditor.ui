@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>91</height>
+    <width>334</width>
+    <height>128</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QListWidget" name="volumesListWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
+     <x>1</x>
+     <y>30</y>
      <width>221</width>
      <height>91</height>
     </rect>
@@ -26,8 +26,8 @@
   <widget class="QPushButton" name="addVolumePushButton">
    <property name="geometry">
     <rect>
-     <x>229</x>
-     <y>0</y>
+     <x>230</x>
+     <y>30</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -39,8 +39,8 @@
   <widget class="QPushButton" name="modifyVolumePushButton">
    <property name="geometry">
     <rect>
-     <x>229</x>
-     <y>30</y>
+     <x>230</x>
+     <y>60</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -52,8 +52,8 @@
   <widget class="QPushButton" name="deleteVolumePushButton">
    <property name="geometry">
     <rect>
-     <x>229</x>
-     <y>60</y>
+     <x>230</x>
+     <y>90</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -62,7 +62,62 @@
     <string>Delete volume</string>
    </property>
   </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>221</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="nodeNameLabel">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>17</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Node name:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="nodeNameLineEdit">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>25</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>nodeNameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::kernel::KernelEditor</receiver>
+   <slot>_onNodeNameTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>147</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onNodeNameTextChanged(QString)</slot>
+ </slots>
 </ui>

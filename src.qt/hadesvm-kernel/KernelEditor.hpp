@@ -34,12 +34,17 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
-            Kernel *const   _kernel;
+            Kernel *const       _kernel;
 
             //////////
             //  Controls & resources
         private:
-            Ui::KernelEditor *      _ui;
+            Ui::KernelEditor *  _ui;
+
+            //////////
+            //  Signal handlers:
+        private slots:
+            void                _onNodeNameTextChanged(QString);
         };
     }
 }

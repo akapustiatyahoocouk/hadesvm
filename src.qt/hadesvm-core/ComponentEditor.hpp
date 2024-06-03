@@ -32,6 +32,13 @@ namespace hadesvm
             //  True if the current contents of the editor's controls
             //  can be saved to the configuration of the edited component.
             virtual bool        canSaveComponentConfiguration() const = 0;
+
+            //////////
+            //  Signals emitted
+        signals:
+            //  Raised when the content of some comtrol(s) within
+            //  the editor changes
+            void                contentChanged();
         };
     }
 }

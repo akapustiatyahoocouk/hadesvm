@@ -30,7 +30,14 @@ KernelEditor::~KernelEditor()
 //  hadesvm::core::ComponentEditor
 bool KernelEditor::canSaveComponentConfiguration() const
 {
-    return true;
+    return Kernel::isValidNodeName(_ui->nodeNameLineEdit->text());
+}
+
+//////////
+//  Signal handlers:
+void KernelEditor::_onNodeNameTextChanged(QString)
+{   //  TODO what ?
+    emit contentChanged();
 }
 
 //  End of hadesvm-kernel/KernelEditor.cpp

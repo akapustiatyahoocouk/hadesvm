@@ -41,7 +41,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Kernel();
+            Kernel(const QString & nodeName);
             virtual ~Kernel();
 
             //////////
@@ -56,15 +56,20 @@ namespace hadesvm
             //////////
             //  Operations (validation)
         public:
+            static bool         isValidNodeName(const QString & name);
             static bool         isValidVolumeName(const QString & name);
 
             //////////
             //  Implementation
         private:
             QRecursiveMutex     _guard;     //  for synchronizing access to all kernel data
-            QMap<Oid, Object*>  _objects;   //  all existing+live kernel objects
 
+            //  Configuration
+            QString             _nodeName;
             QMap<QString, QString>  _mountedFolders;    //  volume namd -> full host path
+
+            //  Runtime state
+            QMap<Oid, Object*>  _objects;   //  all existing+live kernel objects
         };
     }
 }
