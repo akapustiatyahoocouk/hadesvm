@@ -16,7 +16,6 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
         //  Implementation
         _virtualAppliance(virtualAppliance),
         //  Saved state & state changes
-        _originalName(virtualAppliance->name()),
         _addedComponents(),
         _removedComponents(),
         _savedConfiguration(),
@@ -83,8 +82,11 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     {
         if (hadesvm::core::ComponentEditor * editor = component->createEditor(_ui->editorsFrame))
         {
+            editor->loadComponentConfiguration();
             _componentEditors[component] = editor;
             editor->move(0, 0);
+            connect(editor, &hadesvm::core::ComponentEditor::contentChanged,
+                    this, &ConfigureVirtualApplianceDialog::_onEditorContentChanged);
         }
     }
 
@@ -365,10 +367,19 @@ void ConfigureVirtualApplianceDialog::_onRemoveComponentPushButtonClicked()
     _refresh();
 }
 
+void ConfigureVirtualApplianceDialog::_onEditorContentChanged()
+{
+    _refresh();
+}
+
 void ConfigureVirtualApplianceDialog::_onOk()
 {
-    //  Apply the rest of the changes
+    //  Apply the changes
     _virtualAppliance->setName(_ui->nameLineEdit->text());
+    for (auto editor : _componentEditors.values())
+    {
+        editor->saveComponentConfiguration();
+    }
     //  If some component were removed from the VA, we must destroy them now
     for (auto removedComponent : _removedComponents)
     {
@@ -418,8 +429,11 @@ void ConfigureVirtualApplianceDialog::_ComponentCreator::invoke()
     //  Editor too ?
     if (hadesvm::core::ComponentEditor * editor = component->createEditor(_dlg->_ui->editorsFrame))
     {
+        editor->loadComponentConfiguration();
         _dlg->_componentEditors[component] = editor;
         editor->move(0, 0);
+        connect(editor, &hadesvm::core::ComponentEditor::contentChanged,
+                _dlg, &ConfigureVirtualApplianceDialog::_onEditorContentChanged);
         _dlg->_resizeToFitAllEditors();
     }
     //  Update the UI and TODO select newly created component as "current"

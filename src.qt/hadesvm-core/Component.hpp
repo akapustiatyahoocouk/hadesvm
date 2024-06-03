@@ -25,13 +25,35 @@ namespace hadesvm
             friend class VirtualAppliance;
 
             //////////
+            //  Types
+        public:
+            enum class State
+            {
+                //  Component has been constructed, but not yet connected to
+                //  otther components, has no rintime state and is not running.
+                Constructed,
+
+                //  Component has been constructed and connected to other
+                //  components of the VA, but has no runtime state and is not running.
+                Connected,
+
+                //  Component has been constructed, connected to other components
+                //  of the VA and has a runtime state, but is not running.
+                Initialized,
+
+                //  Component has been constructed, connected to other components
+                //  of the VA, has a runtime state and is running.
+                Running
+            };
+
+            //////////
             //  Construction/destruction
         public:
             Component();
             virtual ~Component();
 
             //////////
-            //  Operations
+            //  Operations (general)
         public:
             //  The type of this component
             virtual ComponentType * type() const = 0;
@@ -63,9 +85,18 @@ namespace hadesvm
             virtual ComponentEditor*createEditor(QWidget * parent) = 0;
 
             //////////
+            //  Operations (state management)
+        public:
+            //  The current state of this component
+            State                   state() const;
+
+            //////////
             //  Implementation
         private:
             VirtualAppliance *      _virtualAppliance = nullptr;  //  nullptr == free, else bound
+            //  Runtime state
+            State                   _state = State::Constructed;
+            mutable QRecursiveMutex _stateGuard;
         };
     }
 }

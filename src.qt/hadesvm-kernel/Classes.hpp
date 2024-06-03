@@ -11,6 +11,7 @@ namespace hadesvm
     {
         class HADESVM_KERNEL_PUBLIC Kernel;
         class HADESVM_KERNEL_PUBLIC KernelEditor;
+        class HADESVM_KERNEL_PUBLIC MountedFolderDialog;
 
         class HADESVM_KERNEL_PUBLIC Object;
         class HADESVM_KERNEL_PUBLIC Process;

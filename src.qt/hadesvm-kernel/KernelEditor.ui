@@ -62,7 +62,7 @@
     <string>Delete volume</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -116,8 +116,76 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>addVolumePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::kernel::KernelEditor</receiver>
+   <slot>_onAddVolumePushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>volumesListWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>hadesvm::kernel::KernelEditor</receiver>
+   <slot>_onVolumesListWidgetCurrentRowChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>modifyVolumePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::kernel::KernelEditor</receiver>
+   <slot>_onModifyVolumePushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteVolumePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::kernel::KernelEditor</receiver>
+   <slot>_onDeleteVolumePushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>_onNodeNameTextChanged(QString)</slot>
+  <slot>_onAddVolumePushButtonClicked()</slot>
+  <slot>_onVolumesListWidgetCurrentRowChanged(int)</slot>
+  <slot>_onModifyVolumePushButtonClicked()</slot>
+  <slot>_onDeleteVolumePushButtonClicked()</slot>
  </slots>
 </ui>

@@ -15,7 +15,7 @@ namespace hadesvm
         //  The editor for a Kernel component
         namespace Ui { class KernelEditor; }
 
-        class HADESVM_KERNEL_PUBLIC KernelEditor : public hadesvm::core::ComponentEditor
+        class HADESVM_KERNEL_PUBLIC KernelEditor final : public hadesvm::core::ComponentEditor
         {
             Q_OBJECT
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(KernelEditor)
@@ -29,12 +29,19 @@ namespace hadesvm
             //////////
             //  hadesvm::core::ComponentEditor
         public:
+            virtual void        loadComponentConfiguration() override;
             virtual bool        canSaveComponentConfiguration() const override;
+            virtual void        saveComponentConfiguration() override;
 
             //////////
             //  Implementation
         private:
             Kernel *const       _kernel;
+
+            //  Helpers
+            void                _refresh();
+            void                _addMountedFolder(const QString & volumeName, const QString & path);
+            void                _deleteMountedFolder(const QString & volumeName);
 
             //////////
             //  Controls & resources
@@ -45,6 +52,10 @@ namespace hadesvm
             //  Signal handlers:
         private slots:
             void                _onNodeNameTextChanged(QString);
+            void                _onVolumesListWidgetCurrentRowChanged(int);
+            void                _onAddVolumePushButtonClicked();
+            void                _onModifyVolumePushButtonClicked();
+            void                _onDeleteVolumePushButtonClicked();
         };
     }
 }

@@ -29,9 +29,17 @@ namespace hadesvm
             //////////
             //  Operations
         public:
+            //  Populated editor controls with values as per the current
+            //  configuration of the edited component.
+            virtual void        loadComponentConfiguration() = 0;
+
             //  True if the current contents of the editor's controls
             //  can be saved to the configuration of the edited component.
             virtual bool        canSaveComponentConfiguration() const = 0;
+
+            //  Analyses editor controls, setting the configuration of the
+            //  edited component to reflect control values.
+            virtual void        saveComponentConfiguration() = 0;
 
             //////////
             //  Signals emitted

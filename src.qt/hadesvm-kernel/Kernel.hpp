@@ -54,6 +54,28 @@ namespace hadesvm
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
 
             //////////
+            //  Operations (configuration)
+        public:
+            //  Gets/sets the node name for the HADES kernel instance.
+            QString             nodeName() const { return _nodeName; }
+            void                setNodeName(const QString & nodeName);
+
+            //  An unordered list of volume names of all mounted folders.
+            QStringList         mountedFolderVolumeNames() const;
+
+            //  Returns the path of the mounted folder with the specified
+            //  volume name; returns "" if such mounted folder does not exist.
+            QString             mountedFolderPath(const QString & volumeName) const;
+
+            //  Adds the (volumeName, path) mounted folder. If one already
+            //  exists for the specified volumeName, replaces it.
+            void                setMountedFolderPath(const QString & volumeName, const QString & path);
+
+            //  Removes a mounted folder with the specified volume name.
+            //  Has no effect such mounted folder does not exist.
+            void                removeMountedFolder(const QString & volumeName);
+
+            //////////
             //  Operations (validation)
         public:
             static bool         isValidNodeName(const QString & name);

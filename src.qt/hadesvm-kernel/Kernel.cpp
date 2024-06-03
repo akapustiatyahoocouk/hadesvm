@@ -50,6 +50,45 @@ hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
 }
 
 //////////
+//  Operations (configuration)
+void Kernel::setNodeName(const QString & nodeName)
+{
+    Q_ASSERT(state() == State::Constructed);
+
+    if (isValidNodeName(nodeName))
+    {
+        _nodeName = nodeName;
+    }
+}
+
+QStringList Kernel::mountedFolderVolumeNames() const
+{
+    return QStringList(_mountedFolders.keys());
+}
+
+QString Kernel::mountedFolderPath(const QString & volumeName) const
+{
+    return _mountedFolders.contains(volumeName) ? _mountedFolders[volumeName] : "";
+}
+
+void Kernel::setMountedFolderPath(const QString & volumeName, const QString & path)
+{
+    Q_ASSERT(state() == State::Constructed);
+
+    if (isValidVolumeName(volumeName))
+    {
+        _mountedFolders[volumeName] = path;
+    }
+}
+
+void Kernel::removeMountedFolder(const QString & volumeName)
+{
+    Q_ASSERT(state() == State::Constructed);
+
+    _mountedFolders.remove(volumeName);
+}
+
+//////////
 //  Operations (validation)
 bool Kernel::isValidNodeName(const QString & name)
 {
@@ -69,6 +108,10 @@ bool Kernel::isValidVolumeName(const QString & name)
         {
             return false;
         }
+    }
+    if (name.startsWith(".") || name.endsWith("."))
+    {
+        return false;
     }
     return true;
 }

@@ -33,7 +33,6 @@ namespace hadesvm
             hadesvm::core::VirtualAppliance *const  _virtualAppliance;
 
             //  Saved state & state changes
-            QString             _originalName;
             hadesvm::core::ComponentList    _addedComponents;   //  sorted by displayName
             hadesvm::core::ComponentList    _removedComponents;   //  sorted by displayName
 
@@ -95,6 +94,7 @@ namespace hadesvm
             void                _onConfigurationTreeWidgetSelectionChanged();
             void                _onAddComponentPushButtonClicked();
             void                _onRemoveComponentPushButtonClicked();
+            void                _onEditorContentChanged();
             void                _onOk();
             void                _onCancel();
         };
@@ -102,4 +102,3 @@ namespace hadesvm
 }
 
 //  End of hadesvm-gui/ConfigureVirtualMachineDialog.hpp
-

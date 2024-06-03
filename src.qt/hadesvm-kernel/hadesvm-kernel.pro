@@ -8,6 +8,7 @@ SOURCES += \
     Kernel.Type.cpp \
     Kernel.cpp \
     KernelEditor.cpp \
+    MountedFolderDialog.cpp \
     Plugins.cpp
 
 HEADERS += \
@@ -17,6 +18,7 @@ HEADERS += \
     Kernel.hpp \
     KernelEditor.hpp \
     Linkage.hpp \
+    MountedFolderDialog.hpp \
     Object.hpp \
     Process.hpp \
     Thread.hpp
@@ -24,4 +26,5 @@ HEADERS += \
 LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util
 
 FORMS += \
-    KernelEditor.ui
+    KernelEditor.ui \
+    MountedFolderDialog.ui
