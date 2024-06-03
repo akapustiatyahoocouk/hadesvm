@@ -56,6 +56,12 @@ namespace hadesvm
             //  IMPORTANT: The "Type" attribute must not be touched!
             virtual void            deserialiseConfiguration(QDomElement componentElement) = 0;
 
+            //  Creates a new editor widget for viewing and editing the
+            //  configuration of this component.
+            //  Returns nullptr if this component has no configuration
+            //  to view/modify in an editor.
+            virtual ComponentEditor*createEditor(QWidget * parent) = 0;
+
             //////////
             //  Implementation
         private:

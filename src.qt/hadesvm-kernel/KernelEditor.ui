@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::kernel::KernelEditor</class>
+ <widget class="QWidget" name="hadesvm::kernel::KernelEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>330</width>
+    <height>91</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QListWidget" name="volumesListWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>221</width>
+     <height>91</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="addVolumePushButton">
+   <property name="geometry">
+    <rect>
+     <x>229</x>
+     <y>0</y>
+     <width>101</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add volume</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="modifyVolumePushButton">
+   <property name="geometry">
+    <rect>
+     <x>229</x>
+     <y>30</y>
+     <width>101</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Modify volume</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="deleteVolumePushButton">
+   <property name="geometry">
+    <rect>
+     <x>229</x>
+     <y>60</y>
+     <width>101</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Delete volume</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

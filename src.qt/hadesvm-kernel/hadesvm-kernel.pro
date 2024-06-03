@@ -7,6 +7,7 @@ SOURCES += \
     Architecture.cpp \
     Kernel.Type.cpp \
     Kernel.cpp \
+    KernelEditor.cpp \
     Plugins.cpp
 
 HEADERS += \
@@ -14,9 +15,13 @@ HEADERS += \
     Architecture.hpp \
     Classes.hpp \
     Kernel.hpp \
+    KernelEditor.hpp \
     Linkage.hpp \
     Object.hpp \
     Process.hpp \
     Thread.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util
+
+FORMS += \
+    KernelEditor.ui

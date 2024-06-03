@@ -30,7 +30,8 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
         _componentCreators(),
         //  Controls & resources
         _ui(new Ui::ConfigureVirtualApplianceDialog),
-        _addComponentPopupMenu(new QMenu())
+        _addComponentPopupMenu(new QMenu()),
+        _componentEditors()
 {
     Q_ASSERT(_virtualAppliance != nullptr);
     Q_ASSERT(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
@@ -77,7 +78,18 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
         submenu->setEnabled(submenuHasItems);
     }
 
+    //  Prepare component editors
+    for (auto component : _virtualAppliance->components())
+    {
+        if (hadesvm::core::ComponentEditor * editor = component->createEditor(_ui->editorsFrame))
+        {
+            _componentEditors[component] = editor;
+            editor->move(0, 0);
+        }
+    }
+
     //  Done
+    _resizeToFitAllEditors();
     _refresh();
     _ui->configurationTreeWidget->expandAll();
 }
@@ -115,8 +127,17 @@ void ConfigureVirtualApplianceDialog::_refresh()
         //  always enabled TODO kill off this line _ui->addComponentPushButton->setEnabled(selectedComponentCategory != nullptr);
         _ui->removeComponentPushButton->setEnabled(selectedComponent != nullptr);
 
-        _ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
-            hadesvm::core::VirtualAppliance::isValidName(_ui->nameLineEdit->text()));
+        _adjustEditorVisibility();
+
+        bool okEnabled = hadesvm::core::VirtualAppliance::isValidName(_ui->nameLineEdit->text());
+        for (auto editor : _componentEditors.values())
+        {
+            if (!editor->canSaveComponentConfiguration())
+            {
+                okEnabled = false;
+            }
+        }
+        _ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(okEnabled);
 
         _refreshUnderway = false;
     }
@@ -262,6 +283,36 @@ void ConfigureVirtualApplianceDialog::_restoreComponentConfigurations()
     }
 }
 
+void ConfigureVirtualApplianceDialog::_resizeToFitAllEditors()
+{
+    QSize editorsSize(0, 0);
+    for (auto editor : _componentEditors.values())
+    {
+        QSize editorSize = editor->size();
+        editorsSize.setWidth(qMax(editorsSize.width(), editorSize.width()));
+        editorsSize.setHeight(qMax(editorsSize.height(), editorSize.height()));
+    }
+    const int Leeway = 8;
+    if (editorsSize.width() + Leeway > _ui->editorsFrame->width())
+    {   //  Expand "editorsFrame" and dialog
+        int deltaX = editorsSize.width() - _ui->editorsFrame->width() + Leeway;
+        _ui->configurationFrame->resize(_ui->configurationFrame->width() + deltaX, _ui->configurationFrame->height());
+        _ui->editorsFrame->resize(_ui->editorsFrame->width() + deltaX, _ui->editorsFrame->height());
+        this->resize(this->width() + deltaX, this->height());
+    }
+    //  TODO vertical resize
+}
+
+void ConfigureVirtualApplianceDialog::_adjustEditorVisibility()
+{
+    auto component = _selectedComponent();
+    auto currentEditor = _componentEditors.contains(component) ? _componentEditors[component] : nullptr;
+    for (auto editor : _componentEditors.values())
+    {
+        editor->setVisible(editor == currentEditor);
+    }
+}
+
 //////////
 //  Signal handlers
 void ConfigureVirtualApplianceDialog::_onNameChanged(QString)
@@ -295,6 +346,11 @@ void ConfigureVirtualApplianceDialog::_onRemoveComponentPushButtonClicked()
         return;
     }
     //  ...remove...
+    if (_componentEditors.contains(component))
+    {
+        delete _componentEditors[component];
+        _componentEditors.remove(component);
+    }
     _virtualAppliance->removeComponent(component);
     if (!_addedComponents.contains(component))
     {
@@ -359,6 +415,13 @@ void ConfigureVirtualApplianceDialog::_ComponentCreator::invoke()
     hadesvm::core::Component * component = _componentType->createComponent();
     _dlg->_virtualAppliance->addComponent(component);
     _dlg->_addedComponents.append(component);
+    //  Editor too ?
+    if (hadesvm::core::ComponentEditor * editor = component->createEditor(_dlg->_ui->editorsFrame))
+    {
+        _dlg->_componentEditors[component] = editor;
+        editor->move(0, 0);
+        _dlg->_resizeToFitAllEditors();
+    }
     //  Update the UI and TODO select newly created component as "current"
     _dlg->_refresh();
     _dlg->_setSelectedComponent(component);

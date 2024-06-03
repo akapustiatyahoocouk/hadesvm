@@ -11,7 +11,8 @@ using namespace hadesvm::kernel;
 //  Construction/destruction
 Kernel::Kernel()
     :   _guard(),
-        _objects()
+        _objects(),
+        _mountedFolders()
 {
 }
 
@@ -37,6 +38,30 @@ void Kernel::serialiseConfiguration(QDomElement componentElement)
 
 void Kernel::deserialiseConfiguration(QDomElement componentElement)
 {
+}
+
+hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
+{
+    return new KernelEditor(parent, this);
+}
+
+//////////
+//  Operations (validation)
+bool Kernel::isValidVolumeName(const QString & name)
+{
+    if (name.length() == 0 || name.length() > 64)
+    {
+        return false;
+    }
+    for (QChar c : name)
+    {
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+              (c >= '0' && c <= '9') || (c == '_')))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 //  End of hadesvm-kernel/Kernel.cpp

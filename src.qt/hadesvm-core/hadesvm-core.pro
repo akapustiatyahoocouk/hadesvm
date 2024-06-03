@@ -8,6 +8,7 @@ SOURCES += \
     ComponentAdaptor.cpp \
     ComponentAdaptorType.cpp \
     ComponentCategory.cpp \
+    ComponentEditor.cpp \
     ComponentType.cpp \
     Exceptions.cpp \
     Plugins.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     ComponentAdaptor.hpp \
     ComponentAdaptorType.hpp \
     ComponentCategory.hpp \
+    ComponentEditor.hpp \
     ComponentType.hpp \
     Exceptions.hpp \
     Linkage.hpp \

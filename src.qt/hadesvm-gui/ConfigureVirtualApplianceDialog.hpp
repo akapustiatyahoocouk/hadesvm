@@ -77,11 +77,16 @@ namespace hadesvm
             void                _saveComponentConfigurations();
             void                _restoreComponentConfigurations();
 
+            void                _resizeToFitAllEditors();
+            void                _adjustEditorVisibility();
+
             //////////
             //  Controls & resources
         private:
             Ui::ConfigureVirtualApplianceDialog *   _ui;
             QMenu *             _addComponentPopupMenu = nullptr;
+
+            QMap<hadesvm::core::Component*,hadesvm::core::ComponentEditor*> _componentEditors;
 
             //////////
             //  Signal handlers

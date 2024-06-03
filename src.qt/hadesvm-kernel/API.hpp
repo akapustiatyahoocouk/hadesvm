@@ -22,6 +22,7 @@
 #include "hadesvm-kernel/Process.hpp"
 #include "hadesvm-kernel/Thread.hpp"
 
+#include "hadesvm-kernel/KernelEditor.hpp"
 #include "hadesvm-kernel/Kernel.hpp"
 
 //  End of hadesvm-kernel/API.hpp
