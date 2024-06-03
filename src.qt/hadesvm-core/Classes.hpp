@@ -11,8 +11,10 @@ namespace hadesvm
     {
         class HADESVM_CORE_PUBLIC ComponentCategory;
         class HADESVM_CORE_PUBLIC ComponentType;
+        class HADESVM_CORE_PUBLIC ComponentConfiguration;
         class HADESVM_CORE_PUBLIC Component;
         class HADESVM_CORE_PUBLIC ComponentAdaptorType;
+        class HADESVM_CORE_PUBLIC ComponentAdaptorConfiguration;
         class HADESVM_CORE_PUBLIC ComponentAdaptor;
 
         class HADESVM_CORE_PUBLIC VirtualArchitecture;

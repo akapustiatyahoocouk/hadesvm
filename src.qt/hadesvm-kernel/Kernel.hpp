@@ -17,7 +17,7 @@ namespace hadesvm
             //////////
             //  Types
         public:
-            //  The trype of a Kernel component
+            //  The type of a Kernel component
             class HADESVM_KERNEL_PUBLIC Type final : public hadesvm::core::ComponentType
             {
                 HADESVM_DECLARE_SINGLETON(Type);
@@ -49,12 +49,14 @@ namespace hadesvm
         public:
             virtual Type *      type() const override;
             virtual QString     displayName() const override;
+            virtual void        serialiseConfiguration(QDomElement componentElement) override;
+            virtual void        deserialiseConfiguration(QDomElement componentElement) override;
 
             //////////
             //  Implementation
         private:
-            QRecursiveMutex     _guard = {};    //  for synchronizing access to all kernel data
-            QMap<Oid, Object*>  _objects = {};  //  all existing+live kernel objects
+            QRecursiveMutex     _guard;     //  for synchronizing access to all kernel data
+            QMap<Oid, Object*>  _objects;   //  all existing+live kernel objects
         };
     }
 }

@@ -46,6 +46,16 @@ namespace hadesvm
             //  The short descriptive name of this component
             virtual QString         displayName() const = 0;
 
+            //  Serialises the current configuration of this component
+            //  to an XML element by setting attributes of that XML element.
+            //  IMPORTANT: The "Type" attribute must not be touched!
+            virtual void            serialiseConfiguration(QDomElement componentElement) = 0;
+
+            //  De-serialises the current configuration of this component
+            //  from an XML element by analysing attributes of that XML element.
+            //  IMPORTANT: The "Type" attribute must not be touched!
+            virtual void            deserialiseConfiguration(QDomElement componentElement) = 0;
+
             //////////
             //  Implementation
         private:

@@ -1,1 +1,6 @@
-<VirtualMachine Architecture="HadesVM" Name="aa" Version="1"/>
+<?xml version="1.0" encoding="utf-8"?>
+<VirtualMachine Architecture="HadesVM" Name="aa" Version="1">
+ <Components>
+  <Component Type="HadesVM.Kernel"/>
+ </Components>
+</VirtualMachine>

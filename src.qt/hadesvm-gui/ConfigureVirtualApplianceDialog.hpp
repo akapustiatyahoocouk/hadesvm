@@ -32,14 +32,20 @@ namespace hadesvm
         private:
             hadesvm::core::VirtualAppliance *const  _virtualAppliance;
 
-            hadesvm::core::ComponentCategoryList    _componentCategories = {};   //  sorted by displayName
-            QMap<QTreeWidgetItem*, hadesvm::core::ComponentCategory*> _mapTreeItemsToComponentCategories = {};
-            QMap<QTreeWidgetItem*, hadesvm::core::Component*> _mapTreeItemsToComponents = {};
-
             //  Saved state & state changes
             QString             _originalName;
-            hadesvm::core::ComponentList    _addedComponents = {};   //  sorted by displayName
-            hadesvm::core::ComponentList    _removedComponents = {};   //  sorted by displayName
+            hadesvm::core::ComponentList    _addedComponents;   //  sorted by displayName
+            hadesvm::core::ComponentList    _removedComponents;   //  sorted by displayName
+
+            QDomDocument        _savedConfiguration;
+            QMap<hadesvm::core::Component*, QDomElement> _savedComponentConfigurations;
+            QMap<hadesvm::core::Component*, QDomElement> _savedComponentAdaptorConfigurations;
+
+            //  Working data
+            hadesvm::core::ComponentCategoryList    _componentCategories;   //  sorted by displayName
+            QMap<QTreeWidgetItem*, hadesvm::core::ComponentCategory*> _mapTreeItemsToComponentCategories;
+            QMap<QTreeWidgetItem*, hadesvm::core::Component*> _mapTreeItemsToComponents;
+            bool                _refreshUnderway = false;
 
             //  Helper agents
             class _ComponentCreator final
@@ -58,9 +64,7 @@ namespace hadesvm
                 ConfigureVirtualApplianceDialog *   _dlg;
                 hadesvm::core::ComponentType *      _componentType;
             };
-            QList<_ComponentCreator*>   _componentCreators = {};
-
-            bool                _refreshUnderway = false;
+            QList<_ComponentCreator*>   _componentCreators;
 
             //  Helpers
             void                _refresh();
@@ -69,6 +73,9 @@ namespace hadesvm
             hadesvm::core::ComponentCategory *  _selectedComponentCategory();
             hadesvm::core::Component *  _selectedComponent();
             bool                _setSelectedComponent(hadesvm::core::Component * component);
+
+            void                _saveComponentConfigurations();
+            void                _restoreComponentConfigurations();
 
             //////////
             //  Controls & resources

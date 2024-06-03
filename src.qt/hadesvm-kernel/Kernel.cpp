@@ -10,6 +10,8 @@ using namespace hadesvm::kernel;
 //////////
 //  Construction/destruction
 Kernel::Kernel()
+    :   _guard(),
+        _objects()
 {
 }
 
@@ -27,6 +29,14 @@ Kernel::Type * Kernel::type() const
 QString Kernel::displayName() const
 {
     return Type::instance()->displayName();
+}
+
+void Kernel::serialiseConfiguration(QDomElement componentElement)
+{
+}
+
+void Kernel::deserialiseConfiguration(QDomElement componentElement)
+{
 }
 
 //  End of hadesvm-kernel/Kernel.cpp

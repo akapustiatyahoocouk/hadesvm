@@ -254,7 +254,10 @@ void VirtualAppliance::resume() throws(VirtualApplianceException)
 
 void VirtualAppliance::save() throws(VirtualApplianceException)
 {
+    //  Create & set up DOM document
     QDomDocument document;
+    QDomProcessingInstruction pi = document.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
+    document.appendChild(pi);
 
     //  Set up root element
     QDomElement rootElement = document.createElement(type()->mnemonic());
@@ -262,6 +265,35 @@ void VirtualAppliance::save() throws(VirtualApplianceException)
     rootElement.setAttribute("Architecture", architecture()->mnemonic());
     rootElement.setAttribute("Version", "1");
     document.appendChild(rootElement);
+
+    //  Set up "components" element
+    QDomElement componentsElement = document.createElement("Components");
+    rootElement.appendChild(componentsElement);
+
+    //  Set up component XML nodes
+    for (auto component : _compatibleComponents)
+    {
+        QDomElement componentElement = document.createElement("Component");
+        componentsElement.appendChild(componentElement);
+        componentElement.setAttribute("Type", component->type()->mnemonic());
+        component->serialiseConfiguration(componentElement);
+        Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+    }
+    for (auto componentAdaptor : _componentAdaptors)
+    {
+        auto component = componentAdaptor->adaptedComponent();
+        QDomElement componentElement = document.createElement("Component");
+        componentsElement.appendChild(componentElement);
+        componentElement.setAttribute("Type", component->type()->mnemonic());
+        component->serialiseConfiguration(componentElement);
+        Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+
+        QDomElement adaptorElement = document.createElement("Adaptor");
+        componentElement.appendChild(adaptorElement);
+        adaptorElement.setAttribute("Type", componentAdaptor->type()->mnemonic());
+        componentAdaptor->serialiseConfiguration(adaptorElement);
+        Q_ASSERT(adaptorElement.attribute("Type") == componentAdaptor->type()->mnemonic());
+    }
 
     //  Save!
     QFile file(location());
@@ -336,6 +368,45 @@ VirtualAppliance * VirtualAppliance::load(const QString & location)
 
     //  Create an initially empty VA
     std::unique_ptr<VirtualAppliance> va{type->createVirtualAppliance(name, fi.absoluteFilePath(), architecture)};
+
+    //  Process <Components> element
+    for (QDomElement componentsElement = rootElement.firstChildElement("Components");
+         !componentsElement.isNull();
+         componentsElement = componentsElement.nextSiblingElement("Components"))
+    {
+        for (QDomElement componentElement = componentsElement.firstChildElement("Component");
+             !componentElement.isNull();
+             componentElement = componentElement.nextSiblingElement("Component"))
+        {   //  Create component...
+            QString componentTypeMnemonic = componentElement.attribute("Type");
+            ComponentType * componentType = ComponentType::findByMnemonic(componentTypeMnemonic);
+            if (componentType == nullptr)
+            {
+                throw VirtualApplianceException("Unsupported component type '" + componentTypeMnemonic + "'");
+            }
+            Component * component = componentType->createComponent();
+            component->deserialiseConfiguration(componentElement);
+            va->addComponent(component);
+            //  Adaptor + properties ?
+            ComponentAdaptor * adaptor = nullptr;
+            for (auto ca : va->componentAdaptors())
+            {
+                if (ca->adaptedComponent() == component)
+                {
+                    adaptor = ca;
+                    break;
+                }
+            }
+            if (adaptor != nullptr)
+            {
+                QDomElement adaptorElement = componentElement.firstChildElement("Adaptor");
+                if (!adaptorElement.isNull() && adaptorElement.attribute("Type") == adaptor->type()->mnemonic())
+                {
+                    adaptor->deserialiseConfiguration(adaptorElement);
+                }
+            }
+        }
+    }
 
     //  Done
     return va.release();

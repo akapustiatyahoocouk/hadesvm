@@ -15,7 +15,19 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     :   QDialog(parent),
         //  Implementation
         _virtualAppliance(virtualAppliance),
+        //  Saved state & state changes
         _originalName(virtualAppliance->name()),
+        _addedComponents(),
+        _removedComponents(),
+        _savedConfiguration(),
+        _savedComponentConfigurations(),
+        _savedComponentAdaptorConfigurations(),
+        //  Working data
+        _componentCategories(),
+        _mapTreeItemsToComponentCategories(),
+        _mapTreeItemsToComponents(),
+        //  Helper agents
+        _componentCreators(),
         //  Controls & resources
         _ui(new Ui::ConfigureVirtualApplianceDialog),
         _addComponentPopupMenu(new QMenu())
@@ -28,6 +40,9 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     _ui->nameLineEdit->setText(_virtualAppliance->name());
     _ui->locationLineEdit->setText(_virtualAppliance->location());
     _ui->architectureLineEdit->setText(_virtualAppliance->architecture()->displayName());
+
+    //  Save configuration in case the user cancels the dialog
+    _saveComponentConfigurations();
 
     //  Create component category nodes
     _componentCategories = hadesvm::core::ComponentCategory::all();
@@ -134,7 +149,7 @@ void ConfigureVirtualApplianceDialog::_refreshComponentNodes(
     }
     while (components.count() > componentCategoryItem->childCount())
     {   //  Too few children
-        QTreeWidgetItem * childItem = new QTreeWidgetItem(componentCategoryItem, QStringList("TODO"));
+        new QTreeWidgetItem(componentCategoryItem, QStringList("TODO"));
     }
     //  ...with correct properties
     for (int i = 0; i < components.count(); i++)
@@ -171,6 +186,80 @@ bool ConfigureVirtualApplianceDialog::_setSelectedComponent(hadesvm::core::Compo
         }
     }
     return false;
+}
+
+void ConfigureVirtualApplianceDialog::_saveComponentConfigurations()
+{
+    QDomElement rootElement = _savedConfiguration.createElement("Configurations");
+    _savedConfiguration.appendChild(rootElement);
+
+    for (auto component : _virtualAppliance->compatibleComponents())
+    {
+        QDomElement componentElement = _savedConfiguration.createElement("Component");
+        componentElement.setAttribute("Type", component->type()->mnemonic());
+        rootElement.appendChild(componentElement);
+        component->serialiseConfiguration(componentElement);
+        _savedComponentConfigurations[component] = componentElement;
+    }
+
+    for (auto adaptor : _virtualAppliance->componentAdaptors())
+    {
+        auto component = adaptor->adaptedComponent();
+
+        QDomElement componentElement = _savedConfiguration.createElement("Component");
+        componentElement.setAttribute("Type", component->type()->mnemonic());
+        rootElement.appendChild(componentElement);
+        component->serialiseConfiguration(componentElement);
+        _savedComponentConfigurations[component] = componentElement;
+
+        QDomElement adaptorElement = _savedConfiguration.createElement("Adaptor");
+        adaptorElement.setAttribute("Type", adaptor->type()->mnemonic());
+        componentElement.appendChild(adaptorElement);
+        adaptor->serialiseConfiguration(adaptorElement);
+        _savedComponentAdaptorConfigurations[component] = adaptorElement;
+    }
+
+    qDebug() << _savedConfiguration.toString(); //  TODO kill off
+}
+
+void ConfigureVirtualApplianceDialog::_restoreComponentConfigurations()
+{
+    for (auto component : _virtualAppliance->compatibleComponents())
+    {
+        if (_savedComponentConfigurations.contains(component))
+        {
+            QDomElement componentElement = _savedComponentConfigurations[component];
+            Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+            component->deserialiseConfiguration(componentElement);
+        }
+    }
+
+    for (auto component : _virtualAppliance->adaptedComponents())
+    {
+        if (_savedComponentConfigurations.contains(component))
+        {
+            QDomElement componentElement = _savedComponentConfigurations[component];
+            Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+            component->deserialiseConfiguration(componentElement);
+        }
+        hadesvm::core::ComponentAdaptor * adaptor = nullptr;
+        for (auto ca : _virtualAppliance->componentAdaptors())
+        {
+            if (ca->adaptedComponent() == component)
+            {
+                adaptor = ca;
+                break;
+            }
+        }
+        if (adaptor != nullptr && _savedComponentAdaptorConfigurations.contains(component))
+        {
+            QDomElement adaptorElement = _savedComponentAdaptorConfigurations[component];
+            if (adaptorElement.attribute("Type") == adaptor->type()->mnemonic())
+            {
+                adaptor->deserialiseConfiguration(adaptorElement);
+            }
+        }
+    }
 }
 
 //////////
@@ -214,6 +303,7 @@ void ConfigureVirtualApplianceDialog::_onRemoveComponentPushButtonClicked()
     else
     {
         _addedComponents.removeOne(component);
+        delete component;
     }
     //  ...and update the UI
     _refresh();
@@ -246,11 +336,9 @@ void ConfigureVirtualApplianceDialog::_onCancel()
     {
         Q_ASSERT(!_addedComponents.contains(removedComponent));
         _virtualAppliance->addComponent(removedComponent);
-        //  TODO if the removedComponent used to be adapted, we need to
-        //  restore the adaptor's configuration...
-        //  ...TODO ...as well as component's own configuration
     }
-    //  Done
+    //  Restore configurations & we're done
+    _restoreComponentConfigurations();
     reject();
 }
 

@@ -47,6 +47,16 @@ namespace hadesvm
             //  The component being adapted.
             Component *         adaptedComponent() const { return _adaptedComponent; }
 
+            //  Serialises the current configuration of this component adaptor
+            //  to an XML element by setting attributes of that XML element.
+            //  IMPORTANT: The "Type" attribute must not be touched!
+            virtual void        serialiseConfiguration(QDomElement componentElement) = 0;
+
+            //  De-serialises the current configuration of this component adaptor
+            //  from an XML element by analysing attributes of that XML element.
+            //  IMPORTANT: The "Type" attribute must not be touched!
+            virtual void        deserialiseConfiguration(QDomElement componentElement) = 0;
+
             //////////
             //  Implementation
         private:
