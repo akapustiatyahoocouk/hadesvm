@@ -20,26 +20,19 @@ namespace hadesvm
         };
 
         extern "C"
-        typedef PluginList (*PluginExportProc)(void);
+        typedef void (*PluginExportProc)(PluginList &);
     }
 }
 
-#define HADESVM_BEGIN_PLUGIN_TABLE()                            \
-    extern "C"                                                  \
-    Q_DECL_EXPORT hadesvm::util::PluginList vs_plugin_proc();   \
-    extern "C"                                                  \
-    Q_DECL_EXPORT hadesvm::util::PluginList vs_plugin_proc()    \
-    {                                                           \
-        static hadesvm::util::PluginList result;                \
-        if (result.empty())                                     \
-        {
+#define HADESVM_BEGIN_PLUGIN_TABLE()                                        \
+    extern "C"                                                              \
+    Q_DECL_EXPORT void vs_plugin_proc(hadesvm::util::PluginList & plugins); \
+    extern "C"                                                              \
+    Q_DECL_EXPORT void vs_plugin_proc(hadesvm::util::PluginList & plugins)  \
+    {
 
-#define HADESVM_EXPORT_PLUGIN(instance)                         \
-            result.append(instance);
+#define HADESVM_EXPORT_PLUGIN(instance)     plugins.append(instance);
 
-#define HADESVM_END_PLUGIN_TABLE()                              \
-        }                                                       \
-        return result;                                          \
-    }
+#define HADESVM_END_PLUGIN_TABLE()          }
 
 //  End of hadesvm-util/PluginManager.hpp

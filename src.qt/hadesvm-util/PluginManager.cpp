@@ -37,7 +37,8 @@ void PluginManager::loadPlugins()
                     reinterpret_cast<PluginExportProc>(lib->resolve("vs_plugin_proc"));
                 if (pluginExportProc != nullptr)
                 {
-                    auto newPlugins = (*pluginExportProc)();
+                    PluginList newPlugins;
+                    (*pluginExportProc)(newPlugins);
                     for (auto newPlugin : newPlugins)
                     {
                         qDebug() << fileInfo << ": " << newPlugin; //  TODO kill off

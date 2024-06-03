@@ -167,7 +167,7 @@ void MainWindow::_loadVirtualAppliance()
         {
             va.reset(hadesvm::core::VirtualAppliance::load(location));
         }
-        catch (const hadesvm::core::VirtualApplianceException & ex)
+        catch (const hadesvm::core::VirtualApplianceException & /*ex*/)
         {
             //  TODO log ? QMessageBox::critical(this, "OOPS!", ex.message());
             continue;   //  auto-deletes "va"

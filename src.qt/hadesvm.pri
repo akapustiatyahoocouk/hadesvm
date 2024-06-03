@@ -6,6 +6,7 @@ linux-g++ {
     QMAKE_LFLAGS += -Wl,--no-undefined
 }
 win32-msvc {
+    QMAKE_CXXFLAGS += /GS- /std:c++latest /Za /Zc:rvalueCast /Wall /WX
 }
 
 INCLUDEPATH += ..
