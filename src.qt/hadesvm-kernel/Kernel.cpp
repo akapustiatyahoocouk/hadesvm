@@ -10,19 +10,32 @@ using namespace hadesvm::kernel;
 //////////
 //  Construction/destruction
 Kernel::Kernel()
-    :   _guard(),
+    :   //  State
+        _state(State::Constructed),
         //  Configuration
         _nodeUuid(QUuid::createUuid()),
         _nodeName(QHostInfo::localHostName()),
         _mountedFolders(),
         //  Runtime state
-        _objects()
+        _runtimeStateGuard(),
+        _liveObjects(),
+        _deadObjects(),
+        _oidGenerator(),
+        _localNode(nullptr)
 {
     Q_ASSERT(isValidNodeName(_nodeName));
 }
 
 Kernel::~Kernel()
 {
+    for (Object * object : _liveObjects.values())
+    {
+        delete object;
+    }
+    for (Object * object : _deadObjects.values())
+    {
+        delete object;
+    }
 }
 
 //////////
@@ -82,6 +95,94 @@ void Kernel::deserialiseConfiguration(QDomElement componentElement)
 hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
 {
     return new KernelEditor(parent, this);
+}
+
+//////////
+//  hadesvm::core::Component (state management)
+Kernel::State Kernel::state() const noexcept
+{
+    return _state;
+}
+
+void Kernel::connect() throws(hadesvm::core::VirtualApplianceException)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Constructed)
+    {   //  OOPS!
+        throw hadesvm::core::VirtualApplianceException(displayName() + " is not in Constructed state");
+    }
+
+    //  TODO discover devices that Kernel will manage
+
+    //  Dne
+    _state = State::Connected;
+}
+
+void Kernel::initialize() throws(hadesvm::core::VirtualApplianceException)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Connected)
+    {   //  OOPS!
+        throw hadesvm::core::VirtualApplianceException(displayName() + " is not in Connected state");
+    }
+
+    QMutexLocker lock(&_runtimeStateGuard);
+
+    //  Start with the local node
+    _localNode = new LocalNode(this, _nodeUuid, _nodeName);
+
+    //  Create device objects representing mounted folders
+
+    //  TODO implement
+}
+
+void Kernel::start() throws(hadesvm::core::VirtualApplianceException)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS!
+        throw hadesvm::core::VirtualApplianceException(displayName() + " is not in Initialized state");
+    }
+    //  TODO implement
+}
+
+void Kernel::stop() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Running)
+    {   //  Nothing to do
+        return;
+    }
+    //  TODO implement
+}
+
+void Kernel::deinitialize() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  Nothing to do
+        return;
+    }
+
+    delete _localNode;
+    _localNode = nullptr;
+    //  TODO implement
+}
+
+void Kernel::disconnect() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Connected)
+    {   //  Nothing to do
+        return;
+    }
+    //  TODO implement
 }
 
 //////////
@@ -149,6 +250,29 @@ bool Kernel::isValidVolumeName(const QString & name)
         return false;
     }
     return true;
+}
+
+//////////
+//  Operations (runtime state)
+bool Kernel::isLockedByCurrentThread() const
+{
+    return _runtimeStateGuard.lockingThread() == QThread::currentThread();
+}
+
+//////////
+//  Implementation helpers
+Oid Kernel::_generateUniqueOid()
+{
+    Q_ASSERT(isLockedByCurrentThread());
+
+    for (; ; )
+    {
+        Oid oid = _oidGenerator.generate();
+        if (oid != 0 && !_liveObjects.contains(oid) && !_deadObjects.contains(oid))
+        {
+            return oid;
+        }
+    }
 }
 
 //  End of hadesvm-kernel/Kernel.cpp

@@ -8,7 +8,10 @@ SOURCES += \
     Kernel.Type.cpp \
     Kernel.cpp \
     KernelEditor.cpp \
+    LocalNode.cpp \
     MountedFolderDialog.cpp \
+    Node.cpp \
+    Object.cpp \
     Plugins.cpp
 
 HEADERS += \
@@ -19,6 +22,7 @@ HEADERS += \
     KernelEditor.hpp \
     Linkage.hpp \
     MountedFolderDialog.hpp \
+    Node.hpp \
     Object.hpp \
     Process.hpp \
     Thread.hpp

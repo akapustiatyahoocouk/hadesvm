@@ -9,10 +9,65 @@ namespace hadesvm
 {
     namespace kernel
     {
+        //  A recursive mutex that keeps track of its locking properties
+        class HADESVM_KERNEL_PUBLIC KernelMutex final
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(KernelMutex)
+
+            //////////
+            //  Construction/destruction
+        public:
+            KernelMutex()
+                :   _impl(),
+                _lockCount(0),
+                _lockingThread(nullptr)
+            {
+            }
+
+            ~KernelMutex()
+            {
+            }
+
+            //////////
+            //  Operations
+        public:
+            //  Locks this mutex, idle-waiting if necessary
+            void                lock()
+            {
+                _impl.lock();
+                Q_ASSERT(_lockCount >= 0);
+                _lockCount++;
+                _lockingThread = QThread::currentThread();
+            }
+
+            //  Unlocks this mutex
+            void                unlock()
+            {
+                _lockCount--;
+                Q_ASSERT(_lockCount >= 0);
+                _impl.unlock();
+            }
+
+            //  The thread that currently holds this mutex locked, nullptr if none.
+            QThread *           lockingThread() const
+            {
+                return (_lockCount == 0) ? nullptr : _lockingThread;
+            }
+
+            //////////
+            //  Implementation
+        private:
+            QRecursiveMutex     _impl;
+            std::atomic<int>    _lockCount;
+            QThread *           _lockingThread;
+        };
+
         //  A Hades VM kernel
         class HADESVM_KERNEL_PUBLIC Kernel final : public hadesvm::core::Component
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Kernel)
+
+            friend class Object;
 
             //////////
             //  Types
@@ -54,6 +109,17 @@ namespace hadesvm
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
 
             //////////
+            //  hadesvm::core::Component (state management)
+        public:
+            virtual State       state() const noexcept override;
+            virtual void        connect() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        initialize() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        start() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        stop() noexcept override;
+            virtual void        deinitialize() noexcept override;
+            virtual void        disconnect() noexcept override;
+
+            //////////
             //  Operations (configuration)
         public:
             //  Gets the node UUID for the HADES kernel instance.
@@ -85,9 +151,15 @@ namespace hadesvm
             static bool         isValidVolumeName(const QString & name);
 
             //////////
+            //  Operations (runtime state)
+        public:
+            bool                isLockedByCurrentThread() const;
+
+            //////////
             //  Implementation
         private:
-            QRecursiveMutex     _guard;     //  for synchronizing access to all kernel data
+            //  State
+            State               _state;
 
             //  Configuration
             QUuid               _nodeUuid;
@@ -95,7 +167,16 @@ namespace hadesvm
             QMap<QString, QString>  _mountedFolders;    //  volume namd -> full host path
 
             //  Runtime state
-            QMap<Oid, Object*>  _objects;   //  all existing+live kernel objects
+            KernelMutex         _runtimeStateGuard;
+            QMap<Oid, Object*>  _liveObjects;   //  all existing+live kernel objects
+            QMap<Oid, Object*>  _deadObjects;   //  all existing+dead kernel objects
+
+            QRandomGenerator    _oidGenerator;
+
+            LocalNode *         _localNode;
+
+            //  Helpers
+            Oid                 _generateUniqueOid();
         };
     }
 }

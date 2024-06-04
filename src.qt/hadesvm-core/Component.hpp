@@ -88,15 +88,43 @@ namespace hadesvm
             //  Operations (state management)
         public:
             //  The current state of this component
-            State                   state() const;
+            virtual State           state() const noexcept = 0;
+
+            //  Performs the Constructed -> Connected state transition.
+            //  This connects Component to other components of the same VA
+            //  with which the Component is expected to collaborate.
+            //  Must only be called from the QApplication's main thread
+            virtual void            connect() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Connected -> Initialized state transition.
+            //  This allocated the "runtime state" of the Component.
+            //  Must only be called from the QApplication's main thread
+            virtual void            initialize() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Initialized -> Running state transition.
+            //  This starts the Component.
+            //  Must only be called from the QApplication's main thread
+            virtual void            start() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Running -> Initialized state transition.
+            //  This stops the Component.
+            //  Must only be called from the QApplication's main thread
+            virtual void            stop() noexcept = 0;
+
+            //  Performs the Initialized -> Connected state transition.
+            //  This drops the "runtime state" of the Component.
+            //  Must only be called from the QApplication's main thread
+            virtual void            deinitialize() noexcept = 0;
+
+            //  Performs the Connected -> Constructed state transition.
+            //  This disconnects Component from other components of the same VA.
+            //  Must only be called from the QApplication's main thread
+            virtual void            disconnect() noexcept = 0;
 
             //////////
             //  Implementation
         private:
             VirtualAppliance *      _virtualAppliance = nullptr;  //  nullptr == free, else bound
-            //  Runtime state
-            State                   _state = State::Constructed;
-            mutable QRecursiveMutex _stateGuard;
         };
     }
 }

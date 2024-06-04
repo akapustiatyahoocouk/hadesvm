@@ -52,6 +52,7 @@ namespace hadesvm
             //  Controls & resources
         private:
             Ui::MainWindow *    _ui;
+            QTimer              _refreshTimer;
 
             //////////
             //  Signal handlers
@@ -67,6 +68,7 @@ namespace hadesvm
             void                _onConfigureVm();
             void                _onHelpAbout();
             void                _onCurrentVmChanged(int);
+            void                _onRefreshTimerTick();
         };
     }
 }

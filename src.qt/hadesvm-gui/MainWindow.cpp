@@ -17,7 +17,8 @@ MainWindow::MainWindow(QWidget * parent)
         _currentVirtualAppliance(nullptr),
         _settings(this),
         //  Controls & resources
-        _ui(new Ui::MainWindow)
+        _ui(new Ui::MainWindow),
+        _refreshTimer(this)
 {
     _ui->setupUi(this);
 
@@ -26,12 +27,18 @@ MainWindow::MainWindow(QWidget * parent)
     //  Restore VM list and update UI accordingly
     _loadVirtualAppliance();
 
-    //  Done
+    //  Done - but need to connect & start refresh timer
     _refresh();
+
+    _refreshTimer.setInterval(1000);    //  1 sec
+    connect(&_refreshTimer, &QTimer::timeout,
+            this, &MainWindow::_onRefreshTimerTick);
+    _refreshTimer.start();
 }
 
 MainWindow::~MainWindow()
 {
+    _refreshTimer.stop();
     delete _ui;
 }
 
@@ -372,10 +379,33 @@ void MainWindow::_onExit()
 
 void MainWindow::_onStartVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped)
+    {   //  Nothing to do
+        return;
+    }
+
+    try
+    {
+        _currentVirtualAppliance->start();
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+    }
+    _refresh();
 }
 
 void MainWindow::_onStopVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped)
+    {   //  Nothing to do
+        return;
+    }
+
+    _currentVirtualAppliance->stop();
+    _refresh();
 }
 
 void MainWindow::_onSuspendVm()
@@ -421,6 +451,21 @@ void MainWindow::_onCurrentVmChanged(int)
             _virtualAppliances[index] :
             nullptr;
     _saveVirtualAppliance();
+    _refresh();
+}
+
+void MainWindow::_onRefreshTimerTick()
+{
+    //  Stop any running VAs that want to be wtopped...
+    for (auto virtualAppliance : _virtualAppliances)
+    {
+        if (virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
+            virtualAppliance->stopRequested())
+        {
+            virtualAppliance->stop();
+        }
+    }
+    //  ...and refresh UI
     _refresh();
 }
 

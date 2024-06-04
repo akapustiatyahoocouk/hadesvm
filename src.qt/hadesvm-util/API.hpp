@@ -51,6 +51,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QRandomGenerator>
 #include <QRecursiveMutex>
 #include <QSet>
 #include <QSettings>

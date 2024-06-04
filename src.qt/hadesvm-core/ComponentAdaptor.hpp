@@ -26,13 +26,35 @@ namespace hadesvm
             friend class VirtualAppliance;
 
             //////////
+            //  Types
+        public:
+            enum class State
+            {
+                //  Component adaptor has been constructed, but not yet connected to
+                //  otther components, has no rintime state and is not running.
+                Constructed,
+
+                //  Component adaptor has been constructed and connected to other
+                //  components of the VA, but has no runtime state and is not running.
+                Connected,
+
+                //  Component adaptor has been constructed, connected to other components
+                //  of the VA and has a runtime state, but is not running.
+                Initialized,
+
+                //  Component adaptor has been constructed, connected to other components
+                //  of the VA, has a runtime state and is running.
+                Running
+            };
+
+            //////////
             //  Construction/destruction
         public:
             explicit ComponentAdaptor(Component * adaptedComponent);
             virtual ~ComponentAdaptor();
 
             //////////
-            //  Operations
+            //  Operations (general)
         public:
             //  The type of this component adaptor
             virtual ComponentAdaptorType *  type() const = 0;
@@ -56,6 +78,43 @@ namespace hadesvm
             //  from an XML element by analysing attributes of that XML element.
             //  IMPORTANT: The "Type" attribute must not be touched!
             virtual void        deserialiseConfiguration(QDomElement componentElement) = 0;
+
+            //////////
+            //  Operations (state management)
+        public:
+            //  The current state of this component adaptor
+            virtual State           state() const noexcept = 0;
+
+            //  Performs the Constructed -> Connected state transition.
+            //  This connects ComponentAdaptor to other components of the same VA
+            //  with which the ComponentAdaptor is expected to collaborate.
+            //  Must only be called from the QApplication's main thread
+            virtual void            connect() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Connected -> Initialized state transition.
+            //  This allocated the "runtime state" of the ComponentAdaptor.
+            //  Must only be called from the QApplication's main thread
+            virtual void            initialize() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Initialized -> Running state transition.
+            //  This starts the ComponentAdaptor.
+            //  Must only be called from the QApplication's main thread
+            virtual void            start() throws(VirtualApplianceException) = 0;
+
+            //  Performs the Running -> Initialized state transition.
+            //  This stops the ComponentAdaptor.
+            //  Must only be called from the QApplication's main thread
+            virtual void            stop() noexcept = 0;
+
+            //  Performs the Initialized -> Connected state transition.
+            //  This drops the "runtime state" of the ComponentAdaptor.
+            //  Must only be called from the QApplication's main thread
+            virtual void            deinitialize() noexcept = 0;
+
+            //  Performs the Connected -> Constructed state transition.
+            //  This disconnects ComponentAdaptor from other components of the same VA.
+            //  Must only be called from the QApplication's main thread
+            virtual void            disconnect() noexcept = 0;
 
             //////////
             //  Implementation

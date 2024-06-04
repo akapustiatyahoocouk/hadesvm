@@ -19,6 +19,8 @@
 #include "hadesvm-kernel/Architecture.hpp"
 
 #include "hadesvm-kernel/Object.hpp"
+#include "hadesvm-kernel/Node.hpp"
+
 #include "hadesvm-kernel/Process.hpp"
 #include "hadesvm-kernel/Thread.hpp"
 

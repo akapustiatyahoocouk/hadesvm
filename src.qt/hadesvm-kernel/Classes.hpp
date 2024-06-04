@@ -14,6 +14,7 @@ namespace hadesvm
         class HADESVM_KERNEL_PUBLIC MountedFolderDialog;
 
         class HADESVM_KERNEL_PUBLIC Object;
+        class HADESVM_KERNEL_PUBLIC Node;
         class HADESVM_KERNEL_PUBLIC Process;
         class HADESVM_KERNEL_PUBLIC Thread;
 
