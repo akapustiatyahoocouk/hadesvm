@@ -15,10 +15,38 @@ Node::Node(Kernel * kernel,
         _uuid(uuid),
         _name(name)
 {
+    Q_ASSERT(kernel->findNodeByUuid(uuid) == nullptr);
+
+    //  Register the new node
+    kernel->_nodesByUuid[uuid] = this;
+    this->incrementReferenceCount();    //  we've just created a new reference to this Node
 }
 
 Node::~Node()
 {
+}
+
+//////////
+//  Operations
+QUuid Node::uuid() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _uuid;
+}
+
+QString Node::name() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _name;
+}
+
+Device * Node::findDeviceByName(const QString & name) const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _devices.contains(name) ? _devices[name] : nullptr;;
 }
 
 //  End of hadesvm-kernel/Node.cpp

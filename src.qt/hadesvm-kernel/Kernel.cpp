@@ -18,10 +18,13 @@ Kernel::Kernel()
         _mountedFolders(),
         //  Runtime state
         _runtimeStateGuard(),
+        //  Primary object maps
+        _oidGenerator(),
         _liveObjects(),
         _deadObjects(),
-        _oidGenerator(),
-        _localNode(nullptr)
+        //  Secondary object maps
+        _localNode(nullptr),
+        _deviceManagerProcess(nullptr)
 {
     Q_ASSERT(isValidNodeName(_nodeName));
 }
@@ -30,10 +33,12 @@ Kernel::~Kernel()
 {
     for (Object * object : _liveObjects.values())
     {
+        object->_referenceCount = 0;    //  else "delete" will assert
         delete object;
     }
     for (Object * object : _deadObjects.values())
     {
+        object->_referenceCount = 0;    //  else "delete" will assert
         delete object;
     }
 }
@@ -115,7 +120,7 @@ void Kernel::connect() throws(hadesvm::core::VirtualApplianceException)
 
     //  TODO discover devices that Kernel will manage
 
-    //  Dne
+    //  Done
     _state = State::Connected;
 }
 
@@ -132,10 +137,45 @@ void Kernel::initialize() throws(hadesvm::core::VirtualApplianceException)
 
     //  Start with the local node
     _localNode = new LocalNode(this, _nodeUuid, _nodeName);
+    _localNode->incrementReferenceCount();  //  we've just created a new reference to "_localNode"
 
-    //  Create device objects representing mounted folders
+    //  Create Device objects representing mounted folders
+    for (auto [volumeName, path] : _mountedFolders.asKeyValueRange())
+    {
+        QDir baseDir(virtualAppliance()->directory());
+        path = QFileInfo(baseDir, path).canonicalFilePath();
+        if (_localNode->findDeviceByName(volumeName) != nullptr)
+        {   //  OOPS!
+            throw hadesvm::core::VirtualApplianceException(
+                "Device '" + volumeName +
+                "' already exists for node '" + _localNode->name() + "'");
+        }
+    }
+
+    //  TODO
+
+    //  Create Device objects representing physical devices
+    for (IDeviceComponent * deviceComponent : virtualAppliance()->componentsImplementing<IDeviceComponent>())
+    {
+        if (_localNode->findDeviceByName(deviceComponent->deviceName()) != nullptr)
+        {   //  OOPS!
+            throw hadesvm::core::VirtualApplianceException(
+                "Device '" + deviceComponent->deviceName() +
+                "' already exists for node '" + _localNode->name() + "'");
+        }
+        new PhysicalDevice(this, _localNode, deviceComponent->deviceName(), deviceComponent);
+    }
+
+    //  Create "device manager" system process
+
 
     //  TODO implement
+    _deviceManagerProcess = new Process(this, nullptr, "device manager");
+    _deviceManagerProcess->incrementReferenceCount();   //  we've just created a new reference to "_localNode"
+    new DeviceManagerMainThread(this, _deviceManagerProcess);
+
+    //  Done
+    _state = State::Initialized;
 }
 
 void Kernel::start() throws(hadesvm::core::VirtualApplianceException)
@@ -225,10 +265,19 @@ void Kernel::removeMountedFolder(const QString & volumeName)
 }
 
 //////////
+//  Operations (Node)
+Node * Kernel::findNodeByUuid(const QUuid & uuid) const
+{
+    Q_ASSERT(isLockedByCurrentThread());
+
+    return _nodesByUuid.contains(uuid) ? _nodesByUuid[uuid] : nullptr;
+}
+
+//////////
 //  Operations (validation)
 bool Kernel::isValidNodeName(const QString & name)
 {
-    return isValidVolumeName(name);
+    return isValidVolumeName(name); //  for now
 }
 
 bool Kernel::isValidVolumeName(const QString & name)
@@ -250,6 +299,11 @@ bool Kernel::isValidVolumeName(const QString & name)
         return false;
     }
     return true;
+}
+
+bool Kernel::isValidDeviceName(const QString & name)
+{
+    return isValidVolumeName(name); //  for now
 }
 
 //////////

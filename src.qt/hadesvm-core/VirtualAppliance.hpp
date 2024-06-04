@@ -87,6 +87,33 @@ namespace hadesvm
             //  Must only be called from the QApplication's main thread
             void                    removeComponent(Component * component);
 
+            //  Returns an unordered list of all compatible components and
+            //  component adaptors (but NOT adapted components!) that implement
+            //  the specified interface
+            //  Must only be called from the QApplication's main thread
+            template <class I>
+            QList<I*>               componentsImplementing()
+            {
+                Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+                QList<I*> result;
+                for (Component * component : _compatibleComponents)
+                {
+                    if (I * i = dynamic_cast<I*>(component))
+                    {
+                        result.append(i);
+                    }
+                }
+                for (ComponentAdaptor * componentAdaptor : _componentAdaptors)
+                {
+                    if (I * i = dynamic_cast<I*>(componentAdaptor))
+                    {
+                        result.append(i);
+                    }
+                }
+                return result;
+            }
+
             //////////
             //  Operations (state management)
         public:

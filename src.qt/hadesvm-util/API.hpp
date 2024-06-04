@@ -9,6 +9,7 @@
 //////////
 //  CRT+QT
 #include <QtCompilerDetection>
+#include <QtSystemDetection>
 
 //  These headers are dirty, so disable some warnings for their processing
 #if defined(Q_CC_GNU)

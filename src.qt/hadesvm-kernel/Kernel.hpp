@@ -68,6 +68,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Kernel)
 
             friend class Object;
+            friend class Node;
 
             //////////
             //  Types
@@ -145,14 +146,23 @@ namespace hadesvm
             void                removeMountedFolder(const QString & volumeName);
 
             //////////
+            //  Operations (Node)
+        public:
+            //  Find a Node by UUID, returns nullptr if not found
+            Node *              findNodeByUuid(const QUuid & uuid) const;
+
+            //////////
             //  Operations (validation)
         public:
+            //  TODO document
             static bool         isValidNodeName(const QString & name);
             static bool         isValidVolumeName(const QString & name);
+            static bool         isValidDeviceName(const QString & name);
 
             //////////
             //  Operations (runtime state)
         public:
+            //  Returns true if Kernel is "locked" by the current thread, else false.
             bool                isLockedByCurrentThread() const;
 
             //////////
@@ -168,12 +178,16 @@ namespace hadesvm
 
             //  Runtime state
             KernelMutex         _runtimeStateGuard;
+
+            //  Primary object maps
+            QRandomGenerator    _oidGenerator;
             QMap<Oid, Object*>  _liveObjects;   //  all existing+live kernel objects
             QMap<Oid, Object*>  _deadObjects;   //  all existing+dead kernel objects
 
-            QRandomGenerator    _oidGenerator;
-
+            //  Secondary object maps
+            QMap<QUuid, Node*>  _nodesByUuid; //  node UUID -> node
             LocalNode *         _localNode;
+            Process *           _deviceManagerProcess;
 
             //  Helpers
             Oid                 _generateUniqueOid();

@@ -5,7 +5,7 @@
 //
 //////////
 #include "hadesvm-core/API.hpp"
-    using namespace hadesvm::core;
+using namespace hadesvm::core;
 
 //////////
 //  Construction/destruction
