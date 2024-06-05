@@ -9,8 +9,20 @@ namespace hadesvm
 {
     namespace kernel
     {
+        //////////
+        //  Basic types
+
         //  An OID of a kernel object - unique per kernel instance
-        typedef uint32_t Oid;
+        enum class Oid : uint32_t
+        {
+            Invalid = 0
+        };
+
+        //  A handle to an server opened by a process - unique per process
+        enum class Handle : uint32_t
+        {
+            Invalid = 0xFFFFFFFF    //  invalid handle value
+        };
 
         //////////
         //  A common base class for all kernel objects
@@ -40,7 +52,7 @@ namespace hadesvm
             bool            live() const;
 
             //  TODO document
-            int             referenceCount() const;
+            unsigned int    referenceCount() const;
             void            incrementReferenceCount();
             void            decrementReferenceCount();
 
@@ -50,7 +62,7 @@ namespace hadesvm
             Kernel *const   _kernel;
             const Oid       _oid;
             bool            _live;
-            int             _referenceCount;    //  number of live pointers to this Object
+            unsigned int    _referenceCount;    //  number of live pointers to this Object
         };
 
         //////////
@@ -194,6 +206,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Process)
 
             friend class Thread;
+            friend class Atom;
 
             //////////
             //  Types
@@ -246,17 +259,27 @@ namespace hadesvm
             ExitCode            _exitCode;
             Thread *            _mainThread;
 
+            //  Open handle table
+            QList<Server*>      _openHandles;   //  index == handle
+
             //  Links to other kernel objects
-            QSet<Atom*>         _interestingAtoms;      //  Atoms used by this Process
             QSet<Server*>       _implementedServers;    //  Server "implemented by" this Process
 
-            QList<Server*>      _openHandles;   //  index == handle
+            struct _AtomInterest
+            {   //  represents an interest of a Process in an Atom
+                Process *       _process;       //  interested in an Atom
+                Atom *          _atom;          //  in which a Process is interested
+                unsigned int    _interestCount; //  the number of times Process is interested in Atom
+            };
+            QList<_AtomInterest*>   _atomInterests; //  ...that involve this Process
         };
 
         //  A generic HADES VM kernel thread
         class HADESVM_KERNEL_PUBLIC Thread : public Object
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Thread)
+
+            friend class NativeThread;
 
             //////////
             //  Types
@@ -328,10 +351,49 @@ namespace hadesvm
                 ~SystemCalls();
 
                 //////////
-                //  Operations
+                //  Operations (atoms)
             public:
+                //  Creates/reuses the Atom with the specified name.
+                //  Upon success stores the OID of the Atom in "atomId"
+                //  and returns KErrno::OK; the Atom's reference count
+                //  for the current process is incremented by 1.
+                //  Upon failure returns the error indicator without affecting
+                //  the "atomId" or incrementing anythong.
+                KErrno          getAtom(const QString & name, Oid & atomId);
+
+                //  If the process has "opened" the Atom with the specified OID
+                //  (by a previous "getAtom" call), decrements the Atom's reference
+                //  count on behalf of the calling process by 1 and returns
+                //  KErrno::OK; otherwise returns the error indicator without
+                //  decrementing anything. If a process calls "getAtom" with the
+                //  same atom name multiple times, it must then call "releaseAtom"
+                //  an equal number of times.
+                //  When all processes lose interest in an Atom, the kernel is free
+                //  to destroy the Atom if it so chooses.
+                KErrno          releaseAtom(Oid atomId);
+
+                //////////
+                //  Operations (miscellaneous)
+            public:
+                //  Exits the calling process immediately; including all threads
+                void            exitProcess(Process::ExitCode exitCode = Process::ExitCode::Success);
+
                 //  Exits the calling NativeThread immediately
-                void            exit(Thread::ExitCode exitCode = Thread::ExitCode::Success);
+                void            exitThread(Thread::ExitCode exitCode = Thread::ExitCode::Success);
+
+                //  Creates a new Service with the specified name+version.
+                //  Messages sent to the service can have at most maxParameters
+                //  typed parameters (but can have less than that, including 0).
+                //  Upon success, stores the Handle to the newly created Service
+                //  on behalf of the current process, stores it to "handle" and
+                //  returns KErrno::OK. Upon failure returns the error code and
+                //  does not modify the "handle".
+                KErrno          createService(const QString & name, unsigned int version,
+                                               unsigned int maxParameters, Handle & handle);
+
+                //  Closes the specified "handle" of the current process.
+                //  Returns the success/failure indicator.
+                KErrno          close(Handle handle);
 
                 //////////
                 //  Implementation
@@ -366,8 +428,8 @@ namespace hadesvm
             //  Constructed or Finished.
             void                terminate(ExitCode exitCode);
 
-            //  Runs the thread to completion.
-            virtual void        run() = 0;
+            //  Runs the thread to completion; teturns thread exit code.
+            virtual ExitCode    run() = 0;
 
             //////////
             //  Implementation
@@ -375,6 +437,8 @@ namespace hadesvm
             class _RunnerThread : public QThread
             {
                 HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_RunnerThread)
+
+                friend class NativeThread;
 
                 //////////
                 //  Construction/destruction - from friends only
@@ -385,12 +449,13 @@ namespace hadesvm
                 //////////
                 //  QThread
             public:
-                virtual void    run();
+                virtual void    run() override;
 
                 //////////
                 //  Implementation
             private:
                 NativeThread *const _nativeThread;
+                Kernel *const   _kernel;
             };
             _RunnerThread *     _runnerThread;
         };
@@ -443,13 +508,13 @@ namespace hadesvm
             //  The name of the service
             QString             name() const { return _name; }
             //  The version of the service
-            int                 version() const { return _version; }
+            unsigned int        version() const { return _version; }
 
             //////////
             //  Implementation
         private:
             const QString       _name;
-            const int           _version;   //  > 0
+            const unsigned int  _version;   //  > 0
         };
 
         //  A "servlet" is a server created temporaryly for when a Process
@@ -521,7 +586,8 @@ namespace hadesvm
             //  Implementation
         private:
             const QString       _name;
-            QSet<Process*>      _interestedProcesses;   //  live Processes that use this Atom
+            using _AtomInterest = Process::_AtomInterest;
+            QList<struct _AtomInterest*>    _atomInterests;   //  ...that involve this Atom
         };
     }
 }

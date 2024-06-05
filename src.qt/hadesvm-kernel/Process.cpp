@@ -20,11 +20,14 @@ Process::Process(Kernel * kernel, Process * parent, const QString & name)
         _threads(),
         _exitCode(ExitCode::Unknown),
         _mainThread(nullptr),
+        //  Open handle table
+        _openHandles(),
         //  Links to other kernel objects
-        _interestingAtoms(),
         _implementedServers(),
-        _openHandles()
+        _atomInterests()
 {
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
     if (_parent != nullptr)
     {
         Q_ASSERT(_parent->live() && _parent->kernel() == kernel);
@@ -36,6 +39,8 @@ Process::Process(Kernel * kernel, Process * parent, const QString & name)
 
 Process::~Process()
 {
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
     if (_parent != nullptr)
     {
         _parent->decrementReferenceCount(); //  we've just dropped a reference in "_parent"

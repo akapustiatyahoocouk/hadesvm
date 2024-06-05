@@ -69,6 +69,7 @@ namespace hadesvm
 
             friend class Object;
             friend class Node;
+            friend class NativeThread;
 
             //////////
             //  Types

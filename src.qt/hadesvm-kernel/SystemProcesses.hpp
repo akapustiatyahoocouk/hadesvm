@@ -26,7 +26,7 @@ namespace hadesvm
             //////////
             //  NativeThread
         public:
-            virtual void        run() override;
+            virtual ExitCode    run() override;
 
             //////////
             //  Implementation

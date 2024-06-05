@@ -85,6 +85,19 @@ void MainWindow::_refresh()
         {
             QString text = _virtualAppliances[i]->name() +
                            " [" + _virtualAppliances[i]->architecture()->displayName() + "]";
+            switch (_virtualAppliances[i]->state())
+            {
+                case hadesvm::core::VirtualAppliance::State::Stopped:
+                    break;
+                case hadesvm::core::VirtualAppliance::State::Running:
+                    text += " - Running";
+                    break;
+                case hadesvm::core::VirtualAppliance::State::Suspended:
+                    text += " - Suspended";
+                    break;
+                default:
+                    Q_ASSERT(false);
+            }
             //  TODO also reflect Running/Suspended state in "text"
             _ui->listWidget->item(i)->setText(text);
             _ui->listWidget->item(i)->setData(Qt::ItemDataRole::UserRole, QVariant::fromValue(_virtualAppliances[i]));
@@ -399,7 +412,7 @@ void MainWindow::_onStartVm()
 void MainWindow::_onStopVm()
 {
     if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
-        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped)
+        _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped)
     {   //  Nothing to do
         return;
     }

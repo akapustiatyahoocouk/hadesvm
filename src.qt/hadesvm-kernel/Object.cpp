@@ -17,26 +17,30 @@ Object::Object(Kernel * kernel)
 {
     Q_ASSERT(_kernel != nullptr);
     Q_ASSERT(_kernel->isLockedByCurrentThread());
-    Q_ASSERT(!_kernel->_liveObjects.contains(_oid));
+    Q_ASSERT(!_kernel->_liveObjects.contains(_oid) && !_kernel->_deadObjects.contains(_oid));
 
     kernel->_liveObjects[_oid] = this;
-    _referenceCount++;  //  we've just created a reference to this Object!
+    incrementReferenceCount();  //  we've just added a reference to this Object!
 }
 
 Object::~Object()
 {
-    Q_ASSERT(_referenceCount == 0);
     Q_ASSERT(_kernel->isLockedByCurrentThread());
-    Q_ASSERT(_kernel->_liveObjects.contains(_oid) || _kernel->_deadObjects.contains(_oid));
 
+    Q_ASSERT(_referenceCount == 1);
     if (_kernel->_liveObjects.contains(_oid))
     {
         _kernel->_liveObjects.remove(_oid);
     }
-    else
+    else if (_kernel->_deadObjects.contains(_oid))
     {
         _kernel->_deadObjects.remove(_oid);
     }
+    else
+    {   //  OOPS! Should never happen!
+        Q_ASSERT(false);
+    }
+    decrementReferenceCount();  //  we've just dropped a reference to this Object!
 }
 
 //////////
@@ -62,7 +66,7 @@ bool Object::live() const
     return _live;
 }
 
-int Object::referenceCount() const
+unsigned int Object::referenceCount() const
 {
     Q_ASSERT(_kernel->isLockedByCurrentThread());
 

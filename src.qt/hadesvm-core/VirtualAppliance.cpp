@@ -376,11 +376,20 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
+    if (_state != State::Stopped)
+    {   //  Can't
+        return;
+    }
+
     try
     {
+        _stopRequested = false;
+
         _connectComponents();
         _initializeComponents();
         _startComponents();
+
+        _state = State::Running;
     }
     catch (...)
     {
@@ -389,16 +398,30 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
         _disconnectComponents();
         throw;
     }
-    _stopRequested = false;
 }
 
 void VirtualAppliance::stop() noexcept
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
-    _stopComponents();
-    _deinitializeComponents();
-    _disconnectComponents();
+    switch (_state)
+    {
+        case  State::Stopped:
+            //  Nothing to do
+            break;
+        case State::Suspended:
+            //  TODO implement
+            Q_ASSERT(false);
+            break;
+        case State::Running:
+            _stopComponents();
+            _deinitializeComponents();
+            _disconnectComponents();
+            _state = State::Stopped;
+            break;
+        default:
+            Q_ASSERT(false);
+    }
 }
 
 bool VirtualAppliance::suspendable() const noexcept

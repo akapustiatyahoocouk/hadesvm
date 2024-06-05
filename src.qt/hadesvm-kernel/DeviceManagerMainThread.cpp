@@ -20,9 +20,15 @@ DeviceManagerMainThread::~DeviceManagerMainThread()
 
 //////////
 //  NativeThread
-void DeviceManagerMainThread::run()
+Thread::ExitCode DeviceManagerMainThread::run()
 {
+    qDebug() << "Starting DeviceManagerMainThread";
+    for (; ; )
+    {
+    }
     //  TODO implement
+    qDebug() << "Exiting DeviceManagerMainThread";
+    return ExitCode::Success;
 }
 
 //  End of hadesvm-kernel/DeviceManagerMainThread.cpp

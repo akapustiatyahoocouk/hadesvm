@@ -42,4 +42,27 @@ Thread::~Thread()
     }
 }
 
+//////////
+//  Operations
+Process * Thread::process() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _process;
+}
+
+Thread::State Thread::state() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _state;
+}
+
+Thread::ExitCode Thread::exitCode() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _exitCode;
+}
+
 //  End of hadesvm-kernel/Thread.cpp

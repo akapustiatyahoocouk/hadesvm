@@ -167,9 +167,6 @@ void Kernel::initialize() throws(hadesvm::core::VirtualApplianceException)
     }
 
     //  Create "device manager" system process
-
-
-    //  TODO implement
     _deviceManagerProcess = new Process(this, nullptr, "device manager");
     _deviceManagerProcess->incrementReferenceCount();   //  we've just created a new reference to "_localNode"
     new DeviceManagerMainThread(this, _deviceManagerProcess);
@@ -186,7 +183,24 @@ void Kernel::start() throws(hadesvm::core::VirtualApplianceException)
     {   //  OOPS!
         throw hadesvm::core::VirtualApplianceException(displayName() + " is not in Initialized state");
     }
-    //  TODO implement
+
+    QMutexLocker lock(&_runtimeStateGuard);
+
+    QList<NativeThread*> nativeThreads;
+    for (auto object : _liveObjects.values())
+    {
+        if (auto nativeThread = dynamic_cast<NativeThread*>(object))
+        {
+            nativeThreads.append(nativeThread);
+        }
+    }
+    for (auto nativeThread : nativeThreads)
+    {
+        nativeThread->start();
+    }
+
+    //  Done
+    _state = State::Running;
 }
 
 void Kernel::stop() noexcept
@@ -197,7 +211,18 @@ void Kernel::stop() noexcept
     {   //  Nothing to do
         return;
     }
-    //  TODO implement
+
+    QMutexLocker lock(&_runtimeStateGuard);
+    for (auto object : _liveObjects.values())
+    {
+        if (auto nativeThread = dynamic_cast<NativeThread*>(object))
+        {
+            nativeThread->terminate(Thread::ExitCode::Success);
+        }
+    }
+
+    //  Done
+    _state = State::Initialized;
 }
 
 void Kernel::deinitialize() noexcept
@@ -209,9 +234,18 @@ void Kernel::deinitialize() noexcept
         return;
     }
 
-    delete _localNode;
+    //  Clear secondary object maps
+    _nodesByUuid.clear();
     _localNode = nullptr;
+    _deviceManagerProcess = nullptr;
+
+    //  Clear primary object maps
     //  TODO implement
+    _liveObjects.clear();
+    _deadObjects.clear();
+
+    //  Done
+    _state = State::Connected;
 }
 
 void Kernel::disconnect() noexcept
@@ -222,7 +256,10 @@ void Kernel::disconnect() noexcept
     {   //  Nothing to do
         return;
     }
+
     //  TODO implement
+    //  Done
+    _state = State::Constructed;
 }
 
 //////////
@@ -321,8 +358,8 @@ Oid Kernel::_generateUniqueOid()
 
     for (; ; )
     {
-        Oid oid = _oidGenerator.generate();
-        if (oid != 0 && !_liveObjects.contains(oid) && !_deadObjects.contains(oid))
+        Oid oid = static_cast<Oid>(_oidGenerator.generate());
+        if (oid != Oid::Invalid && !_liveObjects.contains(oid) && !_deadObjects.contains(oid))
         {
             return oid;
         }
