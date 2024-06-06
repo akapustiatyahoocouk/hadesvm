@@ -82,4 +82,12 @@ QVersionNumber NativeThread::SystemCalls::getSystemVersion()
     return result;
 }
 
+KErrno NativeThread::SystemCalls::closeHandle(Handle handle)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.closeHandle(_nativeThread, handle);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
 //  End of hadesvm-kernel/NativeThread.SystemCalls.cpp

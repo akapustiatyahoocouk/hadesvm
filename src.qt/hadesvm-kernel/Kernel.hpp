@@ -178,6 +178,9 @@ namespace hadesvm
                 //  TODO document
                 QVersionNumber  getSystemVersion();
 
+                //  TODO document
+                KErrno          closeHandle(Thread * thread, Handle & handle);
+
                 //////////
                 //  Implementation
             private:

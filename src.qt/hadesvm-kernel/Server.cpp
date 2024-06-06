@@ -15,6 +15,7 @@ Server::Server(Kernel * kernel, Process * serverProcess,
         _serverProcess(serverProcess),
         _maxParameters(qMax(1u, maxParameters)),
         _backlog(backlog),
+        _openHandleCount(0),
         _messageQueue()
 {
     Q_ASSERT(kernel->isLockedByCurrentThread());
@@ -31,5 +32,34 @@ Server::~Server()
 
 //////////
 //  Operations
+Process * Server::serverProcess() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _serverProcess;
+}
+
+unsigned int Server::openHandleCount() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _openHandleCount;
+}
+
+void Server::incrementOpenHandleCount()
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    _openHandleCount++;
+    Q_ASSERT(_openHandleCount != 0);
+}
+
+void Server::decrementOpenHandleCount()
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    Q_ASSERT(_openHandleCount != 0);
+    _openHandleCount--;
+}
 
 //  End of hadesvm-kernel/Server.cpp

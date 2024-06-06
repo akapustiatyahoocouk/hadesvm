@@ -249,16 +249,19 @@ namespace hadesvm
 
             //  Registers a single interest of this Proicess in an Atom with
             //  the specified name.
-            KErrno          getAtom(const QString & name, Oid & atomId);
+            KErrno              getAtom(const QString & name, Oid & atomId);
 
             //  Un-registers a single interest of this Proicess in an Atom with
             //  the specified name.
-            KErrno          releaseAtom(Oid atomOid);
+            KErrno              releaseAtom(Oid atomOid);
 
             //  Opens a new handle to the specified Server.
             //  Upon success stores the "handle" and returns KErrno::OK.
             //  Upon failure returns error indicator without storing anything.
             KErrno              openHandle(Server * server, Handle & handle);
+
+            //  Closes the existing handle of this process.
+            KErrno              closeHandle(Handle handle);
 
             //////////
             //  Implementation
@@ -541,6 +544,15 @@ namespace hadesvm
             //  incoming Messages, handles them and sends out the responses).
             Process *           serverProcess() const;
 
+            //  Returns the count of handles open to this Server by Processes.
+            unsigned int        openHandleCount() const;
+
+            //  Increments the count of handles open to this Server by Processes by 1.
+            void                incrementOpenHandleCount();
+
+            //  Decrements the count of handles open to this Server by Processes by 1.
+            void                decrementOpenHandleCount();
+
             //////////
             //  Implementation
         private:
@@ -548,6 +560,7 @@ namespace hadesvm
             const unsigned int  _maxParameters;
             const unsigned int  _backlog;
 
+            unsigned int        _openHandleCount;
             QQueue<Message*>    _messageQueue;
         };
 

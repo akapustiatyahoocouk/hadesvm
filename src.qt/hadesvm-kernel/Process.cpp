@@ -202,12 +202,40 @@ KErrno Process::openHandle(Server * server, Handle & handle)
     _openHandles[unusedIndex] = server;
     server->incrementReferenceCount();  //  we've just created a new reference to "server"
     handle = static_cast<Handle>(unusedIndex);
+    server->incrementOpenHandleCount(); //  we've just created a new handle to "server"
     //  ...post the HandleOpen message there...
     Message * message =
         new Message(kernel, this, _handleOpenMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
     server->_messageQueue.enqueue(message);
-    message->incrementReferenceCount(); //  we've just created a new reference to "handleOpenMessage"
+    message->incrementReferenceCount(); //  we've just created a new reference to "message"
+    //  ...and we're done
+    return KErrno::OK;
+}
+
+KErrno Process::closeHandle(Handle handle)
+{
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
+    //  Validate parameters
+    int index = static_cast<int>(handle);
+    if (index < 0 || index >= _openHandles.count() || _openHandles[index] == nullptr)
+    {
+        return KErrno::InvalidParameter;
+    }
+
+    //  Close...
+    Server * server = _openHandles[index];
+    _openHandles[index] = nullptr;
+    server->decrementReferenceCount();  //  we've just dropped a reference to the "server"
+    server->decrementOpenHandleCount(); //  we've just dropped a handle to the "server"
+    //  ...notify the server that a handle has been closed...
+    Message * message =
+        new Message(kernel, this, _handleClosedMethodAtomOid,
+                    Message::Parameter(Message::ParameterType::Handle, handle));
+    server->_messageQueue.enqueue(message);
+    message->incrementReferenceCount(); //  we've just created a new reference to "message"
     //  ...and we're done
     return KErrno::OK;
 }

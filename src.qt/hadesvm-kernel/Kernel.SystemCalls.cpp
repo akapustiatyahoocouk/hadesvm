@@ -159,4 +159,17 @@ QVersionNumber Kernel::SystemCalls::getSystemVersion()
     return QVersionNumber(1, 0, 0);
 }
 
+KErrno Kernel::SystemCalls::closeHandle(Thread * thread, Handle & handle)
+{
+    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Process * process = thread->process();
+
+    return process->closeHandle(handle);
+}
+
 //  End of hadesvm-kernel/Kernel.SystemCalls.cpp

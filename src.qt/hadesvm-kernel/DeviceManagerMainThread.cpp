@@ -38,11 +38,12 @@ Thread::ExitCode DeviceManagerMainThread::run()
                               0,
                               _serviceHandle);
     for (; ; )
-    {
+    {   //  TODO implement
         systemCalls.getSystemVersion();
     }
-    //  TODO implement
+
     qDebug() << "Exiting DeviceManagerMainThread";
+    systemCalls.closeHandle(_serviceHandle);
     return ExitCode::Success;
 }
 
