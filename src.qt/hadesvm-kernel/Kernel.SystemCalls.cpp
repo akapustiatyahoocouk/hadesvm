@@ -25,97 +25,26 @@ KErrno Kernel::SystemCalls::getAtom(Thread * thread, const QString & name, Oid &
 {
     QMutexLocker lock(&_kernel->_runtimeStateGuard);
 
-    //  Validate parameters
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
         return KErrno::InvalidParameter;
     }
     Process * process = thread->process();
 
-    //  Do the work
-    if (process->_atomInterests.contains(name))
-    {   //  Just incremenent the reference count
-        Process::_AtomInterest * atomInterest = process->_atomInterests[name];
-        atomInterest->_interestCount++;
-        if (atomInterest->_interestCount == 0)
-        {   //  OOPS! Overflow!
-            atomInterest->_interestCount--;
-            return KErrno::LimitReached;
-        }
-        return KErrno::OK;
-    }
-    else
-    {   //  Need to find the Atom...
-        Atom * atom;
-        if (!_kernel->_atomsByName.contains(name))
-        {   //  Atom does not yet exist - create it now
-            atom = new Atom(_kernel, name);
-            Q_ASSERT(_kernel->_atomsByName.contains(name));
-        }
-        else
-        {
-            atom = _kernel->_atomsByName[name];
-        }
-        //  Create an interest...
-        Process::_AtomInterest * atomInterest = new Process::_AtomInterest();
-        atomInterest->_process = process;
-        atomInterest->_atom = atom;
-        atomInterest->_interestCount = 1;
-        atomInterest->_process->incrementReferenceCount();  //  we've just stored a reference to Process
-        atomInterest->_atom->incrementReferenceCount();     //  we've just stored a reference to Atom
-        //  ...record it
-        process->_atomInterests.insert(name, atomInterest);
-        atom->_atomInterests.insert(atomInterest);
-        //  ...and we're done
-        atomId = atom->oid();
-        return KErrno::OK;
-    }
+    return process->getAtom(name, atomId);
 }
 
 KErrno Kernel::SystemCalls::releaseAtom(Thread * thread, Oid atomOid)
 {
     QMutexLocker lock(&_kernel->_runtimeStateGuard);
 
-    //  Validate parameters
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
         return KErrno::InvalidParameter;
     }
     Process * process = thread->process();
 
-    if (!_kernel->_liveObjects.contains(atomOid))
-    {
-        return KErrno::InvalidParameter;
-    }
-    Atom * atom = dynamic_cast<Atom*>(_kernel->_liveObjects[atomOid]);
-    if (atom == nullptr)
-    {
-        return KErrno::InvalidParameter;
-    }
-    QString atomName = atom->name();
-
-    //  If the "process" has no interest in "atom", there's nothing to do
-    if (!process->_atomInterests.contains(atomName))
-    {
-        return KErrno::InvalidParameter;
-    }
-    //  Decrement interest count...
-    Process::_AtomInterest * atomInterest = process->_atomInterests[atomName];
-    Q_ASSERT(atomInterest->_interestCount > 0);
-    atomInterest->_interestCount--;
-    //  ...and drop the interest if the interest count drops to zero
-    if (atomInterest->_interestCount == 0)
-    {
-        atom->_atomInterests.remove(atomInterest);
-        process->_atomInterests.remove(atomName);
-        process->decrementReferenceCount(); //  we're about to drop a reference to Process from atomInterest
-        atom->decrementReferenceCount();    //  we're about to drop a reference to Atom from atomInterest
-        delete atomInterest;
-    }
-
-    //  TODO can we destroy Atom that no Process has an interest in ?
-    //  All done
-    return KErrno::OK;
+    return process->releaseAtom(atomOid);
 }
 
 KErrno Kernel::SystemCalls::getAtomName(Oid /*atomOid*/, QString & /*name*/)
@@ -163,7 +92,7 @@ KErrno Kernel::SystemCalls::createService(Thread * thread,
         }
     }
 
-    //  Create a new Service
+    //  Create a new Service...
     Service * service = new Service(_kernel, process, name, version, maxParameters, backlog);
     //  ...and open a handle to it on behalf of the calling Process
     KErrno err = process->openHandle(service, handle);  //  Posts the "HandleOpen" message to the service
@@ -188,6 +117,38 @@ KErrno Kernel::SystemCalls::openService(Thread * thread,
         return KErrno::InvalidParameter;
     }
     Process * process = thread->process();
+
+    //  Locate the Service...
+    Service * service = nullptr;
+    for (Object * obj : _kernel->_liveObjects.values())
+    {
+        if (Service * s = dynamic_cast<Service*>(obj))
+        {   //  Match the name/version
+            if (s->name() == name)
+            {
+                if ((version != 0 && version == s->version()) ||
+                    (version == 0 && (service == nullptr || s->version() > service->version())))
+                {
+                    service = s;
+                    break;
+                }
+            }
+        }
+    }
+    if (service == nullptr)
+    {
+        return KErrno::DoesNotExist;
+    }
+
+    //  ...and open a handle to it on behalf of the calling Process
+    KErrno err = process->openHandle(service, handle);  //  Posts the "HandleOpen" message to the service
+    if (err != KErrno::OK)
+    {   //  OOPS!
+        return err;
+    }
+
+    //  Done
+    return KErrno::OK;
 }
 
 //////////

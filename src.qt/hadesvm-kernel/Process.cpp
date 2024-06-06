@@ -24,7 +24,12 @@ Process::Process(Kernel * kernel, Process * parent, const QString & name)
         _openHandles(),
         //  Links to other kernel objects
         _implementedServers(),
-        _atomInterests()
+        _atomInterests(),
+        //  Special atoms
+        _handleOpenMethodAtomOid(Oid::Invalid),
+        _handleOpenMethodErrno(KErrno::OK),
+        _handleClosedMethodAtomOid(Oid::Invalid),
+        _handleClosedMethodErrno(KErrno::OK)
 {
     Q_ASSERT(kernel->isLockedByCurrentThread());
 
@@ -35,6 +40,10 @@ Process::Process(Kernel * kernel, Process * parent, const QString & name)
         _parent->_children.insert(this);
         this->incrementReferenceCount(); //  we've just saved a reference to "*this" in "_parent->_children"
     }
+
+    //  Grab special atoms
+    _handleOpenMethodErrno = getAtom(SystemInterfaces::IUnknown::HandleOpen, _handleOpenMethodAtomOid);
+    _handleClosedMethodErrno = getAtom(SystemInterfaces::IUnknown::HandleClosed, _handleOpenMethodAtomOid);
 }
 
 Process::~Process()
@@ -48,6 +57,10 @@ Process::~Process()
         _parent->_children.remove(this);
         this->decrementReferenceCount(); //  we've just dropped a reference to "*this" in "_parent->_children"
     }
+
+    //  Release special atoms
+    releaseAtom(_handleOpenMethodAtomOid);
+    releaseAtom(_handleClosedMethodAtomOid);
 }
 
 //////////
@@ -73,12 +86,98 @@ Process::ExitCode Process::exitCode() const
     return _exitCode;
 }
 
+KErrno Process::getAtom(const QString & name, Oid & atomId)
+{
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
+    //  Do the work
+    if (_atomInterests.contains(name))
+    {   //  Just incremenent the reference count
+        _AtomInterest * atomInterest = _atomInterests[name];
+        atomInterest->_interestCount++;
+        if (atomInterest->_interestCount == 0)
+        {   //  OOPS! Overflow!
+            atomInterest->_interestCount--;
+            return KErrno::LimitReached;
+        }
+        return KErrno::OK;
+    }
+    else
+    {   //  Need to find the Atom...
+        Atom * atom;
+        if (!kernel->_atomsByName.contains(name))
+        {   //  Atom does not yet exist - create it now
+            atom = new Atom(kernel, name);
+            Q_ASSERT(kernel->_atomsByName.contains(name));
+        }
+        else
+        {
+            atom = kernel->_atomsByName[name];
+        }
+        //  Create an interest...
+        _AtomInterest * atomInterest = new _AtomInterest();
+        atomInterest->_process = this;
+        atomInterest->_atom = atom;
+        atomInterest->_interestCount = 1;
+        atomInterest->_process->incrementReferenceCount();  //  we've just stored a reference to Process
+        atomInterest->_atom->incrementReferenceCount();     //  we've just stored a reference to Atom
+        //  ...record it
+        _atomInterests.insert(name, atomInterest);
+        atom->_atomInterests.insert(atomInterest);
+        //  ...and we're done
+        atomId = atom->oid();
+        return KErrno::OK;
+    }
+}
+
+KErrno Process::releaseAtom(Oid atomOid)
+{
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
+    if (!kernel->_liveObjects.contains(atomOid))
+    {
+        return KErrno::InvalidParameter;
+    }
+    Atom * atom = dynamic_cast<Atom*>(kernel->_liveObjects[atomOid]);
+    if (atom == nullptr)
+    {
+        return KErrno::InvalidParameter;
+    }
+    QString atomName = atom->name();
+
+    //  If the "process" has no interest in "atom", there's nothing to do
+    if (!_atomInterests.contains(atomName))
+    {
+        return KErrno::InvalidParameter;
+    }
+    //  Decrement interest count...
+    _AtomInterest * atomInterest = _atomInterests[atomName];
+    Q_ASSERT(atomInterest->_interestCount > 0);
+    atomInterest->_interestCount--;
+    //  ...and drop the interest if the interest count drops to zero
+    if (atomInterest->_interestCount == 0)
+    {
+        atom->_atomInterests.remove(atomInterest);
+        _atomInterests.remove(atomName);
+        this->decrementReferenceCount(); //  we're about to drop a reference to Process from atomInterest
+        atom->decrementReferenceCount();    //  we're about to drop a reference to Atom from atomInterest
+        delete atomInterest;
+    }
+
+    //  TODO can we destroy Atom that no Process has an interest in ?
+    //  All done
+    return KErrno::OK;
+}
+
 KErrno Process::openHandle(Server * server, Handle & handle)
 {
-    Q_ASSERT(kernel()->isLockedByCurrentThread());
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 
     //  Validate parameters
-    if (server == nullptr || server->kernel() != this->kernel() || !server->live())
+    if (server == nullptr || server->kernel() != kernel || !server->live())
     {
         return KErrno::InvalidParameter;
     }
@@ -104,9 +203,8 @@ KErrno Process::openHandle(Server * server, Handle & handle)
     server->incrementReferenceCount();  //  we've just created a new reference to "server"
     handle = static_cast<Handle>(unusedIndex);
     //  ...post the HandleOpen message there...
-    Oid messageTypeAtomOid = kernel()->getAtom(SystemInterfaces::IUnknown::HandleOpen);
     Message * message =
-        new Message(kernel(), this, messageTypeAtomOid,
+        new Message(kernel, this, _handleOpenMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
     server->_messageQueue.enqueue(message);
     message->incrementReferenceCount(); //  we've just created a new reference to "handleOpenMessage"

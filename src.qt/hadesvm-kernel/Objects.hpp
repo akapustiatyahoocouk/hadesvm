@@ -247,6 +247,14 @@ namespace hadesvm
             //  The exit code of this process, Unknown if not yet Finished
             ExitCode            exitCode() const;
 
+            //  Registers a single interest of this Proicess in an Atom with
+            //  the specified name.
+            KErrno          getAtom(const QString & name, Oid & atomId);
+
+            //  Un-registers a single interest of this Proicess in an Atom with
+            //  the specified name.
+            KErrno          releaseAtom(Oid atomOid);
+
             //  Opens a new handle to the specified Server.
             //  Upon success stores the "handle" and returns KErrno::OK.
             //  Upon failure returns error indicator without storing anything.
@@ -279,6 +287,12 @@ namespace hadesvm
                 unsigned int    _interestCount; //  the number of times Process is interested in Atom
             };
             QMap<QString, _AtomInterest*>   _atomInterests; //  ...that involve this Process, name -> interest
+
+            //  Special atoms
+            Oid                 _handleOpenMethodAtomOid;
+            KErrno              _handleOpenMethodErrno;
+            Oid                 _handleClosedMethodAtomOid;
+            KErrno              _handleClosedMethodErrno;
         };
 
         //  A generic HADES VM kernel thread
@@ -765,6 +779,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Atom)
 
             friend class Kernel;
+            friend class Process;
 
             //////////
             //  Construction/destruction

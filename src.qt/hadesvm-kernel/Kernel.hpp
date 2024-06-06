@@ -71,6 +71,7 @@ namespace hadesvm
             friend class Node;
             friend class NativeThread;
             friend class Atom;
+            friend class Process;
 
             //////////
             //  Types
@@ -253,13 +254,6 @@ namespace hadesvm
         public:
             //  Returns true if Kernel is "locked" by the current thread, else false.
             bool                isLockedByCurrentThread() const;
-
-            //////////
-            //  Operations (Atoms)
-        public:
-            //  If the Atom with the specified name exists, returns its
-            //  Oid; otherwise creates such Atom and then returns its Oid.
-            Oid                 getAtom(const QString & name);
 
             //////////
             //  Implementation

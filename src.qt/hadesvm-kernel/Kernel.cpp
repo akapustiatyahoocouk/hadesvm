@@ -388,25 +388,6 @@ bool Kernel::isLockedByCurrentThread() const
 }
 
 //////////
-//  Operations (Atoms)
-Oid Kernel::getAtom(const QString & name)
-{
-    Q_ASSERT(isLockedByCurrentThread());
-
-    Atom * atom;
-    if (_atomsByName.contains(name))
-    {
-        atom = _atomsByName[name];
-    }
-    else
-    {
-        atom = new Atom(this, name);
-        Q_ASSERT(_atomsByName.contains(name));
-    }
-    return atom->oid();
-}
-
-//////////
 //  Implementation helpers
 Oid Kernel::_generateUniqueOid()
 {
