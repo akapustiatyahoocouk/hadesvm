@@ -7,6 +7,7 @@ SOURCES += \
     Architecture.cpp \
     Device.cpp \
     DeviceManagerMainThread.cpp \
+    Kernel.SystemCalls.cpp \
     Kernel.Type.cpp \
     Kernel.cpp \
     KernelEditor.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     PhysicalDevice.cpp \
     Plugins.cpp \
     Process.cpp \
+    SystemInterfaces.cpp \
     Thread.cpp
 
 HEADERS += \
@@ -33,6 +35,7 @@ HEADERS += \
     MountedFolderDialog.hpp \
     Objects.hpp \
     StorageDevices.hpp \
+    SystemInterfaces.hpp \
     SystemProcesses.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util

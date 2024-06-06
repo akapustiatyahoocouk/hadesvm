@@ -10,7 +10,7 @@ namespace hadesvm
     namespace kernel
     {
         //////////
-        //  Basic types
+        //  Basic types TODO move into a separate header
 
         //  An OID of a kernel object - unique per kernel instance
         enum class Oid : uint32_t
@@ -31,6 +31,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Object)
 
             friend class Kernel;
+            friend class NativeThread;
 
             //////////
             //  Construction/destruction - from friends only
@@ -334,6 +335,8 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(NativeThread)
 
+            friend class Kernel;
+
             //////////
             //  Types
         public:
@@ -376,7 +379,7 @@ namespace hadesvm
                 //  Operations (miscellaneous)
             public:
                 //  TODO document
-                int             getSystemVersion();
+                QVersionNumber  getSystemVersion();
 
                 //  Exits the calling process immediately; including all threads
                 void            exitProcess(Process::ExitCode exitCode = Process::ExitCode::Success);
@@ -384,19 +387,36 @@ namespace hadesvm
                 //  Exits the calling NativeThread immediately
                 void            exitThread(Thread::ExitCode exitCode = Thread::ExitCode::Success);
 
-                //  Creates a new Service with the specified name+version.
-                //  Messages sent to the service can have at most maxParameters
+                //  Creates a new Service with the specified name+version (!= 0).
+                //  Messages sent to the service can have at most "maxParameters"
                 //  typed parameters (but can have less than that, including 0).
+                //  The "backlog", unless 0, specifies the maximum number of
+                //  messages that can be posted into the server's incoming message
+                //  queue before the queue is considered "full" (in which case
+                //  an attempt to post one more message into that queue results in
+                //  KErrno::QueueFull, until such time that the server handles at
+                //  least 1 message in the queue, thus making space there for a
+                //  new message; typical client reaction to a KErrno::QueueFull
+                //  would be yield the thread, then retry posting the message).
                 //  Upon success, stores the Handle to the newly created Service
                 //  on behalf of the current process, stores it to "handle" and
                 //  returns KErrno::OK. Upon failure returns the error code and
                 //  does not modify the "handle".
                 KErrno          createService(const QString & name, unsigned int version,
-                                               unsigned int maxParameters, Handle & handle);
+                                              unsigned int maxParameters, unsigned int backlog,
+                                              Handle & handle);
+
+                //  Opens a service with the specified name and version; if version
+                //  is 0 then opens the latest available version of the service with
+                //  the specified name. Opon success stores the handle to the service
+                //  into "handle" and returns KErrno::OK, upon failure returns the
+                //  error indicator without affecting the "handle".
+                KErrno          openService(const QString & name, unsigned int version,
+                                            Handle & handle);
 
                 //  Closes the specified "handle" of the current process.
                 //  Returns the success/failure indicator.
-                KErrno          close(Handle handle);
+                KErrno          closeHandle(Handle handle);
 
                 //////////
                 //  Implementation
@@ -438,13 +458,13 @@ namespace hadesvm
             //  Implementation
         private:
             std::atomic<bool>       _terminationRequested;
-            std::atomic<ExitCode>   _terminationExitCode;
 
             //  Threads
             class _RunnerThread : public QThread
             {
                 HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_RunnerThread)
 
+                friend class Kernel;
                 friend class NativeThread;
 
                 //////////

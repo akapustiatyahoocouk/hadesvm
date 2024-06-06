@@ -28,6 +28,7 @@
 #include "hadesvm-kernel/KernelEditor.hpp"
 #include "hadesvm-kernel/Kernel.hpp"
 
+#include "hadesvm-kernel/SystemInterfaces.hpp"
 #include "hadesvm-kernel/SystemProcesses.hpp"
 
 //  End of hadesvm-kernel/API.hpp

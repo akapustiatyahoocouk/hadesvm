@@ -10,7 +10,9 @@ using namespace hadesvm::kernel;
 //////////
 //  Construction/destruction
 Kernel::Kernel()
-    :   //  State
+    :   //  System call gateway
+        systemCalls(this),
+        //  State
         _state(State::Constructed),
         //  Configuration
         _nodeUuid(QUuid::createUuid()),
@@ -213,12 +215,27 @@ void Kernel::stop() noexcept
         return;
     }
 
-    QMutexLocker lock(&_runtimeStateGuard);
+    {
+        QMutexLocker lock(&_runtimeStateGuard);
+        for (auto object : _liveObjects.values())
+        {
+            if (auto nativeThread = dynamic_cast<NativeThread*>(object))
+            {
+                nativeThread->terminate(Thread::ExitCode::Success);
+            }
+        }
+    }
+
     for (auto object : _liveObjects.values())
     {
         if (auto nativeThread = dynamic_cast<NativeThread*>(object))
         {
-            nativeThread->terminate(Thread::ExitCode::Success);
+            if (nativeThread->_runnerThread != nullptr)
+            {
+                nativeThread->_runnerThread->wait();
+                delete nativeThread->_runnerThread;
+                nativeThread->_runnerThread = nullptr;
+            }
         }
     }
 

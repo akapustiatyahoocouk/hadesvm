@@ -13,7 +13,6 @@ NativeThread::NativeThread(Kernel * kernel, Process * process)
     :   Thread(kernel, process),
         systemCalls(this),
         _terminationRequested(false),
-        _terminationExitCode(ExitCode::Unknown),
         _runnerThread(nullptr)
 {
 }
@@ -58,11 +57,11 @@ void NativeThread::terminate(ExitCode exitCode)
     //  If we are here, no runner thread has a lock on Kernel!
     Q_ASSERT(_runnerThread != nullptr);
     _terminationRequested = true;
-    _terminationExitCode = exitCode;
 
-    _runnerThread->wait();
-    delete _runnerThread;
-    _runnerThread = nullptr;
+    //  TODO where do we perform this cleanup?
+    //_runnerThread->wait();
+    //delete _runnerThread;
+    //_runnerThread = nullptr;
 
     _exitCode = exitCode;
     _state = State::Finished;

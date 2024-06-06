@@ -24,15 +24,15 @@ NativeThread::SystemCalls::~SystemCalls()
 #define HANDLE_TERMINATION_REQUEST()                        \
     if (_nativeThread->_terminationRequested.load())        \
     {                                                       \
-        throw _nativeThread->_terminationExitCode.load();   \
+        throw Thread::ExitCode::Unknown;                    \
     }
 
-int NativeThread::SystemCalls::getSystemVersion()
+QVersionNumber NativeThread::SystemCalls::getSystemVersion()
 {
     HANDLE_TERMINATION_REQUEST();
 
     //  TODO delegate to Kernel::SystemCalls
-    int result = 1;
+    auto result = _nativeThread->_kernel->systemCalls.getSystemVersion();
 
     HANDLE_TERMINATION_REQUEST();
     return result;

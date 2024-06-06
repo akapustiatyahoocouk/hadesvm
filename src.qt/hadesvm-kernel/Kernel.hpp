@@ -96,6 +96,34 @@ namespace hadesvm
             };
 
             //////////
+            //  Types
+        public:
+            //  The API for system calls to be made by a running NativeThread.
+            class HADESVM_KERNEL_PUBLIC SystemCalls final
+            {
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(SystemCalls)
+
+                friend class Kernel;
+
+                //////////
+                //  Construction/destruction - from friends only
+            private:
+                explicit SystemCalls(Kernel * kernel);
+                ~SystemCalls();
+
+                //////////
+                //  Operations (miscellaneous)
+            public:
+                //  TODO document
+                QVersionNumber  getSystemVersion();
+
+                //////////
+                //  Implementation
+            private:
+                Kernel *const   _kernel;
+            };
+
+            //////////
             //  Construction/destruction
         public:
             Kernel();
@@ -151,6 +179,11 @@ namespace hadesvm
         public:
             //  Find a Node by UUID, returns nullptr if not found
             Node *              findNodeByUuid(const QUuid & uuid) const;
+
+            //////////
+            //  System call gateway
+        public:
+            SystemCalls         systemCalls;
 
             //////////
             //  Operations (validation)
