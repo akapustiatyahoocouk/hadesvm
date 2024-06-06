@@ -10,7 +10,11 @@ using namespace hadesvm::kernel;
 //////////
 //  Construction/destruction
 DeviceManagerMainThread::DeviceManagerMainThread(Kernel * kernel, Process * process)
-    :   NativeThread(kernel, process)
+    :   NativeThread(kernel, process),
+        //  Atoms
+        _serviceNameAtomOid(Oid::Invalid),
+        //  Handles
+        _serviceHandle(Handle::Invalid)
 {
 }
 
@@ -23,6 +27,16 @@ DeviceManagerMainThread::~DeviceManagerMainThread()
 Thread::ExitCode DeviceManagerMainThread::run()
 {
     qDebug() << "Starting DeviceManagerMainThread";
+
+    //  Create relevant atoms TODO examining error codes
+    systemCalls.getAtom(SystemServices::DeviceManager::Name, _serviceNameAtomOid);
+
+    //  Create services TODO examining error codes
+    systemCalls.createService(SystemServices::DeviceManager::Name,
+                              SystemServices::DeviceManager::Version,
+                              1,
+                              0,
+                              _serviceHandle);
     for (; ; )
     {
         systemCalls.getSystemVersion();

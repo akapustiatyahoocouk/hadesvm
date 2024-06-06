@@ -17,6 +17,8 @@ Thread::Thread(Kernel * kernel, Process * process)
         _exitCode(ExitCode::Unknown),
         _isDaemon(false)
 {
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
     Q_ASSERT(_process != nullptr && _process->live() && _process->kernel() == kernel);
     _process->incrementReferenceCount();    //  we've just saved a reference in "_process"
 
@@ -31,6 +33,9 @@ Thread::Thread(Kernel * kernel, Process * process)
 
 Thread::~Thread()
 {
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
     _process->decrementReferenceCount();    //  we've just dropped a reference in "_process"
 
     _process->_threads.remove(this);

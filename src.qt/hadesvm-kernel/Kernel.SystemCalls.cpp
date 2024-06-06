@@ -25,12 +25,14 @@ KErrno Kernel::SystemCalls::getAtom(Thread * thread, const QString & name, Oid &
 {
     QMutexLocker lock(&_kernel->_runtimeStateGuard);
 
+    //  Validate parameters
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
         return KErrno::InvalidParameter;
     }
-
     Process * process = thread->process();
+
+    //  Do the work
     if (process->_atomInterests.contains(name))
     {   //  Just incremenent the reference count
         Process::_AtomInterest * atomInterest = process->_atomInterests[name];
@@ -74,6 +76,7 @@ KErrno Kernel::SystemCalls::releaseAtom(Thread * thread, Oid atomOid)
 {
     QMutexLocker lock(&_kernel->_runtimeStateGuard);
 
+    //  Validate parameters
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
         return KErrno::InvalidParameter;
@@ -121,6 +124,70 @@ KErrno Kernel::SystemCalls::getAtomName(Oid /*atomOid*/, QString & /*name*/)
 
     Q_ASSERT(false);    //  TODO implement properly
     return KErrno::NotImplemented;
+}
+
+//////////
+//  Operations (services and servlets)
+KErrno Kernel::SystemCalls::createService(Thread * thread,
+                                          const QString & name, unsigned int version,
+                                          unsigned int maxParameters, unsigned int backlog,
+                                          Handle & handle)
+{
+    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+
+    //  Validate parameters
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Process * process = thread->process();
+
+    if (!Kernel::isValidServiceName(name))
+    {
+        return KErrno::InvalidParameter;
+    }
+    if (version == 0)
+    {
+        return KErrno::InvalidParameter;
+    }
+
+    //  No duplicates!
+    for (Object * obj : _kernel->_liveObjects.values())
+    {
+        if (Service * srv = dynamic_cast<Service*>(obj))
+        {
+            if (srv->name() == name && srv->version() == version)
+            {   //  OOPS!
+                return KErrno::AlreadyExists;
+            }
+        }
+    }
+
+    //  Create a new Service
+    Service * service = new Service(_kernel, process, name, version, maxParameters, backlog);
+    //  ...and open a handle to it on behalf of the calling Process
+    KErrno err = process->openHandle(service, handle);  //  Posts the "HandleOpen" message to the service
+    if (err != KErrno::OK)
+    {   //  OOPS! The newly created Service cannot be used!
+        delete service;
+        return err;
+    }
+
+    //  Done
+    return KErrno::OK;
+}
+
+KErrno Kernel::SystemCalls::openService(Thread * thread,
+                                        const QString & name, unsigned int version,
+                                        Handle & handle)
+{
+    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Process * process = thread->process();
 }
 
 //////////

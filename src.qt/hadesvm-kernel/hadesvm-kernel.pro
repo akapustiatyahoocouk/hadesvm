@@ -13,6 +13,7 @@ SOURCES += \
     Kernel.cpp \
     KernelEditor.cpp \
     LocalNode.cpp \
+    Message.cpp \
     MountedFolderDialog.cpp \
     NativeThread.SystemCalls.cpp \
     NativeThread.cpp \
@@ -21,7 +22,10 @@ SOURCES += \
     PhysicalDevice.cpp \
     Plugins.cpp \
     Process.cpp \
+    Server.cpp \
+    Service.cpp \
     SystemInterfaces.cpp \
+    SystemServices.cpp \
     Thread.cpp
 
 HEADERS += \
@@ -37,7 +41,8 @@ HEADERS += \
     Objects.hpp \
     StorageDevices.hpp \
     SystemInterfaces.hpp \
-    SystemProcesses.hpp
+    SystemProcesses.hpp \
+    SystemServices.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util
 

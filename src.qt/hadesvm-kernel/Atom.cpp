@@ -24,6 +24,7 @@ Atom::Atom(Kernel * kernel, const QString & name)
 Atom::~Atom()
 {
     Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 
     Q_ASSERT(kernel->isLockedByCurrentThread());
     Q_ASSERT(!kernel->_atomsByName.contains(_name) && kernel->_atomsByName[_name] == this);

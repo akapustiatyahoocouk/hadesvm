@@ -15,10 +15,14 @@ NativeThread::NativeThread(Kernel * kernel, Process * process)
         _terminationRequested(false),
         _runnerThread(nullptr)
 {
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 }
 
 NativeThread::~NativeThread()
 {
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+
     terminate(ExitCode::Success);   //  ...just in case
     delete _runnerThread;   //  "delete nullptr" is safe
 }

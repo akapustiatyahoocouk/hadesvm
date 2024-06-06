@@ -322,15 +322,6 @@ void Kernel::removeMountedFolder(const QString & volumeName)
 }
 
 //////////
-//  Operations (Node)
-Node * Kernel::findNodeByUuid(const QUuid & uuid) const
-{
-    Q_ASSERT(isLockedByCurrentThread());
-
-    return _nodesByUuid.contains(uuid) ? _nodesByUuid[uuid] : nullptr;
-}
-
-//////////
 //  Operations (validation)
 bool Kernel::isValidNodeName(const QString & name)
 {
@@ -351,7 +342,9 @@ bool Kernel::isValidVolumeName(const QString & name)
             return false;
         }
     }
-    if (name.startsWith(".") || name.endsWith("."))
+    if (name.startsWith(".") || name.endsWith(".") ||
+        name.startsWith("-") || name.endsWith("-") ||
+        name.contains("..") || name.contains("--"))
     {
         return false;
     }
@@ -363,11 +356,54 @@ bool Kernel::isValidDeviceName(const QString & name)
     return isValidVolumeName(name); //  for now
 }
 
+bool Kernel::isValidServiceName(const QString & name)
+{
+    if (name.length() == 0 || name.length() > 1024)
+    {
+        return false;
+    }
+    for (QChar c : name)
+    {
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+              (c >= '0' && c <= '9') || (c == '.' || c == '-' || c == ':')))
+        {
+            return false;
+        }
+    }
+    if (name.startsWith(".") || name.endsWith(".") ||
+        name.startsWith("-") || name.endsWith("-") ||
+        name.startsWith(":") || name.endsWith(":") ||
+        name.contains("..") || name.contains("--") || name.contains(":::"))
+    {
+        return false;
+    }
+    return true;
+}
+
 //////////
 //  Operations (runtime state)
 bool Kernel::isLockedByCurrentThread() const
 {
     return _runtimeStateGuard.lockingThread() == QThread::currentThread();
+}
+
+//////////
+//  Operations (Atoms)
+Oid Kernel::getAtom(const QString & name)
+{
+    Q_ASSERT(isLockedByCurrentThread());
+
+    Atom * atom;
+    if (_atomsByName.contains(name))
+    {
+        atom = _atomsByName[name];
+    }
+    else
+    {
+        atom = new Atom(this, name);
+        Q_ASSERT(_atomsByName.contains(name));
+    }
+    return atom->oid();
 }
 
 //////////

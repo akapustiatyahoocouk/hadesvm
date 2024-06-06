@@ -14,6 +14,7 @@ Device::Device(Kernel * kernel, Node * node, const QString & name)
         _node(node),
         _name(name)
 {
+    Q_ASSERT(kernel->isLockedByCurrentThread());
     _node->incrementReferenceCount();   //  we've just created a new reference to "_node"
 
     //  Register with the Node
@@ -25,6 +26,8 @@ Device::Device(Kernel * kernel, Node * node, const QString & name)
 
 Device::~Device()
 {
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 }
 
 //  End of hadesvm-kernel/Device.cpp

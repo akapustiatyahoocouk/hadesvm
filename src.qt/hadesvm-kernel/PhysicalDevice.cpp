@@ -14,11 +14,14 @@ PhysicalDevice::PhysicalDevice(Kernel * kernel, Node * node, const QString & nam
     :   Device(kernel, node, name),
         _component(component)
 {
+    Q_ASSERT(kernel->isLockedByCurrentThread());
     Q_ASSERT(_component != nullptr);
 }
 
 PhysicalDevice::~PhysicalDevice()
 {
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 }
 
 //////////

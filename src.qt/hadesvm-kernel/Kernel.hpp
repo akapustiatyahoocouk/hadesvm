@@ -140,6 +140,38 @@ namespace hadesvm
                 KErrno          getAtomName(Oid atomOid, QString & name);
 
                 //////////
+                //  Operations (services and servlets)
+            public:
+                //  Creates a new Service with the specified name+version (!= 0).
+                //  Messages sent to the service can have at most "maxParameters"
+                //  typed parameters (but can have less than that, including 0).
+                //  The "backlog", unless 0, specifies the maximum number of
+                //  messages that can be posted into the server's incoming message
+                //  queue before the queue is considered "full" (in which case
+                //  an attempt to post one more message into that queue results in
+                //  KErrno::QueueFull, until such time that the server handles at
+                //  least 1 message in the queue, thus making space there for a
+                //  new message; typical client reaction to a KErrno::QueueFull
+                //  would be yield the thread, then retry posting the message).
+                //  Upon success, stores the Handle to the newly created Service
+                //  on behalf of the current process, stores it to "handle" and
+                //  returns KErrno::OK. Upon failure returns the error code and
+                //  does not modify the "handle".
+                KErrno          createService(Thread * thread,
+                                              const QString & name, unsigned int version,
+                                              unsigned int maxParameters, unsigned int backlog,
+                                              Handle & handle);
+
+                //  Opens a service with the specified name and version; if version
+                //  is 0 then opens the latest available version of the service with
+                //  the specified name. Opon success stores the handle to the service
+                //  into "handle" and returns KErrno::OK, upon failure returns the
+                //  error indicator without affecting the "handle".
+                KErrno          openService(Thread * thread,
+                                            const QString & name, unsigned int version,
+                                            Handle & handle);
+
+                //////////
                 //  Operations (miscellaneous)
             public:
                 //  TODO document
@@ -203,12 +235,6 @@ namespace hadesvm
             void                removeMountedFolder(const QString & volumeName);
 
             //////////
-            //  Operations (Node)
-        public:
-            //  Find a Node by UUID, returns nullptr if not found
-            Node *              findNodeByUuid(const QUuid & uuid) const;
-
-            //////////
             //  System call gateway
         public:
             SystemCalls         systemCalls;
@@ -220,12 +246,20 @@ namespace hadesvm
             static bool         isValidNodeName(const QString & name);
             static bool         isValidVolumeName(const QString & name);
             static bool         isValidDeviceName(const QString & name);
+            static bool         isValidServiceName(const QString & name);
 
             //////////
             //  Operations (runtime state)
         public:
             //  Returns true if Kernel is "locked" by the current thread, else false.
             bool                isLockedByCurrentThread() const;
+
+            //////////
+            //  Operations (Atoms)
+        public:
+            //  If the Atom with the specified name exists, returns its
+            //  Oid; otherwise creates such Atom and then returns its Oid.
+            Oid                 getAtom(const QString & name);
 
             //////////
             //  Implementation

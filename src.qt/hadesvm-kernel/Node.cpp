@@ -16,7 +16,8 @@ Node::Node(Kernel * kernel,
         _name(name),
         _devices()
 {
-    Q_ASSERT(kernel->findNodeByUuid(uuid) == nullptr);
+    Q_ASSERT(kernel->isLockedByCurrentThread());
+    Q_ASSERT(!kernel->_nodesByUuid.contains(uuid));
 
     //  Register the new node
     kernel->_nodesByUuid[uuid] = this;
@@ -25,6 +26,8 @@ Node::Node(Kernel * kernel,
 
 Node::~Node()
 {
+    Kernel * kernel = this->kernel();
+    Q_ASSERT(kernel->isLockedByCurrentThread());
 }
 
 //////////

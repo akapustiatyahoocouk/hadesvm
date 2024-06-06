@@ -52,6 +52,27 @@ KErrno NativeThread::SystemCalls::getAtomName(Oid atomOid, QString & name)
 }
 
 //////////
+//  Operations (services and servlets)
+KErrno NativeThread::SystemCalls::createService(const QString & name, unsigned int version,
+                                                unsigned int maxParameters, unsigned int backlog,
+                                                Handle & handle)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createService(_nativeThread, name, version, maxParameters, backlog, handle);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::openService(const QString & name, unsigned int version,
+                                              Handle & handle)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.openService(_nativeThread, name, version, handle);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+//////////
 //  Operations (miscellaneous)
 QVersionNumber NativeThread::SystemCalls::getSystemVersion()
 {

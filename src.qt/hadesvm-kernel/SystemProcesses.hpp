@@ -31,6 +31,10 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
+            //  Atoms
+            Oid                 _serviceNameAtomOid;
+            //  Handles
+            Handle              _serviceHandle;
         };
     }
 }

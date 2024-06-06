@@ -247,6 +247,11 @@ namespace hadesvm
             //  The exit code of this process, Unknown if not yet Finished
             ExitCode            exitCode() const;
 
+            //  Opens a new handle to the specified Server.
+            //  Upon success stores the "handle" and returns KErrno::OK.
+            //  Upon failure returns error indicator without storing anything.
+            KErrno              openHandle(Server * server, Handle & handle);
+
             //////////
             //  Implementation
         private:
@@ -382,17 +387,8 @@ namespace hadesvm
                 KErrno          getAtomName(Oid atomOid, QString & name);
 
                 //////////
-                //  Operations (miscellaneous)
+                //  Operations (services and servlets)
             public:
-                //  TODO document
-                QVersionNumber  getSystemVersion();
-
-                //  Exits the calling process immediately; including all threads
-                void            exitProcess(Process::ExitCode exitCode = Process::ExitCode::Success);
-
-                //  Exits the calling NativeThread immediately
-                void            exitThread(Thread::ExitCode exitCode = Thread::ExitCode::Success);
-
                 //  Creates a new Service with the specified name+version (!= 0).
                 //  Messages sent to the service can have at most "maxParameters"
                 //  typed parameters (but can have less than that, including 0).
@@ -419,6 +415,18 @@ namespace hadesvm
                 //  error indicator without affecting the "handle".
                 KErrno          openService(const QString & name, unsigned int version,
                                             Handle & handle);
+
+                //////////
+                //  Operations (miscellaneous)
+            public:
+                //  TODO document
+                QVersionNumber  getSystemVersion();
+
+                //  Exits the calling process immediately; including all threads
+                void            exitProcess(Process::ExitCode exitCode = Process::ExitCode::Success);
+
+                //  Exits the calling NativeThread immediately
+                void            exitThread(Thread::ExitCode exitCode = Thread::ExitCode::Success);
 
                 //  Closes the specified "handle" of the current process.
                 //  Returns the success/failure indicator.
@@ -503,10 +511,13 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Server)
 
+            friend class Process;
+
             //////////
             //  Construction/destruction
         public:
-            Server(Kernel * kernel, Process * serverProcess);
+            Server(Kernel * kernel, Process * serverProcess,
+                   unsigned int maxParameters, unsigned int backlog);
             virtual ~Server();
 
             //////////
@@ -520,6 +531,10 @@ namespace hadesvm
             //  Implementation
         private:
             Process *const      _serverProcess;
+            const unsigned int  _maxParameters;
+            const unsigned int  _backlog;
+
+            QQueue<Message*>    _messageQueue;
         };
 
         //  A "service" is a server that has a system-wide-unique name, by
@@ -532,16 +547,18 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Service(Kernel * kernel);
+            Service(Kernel * kernel, Process * serverProcess,
+                    const QString & name, unsigned int version,
+                    unsigned int maxParameters, unsigned int backlog);
             virtual ~Service();
 
             //////////
             //  Operations
         public:
             //  The name of the service
-            QString             name() const { return _name; }
+            QString             name() const;
             //  The version of the service
-            unsigned int        version() const { return _version; }
+            unsigned int        version() const;
 
             //////////
             //  Implementation
@@ -580,18 +597,162 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Message)
 
             //////////
+            //  Types
+        public:
+            //  The data type of a single message parameter
+            enum class ParameterType
+            {
+                Bool,
+                UInt8,
+                Int8,
+                UInt16,
+                Int16,
+                UInt32,
+                Int32,
+                UInt64,
+                Int64,
+                Real32,
+                Real64,
+                Oid,
+                Handle
+            };
+
+            //  A single parameter of a message
+            class HADESVM_KERNEL_PUBLIC Parameter final
+            {
+                //////////
+                //  Construction/destruction/assignment
+            public:
+                Parameter(ParameterType type, bool value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint8_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int8_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint16_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int16_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint32_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int32_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint64_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int64_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, float value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, double value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, Oid value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, Handle value)
+                    :   _type(type), _value() { _setValue(value); }
+
+                //////////
+                //  Implementation
+            private:
+                const ParameterType _type;
+                union
+                {
+                    bool        boolean;
+                    uint8_t     uint8;
+                    int8_t      int8;
+                    uint16_t    uint16;
+                    int16_t     int16;
+                    uint32_t    uint32;
+                    int32_t     int32;
+                    uint64_t    uint64;
+                    int64_t     int64;
+                    float       real32;
+                    double      real64;
+                    Oid         oid;
+                    Handle      handle;
+                } _value;
+
+                //  Helpers
+                template <class T>
+                void            _setValue(T value)
+                {
+                    switch (_type)
+                    {
+                        case ParameterType::Bool:
+                            _value.boolean = static_cast<bool>(value);
+                            break;
+                        case ParameterType::UInt8:
+                            _value.uint8 = static_cast<uint8_t>(value);
+                            break;
+                        case ParameterType::Int8:
+                            _value.int8 = static_cast<int8_t>(value);
+                            break;
+                        case ParameterType::UInt16:
+                            _value.uint16 = static_cast<uint16_t>(value);
+                            break;
+                        case ParameterType::Int16:
+                            _value.int16 = static_cast<int16_t>(value);
+                            break;
+                        case ParameterType::UInt32:
+                            _value.uint32 = static_cast<uint32_t>(value);
+                            break;
+                        case ParameterType::Int32:
+                            _value.int32 = static_cast<int32_t>(value);
+                            break;
+                        case ParameterType::UInt64:
+                            _value.uint64 = static_cast<uint64_t>(value);
+                            break;
+                        case ParameterType::Int64:
+                            _value.int64 = static_cast<int64_t>(value);
+                            break;
+                        case ParameterType::Real32:
+                            _value.real32 = static_cast<float>(value);
+                            break;
+                        case ParameterType::Real64:
+                            _value.real64 = static_cast<double>(value);
+                            break;
+                        case ParameterType::Oid:
+                            _value.oid = static_cast<Oid>(value);
+                            break;
+                        case ParameterType::Handle:
+                            _value.handle = static_cast<Handle>(value);
+                            break;
+                        default:
+                            Q_ASSERT(false);
+                    }
+                }
+            };
+
+            //////////
             //  Construction/destruction
         public:
-            Message(Kernel * kernel);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1,
+                    const Parameter & param2);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1,
+                    const Parameter & param2, const Parameter & param3);
             virtual ~Message();
 
             //////////
             //  Operations
         public:
+            Process *           senderProcess() const { return _senderProcess; }
+            Oid                 messageTypeAtomOid() const { return _messageTypeAtomOid; }
 
             //////////
             //  Implementation
         private:
+            Process *const      _senderProcess; //  the Process that has created the message
+            const Oid           _messageTypeAtomOid;
+
+            Handle              _senderHandle;  //  the Handle within the _senderProcess that was used to post the message
+
+            QList<Parameter>    _parameters;
         };
 
         //////////
