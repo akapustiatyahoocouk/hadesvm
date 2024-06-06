@@ -375,6 +375,9 @@ namespace hadesvm
                 //////////
                 //  Operations (miscellaneous)
             public:
+                //  TODO document
+                int             getSystemVersion();
+
                 //  Exits the calling process immediately; including all threads
                 void            exitProcess(Process::ExitCode exitCode = Process::ExitCode::Success);
 
@@ -434,6 +437,10 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
+            std::atomic<bool>       _terminationRequested;
+            std::atomic<ExitCode>   _terminationExitCode;
+
+            //  Threads
             class _RunnerThread : public QThread
             {
                 HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_RunnerThread)
@@ -587,7 +594,7 @@ namespace hadesvm
         private:
             const QString       _name;
             using _AtomInterest = Process::_AtomInterest;
-            QList<struct _AtomInterest*>    _atomInterests;   //  ...that involve this Atom
+            QList<_AtomInterest*>   _atomInterests;   //  ...that involve this Atom
         };
     }
 }

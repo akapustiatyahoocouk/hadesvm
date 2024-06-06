@@ -23,6 +23,7 @@ Kernel::Kernel()
         _liveObjects(),
         _deadObjects(),
         //  Secondary object maps
+        _nodesByUuid(),
         _localNode(nullptr),
         _deviceManagerProcess(nullptr)
 {

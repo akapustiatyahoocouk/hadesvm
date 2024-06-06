@@ -12,6 +12,8 @@ using namespace hadesvm::kernel;
 NativeThread::NativeThread(Kernel * kernel, Process * process)
     :   Thread(kernel, process),
         systemCalls(this),
+        _terminationRequested(false),
+        _terminationExitCode(ExitCode::Unknown),
         _runnerThread(nullptr)
 {
 }
@@ -55,9 +57,10 @@ void NativeThread::terminate(ExitCode exitCode)
 
     //  If we are here, no runner thread has a lock on Kernel!
     Q_ASSERT(_runnerThread != nullptr);
-    _runnerThread->terminate();
-    _runnerThread->wait();
+    _terminationRequested = true;
+    _terminationExitCode = exitCode;
 
+    _runnerThread->wait();
     delete _runnerThread;
     _runnerThread = nullptr;
 
@@ -84,13 +87,15 @@ void NativeThread::_RunnerThread::run()
     {
         ExitCode exitCode = _nativeThread->run();
 
-        QMutexLocker lock(&_kernel->_runtimeStateGuard);
+        //  TODO access atomicity ?
         _nativeThread->_exitCode = exitCode;
         _nativeThread->_state = State::Finished;
     }
-    catch (ExitCode /*exitCode*/)
+    catch (ExitCode exitCode)
     {   //  NativeThread::run() has called systemCalls.exitThread();
-        Q_ASSERT(false);    //  TODO implement properly
+        //  TODO access atomicity ?
+        _nativeThread->_exitCode = exitCode;
+        _nativeThread->_state = State::Finished;
     }
     catch (Process::ExitCode /*exitCode*/)
     {   //  NativeThread::run() has called systemCalls.exitProcess();
@@ -100,17 +105,6 @@ void NativeThread::_RunnerThread::run()
     {   //  NativeThread::run() has thrown something
         Q_ASSERT(false);    //  TODO implement properly
     }
-}
-
-//////////
-//  NativeThread::SystemCalls
-NativeThread::SystemCalls::SystemCalls(NativeThread * nativeThread)
-    :   _nativeThread(nativeThread)
-{
-}
-
-NativeThread::SystemCalls::~SystemCalls()
-{
 }
 
 //  End of hadesvm-kernel/NativeThread.cpp

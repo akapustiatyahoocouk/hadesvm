@@ -25,6 +25,7 @@ Thread::ExitCode DeviceManagerMainThread::run()
     qDebug() << "Starting DeviceManagerMainThread";
     for (; ; )
     {
+        systemCalls.getSystemVersion();
     }
     //  TODO implement
     qDebug() << "Exiting DeviceManagerMainThread";
