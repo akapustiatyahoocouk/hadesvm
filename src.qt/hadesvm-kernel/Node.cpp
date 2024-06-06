@@ -13,7 +13,8 @@ Node::Node(Kernel * kernel,
            const QUuid & uuid, const QString & name)
     :   Object(kernel),
         _uuid(uuid),
-        _name(name)
+        _name(name),
+        _devices()
 {
     Q_ASSERT(kernel->findNodeByUuid(uuid) == nullptr);
 

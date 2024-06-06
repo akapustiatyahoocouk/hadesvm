@@ -18,6 +18,7 @@ namespace hadesvm
             InvalidParameter,   //  invalid system call parameter
             QueueFull,          //  server queue is full
             NotImplemented,     //  interface or method not implemented
+            LimitReached,       //  counter limit reached, etc.
 
             //  Miscellaneous
             OK = 0x00000000,

@@ -206,6 +206,7 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Process)
 
+            friend class Kernel;
             friend class Thread;
             friend class Atom;
 
@@ -272,7 +273,7 @@ namespace hadesvm
                 Atom *          _atom;          //  in which a Process is interested
                 unsigned int    _interestCount; //  the number of times Process is interested in Atom
             };
-            QList<_AtomInterest*>   _atomInterests; //  ...that involve this Process
+            QMap<QString, _AtomInterest*>   _atomInterests; //  ...that involve this Process, name -> interest
         };
 
         //  A generic HADES VM kernel thread
@@ -373,7 +374,12 @@ namespace hadesvm
                 //  an equal number of times.
                 //  When all processes lose interest in an Atom, the kernel is free
                 //  to destroy the Atom if it so chooses.
-                KErrno          releaseAtom(Oid atomId);
+                KErrno          releaseAtom(Oid atomOid);
+
+                //  If an Atom with the specified OID exists, stores its name
+                //  into "name" and returns KErrno::OK; otherwise returns
+                //  KErrno::InvalidParameter without storing anything into "name".
+                KErrno          getAtomName(Oid atomOid, QString & name);
 
                 //////////
                 //  Operations (miscellaneous)
@@ -597,6 +603,8 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Atom)
 
+            friend class Kernel;
+
             //////////
             //  Construction/destruction
         public:
@@ -614,7 +622,7 @@ namespace hadesvm
         private:
             const QString       _name;
             using _AtomInterest = Process::_AtomInterest;
-            QList<_AtomInterest*>   _atomInterests;   //  ...that involve this Atom
+            QSet<_AtomInterest*>    _atomInterests;   //  ...that involve this Atom
         };
     }
 }

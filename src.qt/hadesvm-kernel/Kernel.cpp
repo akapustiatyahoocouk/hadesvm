@@ -26,6 +26,7 @@ Kernel::Kernel()
         _deadObjects(),
         //  Secondary object maps
         _nodesByUuid(),
+        _atomsByName(),
         _localNode(nullptr),
         _deviceManagerProcess(nullptr)
 {
@@ -254,6 +255,7 @@ void Kernel::deinitialize() noexcept
 
     //  Clear secondary object maps
     _nodesByUuid.clear();
+    _atomsByName.clear();
     _localNode = nullptr;
     _deviceManagerProcess = nullptr;
 

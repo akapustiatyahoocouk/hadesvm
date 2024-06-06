@@ -12,6 +12,10 @@ using namespace hadesvm::kernel;
 //  Construction/destruction
 MountedFolderDialog::MountedFolderDialog(QWidget * parent, const QString & volumeName, const QString & path)
     :   QDialog(parent),
+        //  Implementation
+        _volumeName(),
+        _path(),
+        //  Controls & resources
         _ui(new Ui::MountedFolderDialog)
 {
     _ui->setupUi(this);

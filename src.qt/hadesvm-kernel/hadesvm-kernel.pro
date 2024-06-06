@@ -5,6 +5,7 @@ DEFINES += HADESVM_KERNEL_LIBRARY
 
 SOURCES += \
     Architecture.cpp \
+    Atom.cpp \
     Device.cpp \
     DeviceManagerMainThread.cpp \
     Kernel.SystemCalls.cpp \

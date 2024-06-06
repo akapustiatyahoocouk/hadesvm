@@ -70,6 +70,7 @@ namespace hadesvm
             friend class Object;
             friend class Node;
             friend class NativeThread;
+            friend class Atom;
 
             //////////
             //  Types
@@ -110,6 +111,33 @@ namespace hadesvm
             private:
                 explicit SystemCalls(Kernel * kernel);
                 ~SystemCalls();
+
+                //////////
+                //  Operations (atoms)
+            public:
+                //  Creates/reuses the Atom with the specified name.
+                //  Upon success stores the OID of the Atom in "atomId"
+                //  and returns KErrno::OK; the Atom's reference count
+                //  for the specified "thread"'s process is incremented by 1.
+                //  Upon failure returns the error indicator without affecting
+                //  the "atomId" or incrementing anythong.
+                KErrno          getAtom(Thread * thread, const QString & name, Oid & atomId);
+
+                //  If the "thread"'s process has "opened" the Atom with the specified
+                //  OID (by a previous "getAtom" call), decrements the Atom's reference
+                //  count on behalf of the specified "thread"'s process by 1 and returns
+                //  KErrno::OK; otherwise returns the error indicator without
+                //  decrementing anything. If a process calls "getAtom" with the
+                //  same atom name multiple times, it must then call "releaseAtom"
+                //  an equal number of times.
+                //  When all processes lose interest in an Atom, the kernel is free
+                //  to destroy the Atom if it so chooses.
+                KErrno          releaseAtom(Thread * thread, Oid atomOid);
+
+                //  If an Atom with the specified OID exists, stores its name
+                //  into "name" and returns KErrno::OK; otherwise returns
+                //  KErrno::InvalidParameter without storing anything into "name".
+                KErrno          getAtomName(Oid atomOid, QString & name);
 
                 //////////
                 //  Operations (miscellaneous)
@@ -220,6 +248,7 @@ namespace hadesvm
 
             //  Secondary object maps
             QMap<QUuid, Node*>  _nodesByUuid; //  node UUID -> node
+            QMap<QString, Atom*>_atomsByName; //  all that exist
             LocalNode *         _localNode;
             Process *           _deviceManagerProcess;
 
