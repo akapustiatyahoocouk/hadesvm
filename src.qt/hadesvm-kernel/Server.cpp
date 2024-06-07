@@ -16,7 +16,8 @@ Server::Server(Kernel * kernel, Process * serverProcess,
         _maxParameters(qMax(1u, maxParameters)),
         _backlog(backlog),
         _openHandleCount(0),
-        _messageQueue()
+        _messageQueue(),
+        _messageQueueSize()
 {
     Q_ASSERT(kernel->isLockedByCurrentThread());
     Q_ASSERT(_serverProcess != nullptr && _serverProcess->kernel() == kernel && _serverProcess->live());

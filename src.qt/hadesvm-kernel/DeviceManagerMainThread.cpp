@@ -39,7 +39,18 @@ Thread::ExitCode DeviceManagerMainThread::run()
                               _serviceHandle);
     for (; ; )
     {   //  TODO implement
-        systemCalls.getSystemVersion();
+        Oid messageOid;
+        Oid senderProcessOid;
+        Handle senderProcessHandle;
+        Oid messageTypeAtomOid;
+        QList<Message::Parameter> params;
+        KErrno err = systemCalls.getMessage(_serviceHandle, InfiniteTimeout,
+                                            messageOid, senderProcessOid, senderProcessHandle,
+                                            messageTypeAtomOid, params);
+        if (err == KErrno::OK)
+        {
+            qDebug() << static_cast<uint32_t>(messageOid) << ": " << static_cast<uint32_t>(messageTypeAtomOid);
+        }
     }
 
     qDebug() << "Exiting DeviceManagerMainThread";

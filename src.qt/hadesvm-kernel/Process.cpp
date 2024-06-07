@@ -209,6 +209,7 @@ KErrno Process::openHandle(Server * server, Handle & handle)
                     Message::Parameter(Message::ParameterType::Handle, handle));
     message->_senderHandle = handle;
     server->_messageQueue.enqueue(message);
+    server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
     //  ...and we're done
@@ -238,6 +239,7 @@ KErrno Process::closeHandle(Handle handle)
                     Message::Parameter(Message::ParameterType::Handle, handle));
     message->_senderHandle = handle;
     server->_messageQueue.enqueue(message);
+    server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
     //  ...and we're done

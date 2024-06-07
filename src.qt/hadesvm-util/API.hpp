@@ -55,6 +55,7 @@
 #include <QQueue>
 #include <QRandomGenerator>
 #include <QRecursiveMutex>
+#include <QSemaphore>
 #include <QSet>
 #include <QSettings>
 #include <QStatusBar>

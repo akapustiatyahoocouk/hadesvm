@@ -258,6 +258,7 @@ KErrno Kernel::SystemCalls::postMessage(Thread * thread, Handle handle, Oid mess
 
     message->_senderHandle = handle;
     server->_messageQueue.enqueue(message);
+    server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
     return KErrno::OK;

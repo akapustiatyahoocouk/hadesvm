@@ -24,6 +24,10 @@ namespace hadesvm
             Invalid = 0xFFFFFFFF    //  invalid handle value
         };
 
+        //  TODO document TODO namespace ?
+        static const uint32_t NoTimeout = 0x00000000;
+        static const uint32_t InfiniteTimeout = 0xFFFFFFFF;
+
         //////////
         //  A common base class for all kernel objects
         class HADESVM_KERNEL_PUBLIC Object
@@ -210,6 +214,7 @@ namespace hadesvm
 
             friend class Kernel;
             friend class Process;
+            friend class NativeThread;
 
             //////////
             //  Construction/destruction
@@ -242,7 +247,9 @@ namespace hadesvm
             const unsigned int  _backlog;
 
             unsigned int        _openHandleCount;
+
             QQueue<Message*>    _messageQueue;
+            QSemaphore          _messageQueueSize;
         };
 
         //  A "service" is a server that has a system-wide-unique name, by
@@ -306,6 +313,7 @@ namespace hadesvm
 
             friend class Kernel;
             friend class Process;
+            friend class NativeThread;
 
             //////////
             //  Types
@@ -475,6 +483,9 @@ namespace hadesvm
             //  Returns the Handle within the senderProcess that was used to post
             //  the message; Handle::Invalid if message has not yet been Posted
             Handle              senderHandle() const;
+
+            //  The parameters of the message
+            QList<Parameter>    parameters() const;
 
             //////////
             //  Implementation
@@ -715,8 +726,8 @@ namespace hadesvm
                 //  returns KErrno::OK. Upon failure returns the error code and
                 //  does not modify the "handle".
                 KErrno          createService(const QString & name, unsigned int version,
-                                     unsigned int maxParameters, unsigned int backlog,
-                                     Handle & handle);
+                                              unsigned int maxParameters, unsigned int backlog,
+                                              Handle & handle);
 
                 //  Opens a service with the specified name and version; if version
                 //  is 0 then opens the latest available version of the service with
@@ -724,7 +735,7 @@ namespace hadesvm
                 //  into "handle" and returns KErrno::OK, upon failure returns the
                 //  error indicator without affecting the "handle".
                 KErrno          openService(const QString & name, unsigned int version,
-                                   Handle & handle);
+                                            Handle & handle);
 
                 //////////
                 //  Operations (messages)
@@ -762,6 +773,24 @@ namespace hadesvm
                 //  KErron::OK is returned. Upon failure an error indicator
                 //  is returned without any changes to the state of the Message.
                 KErrno          postMessage(Handle handle, Oid messageOid);
+
+                //  When called by a process that implements a Server, retrieves
+                //  the next incoming Message from the Server's message queue.
+                //  Upon success, stores message properties into the specified
+                //  variables and returns KErrno::OK. Upon failure returns the
+                //  error indicator without storing anything.
+                //  The "handle" is the handle to the Server that is obtained when
+                //  the Process that implements the Server makes a "createService"
+                //  call.
+                //  The "timeoutMs" specifies the maximum time, in milliseconds,
+                //  to idle-wait before giving up. "NoTimeout" here means "don't
+                //  wait", i.e. retrieve message if it is immediately available,
+                //  else give up. The "InfiniteTimeout" means wait forever.
+                KErrno          getMessage(Handle handle, uint32_t timeoutMs,
+                                           Oid & messageOid,
+                                           Oid & senderProcessOid, Handle & senderProcessHandle,
+                                           Oid & messageTypeAtomOid,
+                                           QList<Message::Parameter> & params);
 
                 //////////
                 //  Operations (miscellaneous)

@@ -95,4 +95,11 @@ Handle Message::senderHandle() const
     return _senderHandle;
 }
 
+QList<Message::Parameter> Message::parameters() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _parameters;
+}
+
 //  End of hadesvm-kernel/Message.cpp

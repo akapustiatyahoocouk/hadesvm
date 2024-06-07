@@ -19,6 +19,8 @@ namespace hadesvm
             LimitReached        = 0x00000005,   //  counter limit reached, etc.
             AlreadyExists       = 0x00000006,   //  object already exists
             DoesNotExist        = 0x00000007,   //  object does not exist
+            Timeout             = 0x00000008,   //  service timed out
+            ServerDead          = 0x00000009,   //  the server has since died
 
             //  Miscellaneous
             OK                  = 0x00000000,

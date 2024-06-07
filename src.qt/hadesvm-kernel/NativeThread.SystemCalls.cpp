@@ -137,6 +137,96 @@ KErrno NativeThread::SystemCalls::postMessage(Handle handle, Oid messageOid)
     return result;
 }
 
+KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
+                                             Oid & messageOid,
+                                             Oid & senderProcessOid, Handle & senderProcessHandle,
+                                             Oid & messageTypeAtomOid,
+                                             QList<Message::Parameter> & params)
+{
+    const uint32_t WaitChunkMs = 1000;
+
+    HANDLE_TERMINATION_REQUEST();
+
+    //  Prepare to wait
+    Process * process;
+    {
+        QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+        process = _nativeThread->process();
+        process->incrementReferenceCount(); //  we'll be keeping the reference to "process" for now
+    }
+
+    for (; ; )
+    {
+        try
+        {
+            HANDLE_TERMINATION_REQUEST();
+        }
+        catch (...)
+        {
+            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            process->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
+            throw;
+        }
+
+        Server * server;
+        {
+            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            //  Is the Process still "live" ?
+            if (!process->live())
+            {   //  No - release reference and give up
+                process->decrementReferenceCount();
+                return KErrno::ServerDead;
+            }
+            server = process->serverForHandle(handle);
+            if (server == nullptr)
+            {   //  OOPS!  Invalid handle (or not a handle to a Server
+                process->decrementReferenceCount();
+                return KErrno::InvalidParameter;
+            }
+            server->incrementReferenceCount();  //  for now
+        }
+
+        //  Wait for a Message to become available
+        uint32_t waitChunkMs = qMin(timeoutMs, WaitChunkMs);
+        if (server->_messageQueueSize.tryAcquire(1, waitChunkMs))
+        {   //  There IS a message in the queue!
+            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+
+            server->decrementReferenceCount();
+            process->decrementReferenceCount();
+            Q_ASSERT(!server->_messageQueue.isEmpty());
+            Message * message = server->_messageQueue.dequeue();
+            message->decrementReferenceCount(); //  we've just dropped reference to "message" from "server->_messageQueue"
+            message->_state = Message::State::Processing;
+
+            messageOid = message->oid();
+            senderProcessOid = message->_senderProcess->oid();
+            senderProcessHandle = message->senderHandle();
+            messageTypeAtomOid = message->messageTypeAtomOid();
+            params = message->parameters();
+
+            return KErrno::OK;
+        }
+        else
+        {   //  No message - must drop the server ref made before we started waiting
+            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            server->decrementReferenceCount();
+        }
+
+        //  Keep waiting
+        if (timeoutMs != InfiniteTimeout)
+        {
+            timeoutMs -= waitChunkMs;
+        }
+        if (timeoutMs == 0)
+        {   //  OOPS! Give up.
+            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            process->decrementReferenceCount();
+            return KErrno::Timeout;
+        }
+    }
+}
+
 //////////
 //  Operations (miscellaneous)
 QVersionNumber NativeThread::SystemCalls::getSystemVersion()
