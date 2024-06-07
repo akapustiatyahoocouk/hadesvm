@@ -152,6 +152,118 @@ KErrno Kernel::SystemCalls::openService(Thread * thread,
 }
 
 //////////
+//  Operations (messages)
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          Oid & messageOid)
+{
+    return createMessage(thread, messageTypeAtomOid,
+                         QList<Message::Parameter>(), messageOid);
+}
+
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          const Message::Parameter & param0,
+                                          Oid & messageOid)
+{
+    return createMessage(thread, messageTypeAtomOid,
+                         QList<Message::Parameter>{param0}, messageOid);
+}
+
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          const Message::Parameter & param0,
+                                          const Message::Parameter & param1,
+                                          Oid & messageOid)
+{
+    return createMessage(thread, messageTypeAtomOid,
+                         QList<Message::Parameter>{param0, param1}, messageOid);
+}
+
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          const Message::Parameter & param0,
+                                          const Message::Parameter & param1,
+                                          const Message::Parameter & param2,
+                                          Oid & messageOid)
+{
+    return createMessage(thread, messageTypeAtomOid,
+                         QList<Message::Parameter>{param0, param1, param2}, messageOid);
+}
+
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          const Message::Parameter & param0,
+                                          const Message::Parameter & param1,
+                                          const Message::Parameter & param2,
+                                          const Message::Parameter & param3,
+                                          Oid & messageOid)
+{
+    return createMessage(thread, messageTypeAtomOid,
+                         QList<Message::Parameter>{param0, param1, param2, param3}, messageOid);
+}
+
+KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                          const QList<Message::Parameter> & params,
+                                          Oid & messageOid)
+{
+    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Kernel * kernel = thread->kernel();
+    Process * process = thread->process();
+
+    if (!kernel->_liveObjects.contains(messageTypeAtomOid))
+    {
+        return KErrno::InvalidParameter;
+    }
+    Atom * atom = dynamic_cast<Atom*>(kernel->_liveObjects[messageTypeAtomOid]);
+    if (atom == nullptr || !process->_atomInterests.contains(atom->name()))
+    {   //  Process must getAtom before it can use that Atom
+        return KErrno::InvalidParameter;
+    }
+
+    //  Create a new Message
+    Message * message = new Message(_kernel, process, messageTypeAtomOid, params);
+    messageOid = message->oid();
+    return KErrno::OK;
+}
+
+KErrno Kernel::SystemCalls::postMessage(Thread * thread, Handle handle, Oid messageOid)
+{
+    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Kernel * kernel = thread->kernel();
+    Process * process = thread->process();
+
+    if (!kernel->_liveObjects.contains(messageOid))
+    {
+        return KErrno::InvalidParameter;
+    }
+    Message * message = dynamic_cast<Message*>(kernel->_liveObjects[messageOid]);
+    if (message == nullptr || message->senderProcess() != process ||
+        message->state() != Message::State::Constructed)
+    {   //  Process must createMessage before it can post that Message
+        return KErrno::InvalidParameter;
+    }
+
+    //  Post the message
+    Server * server = process->serverForHandle(handle);
+    if (server == nullptr)
+    {
+        return KErrno::InvalidParameter;
+    }
+
+    message->_senderHandle = handle;
+    server->_messageQueue.enqueue(message);
+    message->_state = Message::State::Posted;
+    message->incrementReferenceCount(); //  we've just created a new reference to "message"
+    return KErrno::OK;
+}
+
+//////////
 //  Operations (miscellaneous)
 QVersionNumber Kernel::SystemCalls::getSystemVersion()
 {

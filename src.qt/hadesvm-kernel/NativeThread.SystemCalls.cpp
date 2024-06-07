@@ -73,6 +73,71 @@ KErrno NativeThread::SystemCalls::openService(const QString & name, unsigned int
 }
 
 //////////
+//  Operations (messages)
+KErrno NativeThread::SystemCalls::createMessage(Oid messageTypeAtomOid,
+                                                Oid & messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createMessage(_nativeThread, messageTypeAtomOid, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::createMessage(Oid messageTypeAtomOid,
+                                                const Message::Parameter & param0,
+                                                Oid & messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createMessage(_nativeThread, messageTypeAtomOid, param0, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::createMessage(Oid messageTypeAtomOid,
+                                                const Message::Parameter & param0,
+                                                const Message::Parameter & param1,
+                                                Oid & messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createMessage(_nativeThread, messageTypeAtomOid, param0, param1, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::createMessage(Oid messageTypeAtomOid,
+                                                const Message::Parameter & param0,
+                                                const Message::Parameter & param1,
+                                                const Message::Parameter & param2,
+                                                Oid & messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createMessage(_nativeThread, messageTypeAtomOid, param0, param1, param2, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::createMessage(Oid messageTypeAtomOid,
+                                                const Message::Parameter & param0,
+                                                const Message::Parameter & param1,
+                                                const Message::Parameter & param2,
+                                                const Message::Parameter & param3,
+                                                Oid & messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.createMessage(_nativeThread, messageTypeAtomOid, param0, param1, param2, param3, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+KErrno NativeThread::SystemCalls::postMessage(Handle handle, Oid messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.postMessage(_nativeThread, handle, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
+//////////
 //  Operations (miscellaneous)
 QVersionNumber NativeThread::SystemCalls::getSystemVersion()
 {

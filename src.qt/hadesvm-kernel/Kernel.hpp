@@ -173,6 +173,46 @@ namespace hadesvm
                                             Handle & handle);
 
                 //////////
+                //  Operations (messages)
+            public:
+                //  Creates a new Message with the specified type (and parameters)
+                //  on behalf of the specified Thread's owner Process.
+                //  Opun success stores the OID of the newly created Message
+                //  into "messageOid" and returns KErrno::OK.
+                //  Upon failure returns an error indicator without storing anything.
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              Oid & messageOid);
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              Oid & messageOid);
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              Oid & messageOid);
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              const Message::Parameter & param2,
+                                              Oid & messageOid);
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              const Message::Parameter & param2,
+                                              const Message::Parameter & param3,
+                                              Oid & messageOid);
+                KErrno          createMessage(Thread * thread, Oid messageTypeAtomOid,
+                                              const QList<Message::Parameter> & params,
+                                              Oid & messageOid);
+
+                //  Posts the Message with the specified OID, created by the
+                //  specified Thread's owner Process, to a Server to which a
+                //  "handle" has been open. Upon success (Message must be in
+                //  a Constructed state), the Message becomes Posted and the
+                //  KErron::OK is returned. Upon failure an error indicator
+                //  is returned without any changes to the state of the Message.
+                KErrno          postMessage(Thread * thread, Handle handle, Oid messageOid);
+
+                //////////
                 //  Operations (miscellaneous)
             public:
                 //  TODO document

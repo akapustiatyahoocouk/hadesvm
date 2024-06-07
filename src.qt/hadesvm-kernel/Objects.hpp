@@ -199,6 +199,296 @@ namespace hadesvm
         };
 
         //////////
+        //  Servers
+
+        //  A "server" is an object that can be accessed by a Process via
+        //  "handles". Processes use "handles" to send messages to the service
+        //  and receive responses.
+        class HADESVM_KERNEL_PUBLIC Server : public Object
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Server)
+
+            friend class Kernel;
+            friend class Process;
+
+            //////////
+            //  Construction/destruction
+        public:
+            Server(Kernel * kernel, Process * serverProcess,
+                   unsigned int maxParameters, unsigned int backlog);
+            virtual ~Server();
+
+            //////////
+            //  Operations
+        public:
+            //  The process that implements this Server (i.e. accepts
+            //  incoming Messages, handles them and sends out the responses).
+            Process *           serverProcess() const;
+
+            //  Returns the count of handles open to this Server by Processes.
+            unsigned int        openHandleCount() const;
+
+            //  Increments the count of handles open to this Server by Processes by 1.
+            void                incrementOpenHandleCount();
+
+            //  Decrements the count of handles open to this Server by Processes by 1.
+            void                decrementOpenHandleCount();
+
+            //////////
+            //  Implementation
+        private:
+            Process *const      _serverProcess;
+            const unsigned int  _maxParameters;
+            const unsigned int  _backlog;
+
+            unsigned int        _openHandleCount;
+            QQueue<Message*>    _messageQueue;
+        };
+
+        //  A "service" is a server that has a system-wide-unique name, by
+        //  which it can be located by processes which then open "handles" to
+        //  the service and use it via those "handles".
+        class HADESVM_KERNEL_PUBLIC Service : public Server
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Service)
+
+            //////////
+            //  Construction/destruction
+        public:
+            Service(Kernel * kernel, Process * serverProcess,
+                    const QString & name, unsigned int version,
+                    unsigned int maxParameters, unsigned int backlog);
+            virtual ~Service();
+
+            //////////
+            //  Operations
+        public:
+            //  The name of the service
+            QString             name() const;
+            //  The version of the service
+            unsigned int        version() const;
+
+            //////////
+            //  Implementation
+        private:
+            const QString       _name;
+            const unsigned int  _version;   //  > 0
+        };
+
+        //  A "servlet" is a server created temporaryly for when a Process
+        //  needs it (such as a file access channel, etc.)
+        //  Unlike Services, which exist permanently, Servlets are destroyed
+        //  when the last handle to them is closed.
+        class HADESVM_KERNEL_PUBLIC Servlet : public Server
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Servlet)
+
+            //////////
+            //  Construction/destruction
+        public:
+            Servlet(Kernel * kernel);
+            virtual ~Servlet();
+
+            //////////
+            //  Operations
+        public:
+
+            //////////
+            //  Implementation
+        private:
+        };
+
+        //  A "message" is something that a running Process can send to a
+        //  Server, which the Server then processes and responds to.
+        class HADESVM_KERNEL_PUBLIC Message : public Object
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Message)
+
+            friend class Kernel;
+            friend class Process;
+
+            //////////
+            //  Types
+        public:
+            //  The data type of a single message parameter
+            enum class ParameterType
+            {
+                Bool,
+                UInt8,
+                Int8,
+                UInt16,
+                Int16,
+                UInt32,
+                Int32,
+                UInt64,
+                Int64,
+                Real32,
+                Real64,
+                Oid,
+                Handle
+            };
+
+            //  A single parameter of a message
+            class HADESVM_KERNEL_PUBLIC Parameter final
+            {
+                //////////
+                //  Construction/destruction/assignment
+            public:
+                Parameter(ParameterType type, bool value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint8_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int8_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint16_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int16_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint32_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int32_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, uint64_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, int64_t value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, float value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, double value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, Oid value)
+                    :   _type(type), _value() { _setValue(value); }
+                Parameter(ParameterType type, Handle value)
+                    :   _type(type), _value() { _setValue(value); }
+
+                //////////
+                //  Implementation
+            private:
+                const ParameterType _type;
+                union
+                {
+                    bool        boolean;
+                    uint8_t     uint8;
+                    int8_t      int8;
+                    uint16_t    uint16;
+                    int16_t     int16;
+                    uint32_t    uint32;
+                    int32_t     int32;
+                    uint64_t    uint64;
+                    int64_t     int64;
+                    float       real32;
+                    double      real64;
+                    Oid         oid;
+                    Handle      handle;
+                } _value;
+
+                //  Helpers
+                template <class T>
+                void            _setValue(T value)
+                {
+                    switch (_type)
+                    {
+                        case ParameterType::Bool:
+                            _value.boolean = static_cast<bool>(value);
+                            break;
+                        case ParameterType::UInt8:
+                            _value.uint8 = static_cast<uint8_t>(value);
+                            break;
+                        case ParameterType::Int8:
+                            _value.int8 = static_cast<int8_t>(value);
+                            break;
+                        case ParameterType::UInt16:
+                            _value.uint16 = static_cast<uint16_t>(value);
+                            break;
+                        case ParameterType::Int16:
+                            _value.int16 = static_cast<int16_t>(value);
+                            break;
+                        case ParameterType::UInt32:
+                            _value.uint32 = static_cast<uint32_t>(value);
+                            break;
+                        case ParameterType::Int32:
+                            _value.int32 = static_cast<int32_t>(value);
+                            break;
+                        case ParameterType::UInt64:
+                            _value.uint64 = static_cast<uint64_t>(value);
+                            break;
+                        case ParameterType::Int64:
+                            _value.int64 = static_cast<int64_t>(value);
+                            break;
+                        case ParameterType::Real32:
+                            _value.real32 = static_cast<float>(value);
+                            break;
+                        case ParameterType::Real64:
+                            _value.real64 = static_cast<double>(value);
+                            break;
+                        case ParameterType::Oid:
+                            _value.oid = static_cast<Oid>(value);
+                            break;
+                        case ParameterType::Handle:
+                            _value.handle = static_cast<Handle>(value);
+                            break;
+                        default:
+                            Q_ASSERT(false);
+                    }
+                }
+            };
+
+            //  Message states
+            enum class State
+            {
+                Constructed,    //  message has just been consructed
+                Posted,         //  message has been added to the sermer's message queue
+                Processing,     //  server has retrieved message from message queue and is processing it
+                Processes       //  server has signalled the end of message' processinf
+            };
+
+            //////////
+            //  Construction/destruction
+        public:
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1,
+                    const Parameter & param2);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const Parameter & param0, const Parameter & param1,
+                    const Parameter & param2, const Parameter & param3);
+            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
+                    const QList<Parameter> & params);
+            virtual ~Message();
+
+            //////////
+            //  Operations
+        public:
+            //  Returns the process that has created the message.
+            Process *           senderProcess() const;
+
+            //  Returns the OID of an Atom that represents message type.
+            Oid                 messageTypeAtomOid() const;
+
+            //  Returns the current state of the message
+            State               state() const;
+
+            //  Returns the Handle within the senderProcess that was used to post
+            //  the message; Handle::Invalid if message has not yet been Posted
+            Handle              senderHandle() const;
+
+            //////////
+            //  Implementation
+        private:
+            Process *const      _senderProcess; //  the Process that has created the message
+            const Oid           _messageTypeAtomOid;
+            State               _state;
+            Handle              _senderHandle;  //  the Handle within the _senderProcess that was used to post the message
+            Server *            _server;        //  in whose message queue a Posted message resides, else nullptr
+
+            QList<Parameter>    _parameters;
+        };
+
+        //////////
         //  Processes and threads
 
         //  A generic Hades VM kernel process
@@ -262,6 +552,9 @@ namespace hadesvm
 
             //  Closes the existing handle of this process.
             KErrno              closeHandle(Handle handle);
+
+            //  TODO document
+            Server *            serverForHandle(Handle handle);
 
             //////////
             //  Implementation
@@ -422,8 +715,8 @@ namespace hadesvm
                 //  returns KErrno::OK. Upon failure returns the error code and
                 //  does not modify the "handle".
                 KErrno          createService(const QString & name, unsigned int version,
-                                              unsigned int maxParameters, unsigned int backlog,
-                                              Handle & handle);
+                                     unsigned int maxParameters, unsigned int backlog,
+                                     Handle & handle);
 
                 //  Opens a service with the specified name and version; if version
                 //  is 0 then opens the latest available version of the service with
@@ -431,7 +724,44 @@ namespace hadesvm
                 //  into "handle" and returns KErrno::OK, upon failure returns the
                 //  error indicator without affecting the "handle".
                 KErrno          openService(const QString & name, unsigned int version,
-                                            Handle & handle);
+                                   Handle & handle);
+
+                //////////
+                //  Operations (messages)
+            public:
+                //  Creates a new Message with the specified type (and parameters)
+                //  on behalf of the calling Thread's owner Process.
+                //  Opun success stores the OID of the newly created Message
+                //  into "messageOid" and returns KErrno::OK.
+                //  Upon failure returns an error indicator without storing anything.
+                KErrno          createMessage(Oid messageTypeAtomOid,
+                                              Oid & messageOid);
+                KErrno          createMessage(Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              Oid & messageOid);
+                KErrno          createMessage(Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              Oid & messageOid);
+                KErrno          createMessage(Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              const Message::Parameter & param2,
+                                              Oid & messageOid);
+                KErrno          createMessage(Oid messageTypeAtomOid,
+                                              const Message::Parameter & param0,
+                                              const Message::Parameter & param1,
+                                              const Message::Parameter & param2,
+                                              const Message::Parameter & param3,
+                                              Oid & messageOid);
+
+                //  Posts the Message with the specified OID, created by the
+                //  current Thread's owner Process, to a Server to which a
+                //  "handle" has been open. Upon success (Message must be in
+                //  a Constructed state), the Message becomes Posted and the
+                //  KErron::OK is returned. Upon failure an error indicator
+                //  is returned without any changes to the state of the Message.
+                KErrno          postMessage(Handle handle, Oid messageOid);
 
                 //////////
                 //  Operations (miscellaneous)
@@ -516,270 +846,6 @@ namespace hadesvm
                 Kernel *const   _kernel;
             };
             _RunnerThread *     _runnerThread;
-        };
-
-        //////////
-        //  Servers
-
-        //  A "server" is an object that can be accessed by a Process via
-        //  "handles". Processes use "handles" to send messages to the service
-        //  and receive responses.
-        class HADESVM_KERNEL_PUBLIC Server : public Object
-        {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Server)
-
-            friend class Process;
-
-            //////////
-            //  Construction/destruction
-        public:
-            Server(Kernel * kernel, Process * serverProcess,
-                   unsigned int maxParameters, unsigned int backlog);
-            virtual ~Server();
-
-            //////////
-            //  Operations
-        public:
-            //  The process that implements this Server (i.e. accepts
-            //  incoming Messages, handles them and sends out the responses).
-            Process *           serverProcess() const;
-
-            //  Returns the count of handles open to this Server by Processes.
-            unsigned int        openHandleCount() const;
-
-            //  Increments the count of handles open to this Server by Processes by 1.
-            void                incrementOpenHandleCount();
-
-            //  Decrements the count of handles open to this Server by Processes by 1.
-            void                decrementOpenHandleCount();
-
-            //////////
-            //  Implementation
-        private:
-            Process *const      _serverProcess;
-            const unsigned int  _maxParameters;
-            const unsigned int  _backlog;
-
-            unsigned int        _openHandleCount;
-            QQueue<Message*>    _messageQueue;
-        };
-
-        //  A "service" is a server that has a system-wide-unique name, by
-        //  which it can be located by processes which then open "handles" to
-        //  the service and use it via those "handles".
-        class HADESVM_KERNEL_PUBLIC Service : public Server
-        {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Service)
-
-            //////////
-            //  Construction/destruction
-        public:
-            Service(Kernel * kernel, Process * serverProcess,
-                    const QString & name, unsigned int version,
-                    unsigned int maxParameters, unsigned int backlog);
-            virtual ~Service();
-
-            //////////
-            //  Operations
-        public:
-            //  The name of the service
-            QString             name() const;
-            //  The version of the service
-            unsigned int        version() const;
-
-            //////////
-            //  Implementation
-        private:
-            const QString       _name;
-            const unsigned int  _version;   //  > 0
-        };
-
-        //  A "servlet" is a server created temporaryly for when a Process
-        //  needs it (such as a file access channel, etc.)
-        //  Unlike Services, which exist permanently, Servlets are destroyed
-        //  when the last handle to them is closed.
-        class HADESVM_KERNEL_PUBLIC Servlet : public Server
-        {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Servlet)
-
-            //////////
-            //  Construction/destruction
-        public:
-            Servlet(Kernel * kernel);
-            virtual ~Servlet();
-
-            //////////
-            //  Operations
-        public:
-
-            //////////
-            //  Implementation
-        private:
-        };
-
-        //  A "message" is something that a running Process can send to a
-        //  Server, which the Server then processes and responds to.
-        class HADESVM_KERNEL_PUBLIC Message : public Object
-        {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Message)
-
-            //////////
-            //  Types
-        public:
-            //  The data type of a single message parameter
-            enum class ParameterType
-            {
-                Bool,
-                UInt8,
-                Int8,
-                UInt16,
-                Int16,
-                UInt32,
-                Int32,
-                UInt64,
-                Int64,
-                Real32,
-                Real64,
-                Oid,
-                Handle
-            };
-
-            //  A single parameter of a message
-            class HADESVM_KERNEL_PUBLIC Parameter final
-            {
-                //////////
-                //  Construction/destruction/assignment
-            public:
-                Parameter(ParameterType type, bool value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, uint8_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, int8_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, uint16_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, int16_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, uint32_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, int32_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, uint64_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, int64_t value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, float value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, double value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, Oid value)
-                    :   _type(type), _value() { _setValue(value); }
-                Parameter(ParameterType type, Handle value)
-                    :   _type(type), _value() { _setValue(value); }
-
-                //////////
-                //  Implementation
-            private:
-                const ParameterType _type;
-                union
-                {
-                    bool        boolean;
-                    uint8_t     uint8;
-                    int8_t      int8;
-                    uint16_t    uint16;
-                    int16_t     int16;
-                    uint32_t    uint32;
-                    int32_t     int32;
-                    uint64_t    uint64;
-                    int64_t     int64;
-                    float       real32;
-                    double      real64;
-                    Oid         oid;
-                    Handle      handle;
-                } _value;
-
-                //  Helpers
-                template <class T>
-                void            _setValue(T value)
-                {
-                    switch (_type)
-                    {
-                        case ParameterType::Bool:
-                            _value.boolean = static_cast<bool>(value);
-                            break;
-                        case ParameterType::UInt8:
-                            _value.uint8 = static_cast<uint8_t>(value);
-                            break;
-                        case ParameterType::Int8:
-                            _value.int8 = static_cast<int8_t>(value);
-                            break;
-                        case ParameterType::UInt16:
-                            _value.uint16 = static_cast<uint16_t>(value);
-                            break;
-                        case ParameterType::Int16:
-                            _value.int16 = static_cast<int16_t>(value);
-                            break;
-                        case ParameterType::UInt32:
-                            _value.uint32 = static_cast<uint32_t>(value);
-                            break;
-                        case ParameterType::Int32:
-                            _value.int32 = static_cast<int32_t>(value);
-                            break;
-                        case ParameterType::UInt64:
-                            _value.uint64 = static_cast<uint64_t>(value);
-                            break;
-                        case ParameterType::Int64:
-                            _value.int64 = static_cast<int64_t>(value);
-                            break;
-                        case ParameterType::Real32:
-                            _value.real32 = static_cast<float>(value);
-                            break;
-                        case ParameterType::Real64:
-                            _value.real64 = static_cast<double>(value);
-                            break;
-                        case ParameterType::Oid:
-                            _value.oid = static_cast<Oid>(value);
-                            break;
-                        case ParameterType::Handle:
-                            _value.handle = static_cast<Handle>(value);
-                            break;
-                        default:
-                            Q_ASSERT(false);
-                    }
-                }
-            };
-
-            //////////
-            //  Construction/destruction
-        public:
-            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid);
-            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
-                    const Parameter & param0);
-            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
-                    const Parameter & param0, const Parameter & param1);
-            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
-                    const Parameter & param0, const Parameter & param1,
-                    const Parameter & param2);
-            Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
-                    const Parameter & param0, const Parameter & param1,
-                    const Parameter & param2, const Parameter & param3);
-            virtual ~Message();
-
-            //////////
-            //  Operations
-        public:
-            Process *           senderProcess() const { return _senderProcess; }
-            Oid                 messageTypeAtomOid() const { return _messageTypeAtomOid; }
-
-            //////////
-            //  Implementation
-        private:
-            Process *const      _senderProcess; //  the Process that has created the message
-            const Oid           _messageTypeAtomOid;
-
-            Handle              _senderHandle;  //  the Handle within the _senderProcess that was used to post the message
-
-            QList<Parameter>    _parameters;
         };
 
         //////////

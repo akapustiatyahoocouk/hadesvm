@@ -207,7 +207,9 @@ KErrno Process::openHandle(Server * server, Handle & handle)
     Message * message =
         new Message(kernel, this, _handleOpenMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
+    message->_senderHandle = handle;
     server->_messageQueue.enqueue(message);
+    message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
     //  ...and we're done
     return KErrno::OK;
@@ -234,10 +236,26 @@ KErrno Process::closeHandle(Handle handle)
     Message * message =
         new Message(kernel, this, _handleClosedMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
+    message->_senderHandle = handle;
     server->_messageQueue.enqueue(message);
+    message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
     //  ...and we're done
     return KErrno::OK;
+}
+
+Server * Process::serverForHandle(Handle handle)
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    //  Validate parameters
+    int index = static_cast<int>(handle);
+    if (index < 0 || index >= _openHandles.count() || _openHandles[index] == nullptr)
+    {
+        return nullptr;
+    }
+
+    return _openHandles[index];
 }
 
 //  End of hadesvm-kernel/Process.cpp
