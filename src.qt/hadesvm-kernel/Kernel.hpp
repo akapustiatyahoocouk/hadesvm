@@ -298,6 +298,10 @@ namespace hadesvm
             //  Returns true if Kernel is "locked" by the current thread, else false.
             bool                isLockedByCurrentThread() const;
 
+            //  TODO document
+            void                lock();
+            void                unlock();
+
             //////////
             //  Implementation
         private:

@@ -23,7 +23,7 @@ NativeThread::~NativeThread()
     Kernel * kernel = this->kernel();
     Q_ASSERT(kernel->isLockedByCurrentThread());
 
-    terminate(ExitCode::Success);   //  ...just in case
+    terminate();            //  ...just in case
     delete _runnerThread;   //  "delete nullptr" is safe
 }
 
@@ -44,7 +44,7 @@ void NativeThread::start()
     _runnerThread->start();
 }
 
-void NativeThread::terminate(ExitCode exitCode)
+void NativeThread::terminate()
 {
     Q_ASSERT(kernel()->isLockedByCurrentThread());
 
@@ -54,7 +54,7 @@ void NativeThread::terminate(ExitCode exitCode)
     }
     if (state() == State::Constructed)
     {   //  Go straight to Finished state
-        _exitCode = exitCode;
+        _exitCode = ExitCode::Terminated;
         _state = State::Finished;
     }
 
@@ -67,7 +67,7 @@ void NativeThread::terminate(ExitCode exitCode)
     //delete _runnerThread;
     //_runnerThread = nullptr;
 
-    _exitCode = exitCode;
+    _exitCode = ExitCode::Terminated;
     _state = State::Finished;
 }
 

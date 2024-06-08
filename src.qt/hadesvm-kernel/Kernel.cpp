@@ -37,12 +37,12 @@ Kernel::~Kernel()
 {
     for (Object * object : _liveObjects.values())
     {
-        object->_referenceCount = 0;    //  else "delete" will assert
+        object->_referenceCount = 1;    //  else "delete" will assert
         delete object;
     }
     for (Object * object : _deadObjects.values())
     {
-        object->_referenceCount = 0;    //  else "delete" will assert
+        object->_referenceCount = 1;    //  else "delete" will assert
         delete object;
     }
 }
@@ -222,7 +222,7 @@ void Kernel::stop() noexcept
         {
             if (auto nativeThread = dynamic_cast<NativeThread*>(object))
             {
-                nativeThread->terminate(Thread::ExitCode::Success);
+                nativeThread->terminate();
             }
         }
     }
@@ -385,6 +385,16 @@ bool Kernel::isValidServiceName(const QString & name)
 bool Kernel::isLockedByCurrentThread() const
 {
     return _runtimeStateGuard.lockingThread() == QThread::currentThread();
+}
+
+void Kernel::lock()
+{
+    _runtimeStateGuard.lock();
+}
+
+void Kernel::unlock()
+{
+    _runtimeStateGuard.unlock();
 }
 
 //////////

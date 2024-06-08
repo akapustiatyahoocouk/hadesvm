@@ -38,13 +38,13 @@ namespace hadesvm
             friend class NativeThread;
 
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             explicit Object(Kernel * kernel);
             virtual ~Object();
 
             //////////
-            //  Properties
+            //  Properties - in "kernel locked" state only
         public:
             //  The Kernel managing this Object.
             Kernel *        kernel() const;
@@ -82,14 +82,14 @@ namespace hadesvm
             friend class Device;
 
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             Node(Kernel * kernel,
                  const QUuid & uuid, const QString & name);
             virtual ~Node();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The UUID of this Node - unique worldwide.
             QUuid               uuid() const;
@@ -116,11 +116,9 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(LocalNode)
 
-            friend class Kernel;
-
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             LocalNode(Kernel * kernel,
                       const QUuid & uuid, const QString & name);
             virtual ~LocalNode();
@@ -135,13 +133,13 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Device)
 
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             Device(Kernel * kernel, Node * node, const QString & name);
             virtual ~Device();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The Node at which this Device is attached.
             Node *              node() const;
@@ -161,17 +159,15 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(PhysicalDevice)
 
-            friend class Kernel;
-
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             PhysicalDevice(Kernel * kernel, Node * node, const QString & name,
                            IDeviceComponent * component);
             virtual ~PhysicalDevice();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  Returns the Component represented by this Device.
             IDeviceComponent *  component() const;
@@ -188,14 +184,10 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(VirtualDevice)
 
             //////////
-            //  Construction/destruction - from friends only
-        protected:
+            //  Construction/destruction - in "kernel locked" state only
+        public:
             VirtualDevice(Kernel * kernel, Node * node, const QString & name);
             virtual ~VirtualDevice();
-
-            //////////
-            //  Operations
-        public:
 
             //////////
             //  Implementation
@@ -217,14 +209,14 @@ namespace hadesvm
             friend class NativeThread;
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Server(Kernel * kernel, Process * serverProcess,
                    unsigned int maxParameters, unsigned int backlog);
             virtual ~Server();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The process that implements this Server (i.e. accepts
             //  incoming Messages, handles them and sends out the responses).
@@ -260,7 +252,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Service)
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Service(Kernel * kernel, Process * serverProcess,
                     const QString & name, unsigned int version,
@@ -268,7 +260,7 @@ namespace hadesvm
             virtual ~Service();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The name of the service
             QString             name() const;
@@ -291,14 +283,10 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Servlet)
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Servlet(Kernel * kernel);
             virtual ~Servlet();
-
-            //////////
-            //  Operations
-        public:
 
             //////////
             //  Implementation
@@ -447,11 +435,11 @@ namespace hadesvm
                 Constructed,    //  message has just been consructed
                 Posted,         //  message has been added to the sermer's message queue
                 Processing,     //  server has retrieved message from message queue and is processing it
-                Processes       //  server has signalled the end of message' processinf
+                Processed       //  server has signalled the end of message' processinf
             };
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid);
             Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOid,
@@ -469,7 +457,7 @@ namespace hadesvm
             virtual ~Message();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  Returns the process that has created the message.
             Process *           senderProcess() const;
@@ -487,6 +475,10 @@ namespace hadesvm
             //  The parameters of the message
             QList<Parameter>    parameters() const;
 
+            //  TODO document
+            KErrno              result() const;
+            QList<Parameter>    outputs() const;
+
             //////////
             //  Implementation
         private:
@@ -497,6 +489,10 @@ namespace hadesvm
             Server *            _server;        //  in whose message queue a Posted message resides, else nullptr
 
             QList<Parameter>    _parameters;
+
+            QSemaphore          _completionCount;   //  starts off as 0, becomes 1 when Processed
+            KErrno              _result;    //  set when message becomes Processed
+            QList<Parameter>    _outputs;   //  set when message becomes Processed
         };
 
         //////////
@@ -508,8 +504,8 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Process)
 
             friend class Kernel;
-            friend class Thread;
             friend class Atom;
+            friend class Thread;
 
             //////////
             //  Types
@@ -526,18 +522,19 @@ namespace hadesvm
             //  Process exit codes
             enum class ExitCode : uint32_t
             {
-                Success = 0,
-                Unknown = 0xFFFFFFFF    //  e.g. still running (not available)
+                Success     = 0,
+                Terminated  = 0xFFFFFFFE,   //  process terminated from outside instead if exisint voluntarily
+                Unknown     = 0xFFFFFFFF    //  e.g. still running (not available)
             };
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Process(Kernel * kernel, Process * parent, const QString & name);
             virtual ~Process();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The name of this process (not necessarily unique!)
             QString             name() const;
@@ -625,18 +622,19 @@ namespace hadesvm
             //  Thread exit codes
             enum class ExitCode : uint32_t
             {
-                Success = 0,
-                Unknown = 0xFFFFFFFF    //  e.g. still running (not available)
+                Success     = 0,
+                Terminated  = 0xFFFFFFFE,   //  thread terminated from outside instead if exisint voluntarily
+                Unknown     = 0xFFFFFFFF    //  e.g. still running (not available)
             };
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Thread(Kernel * kernel, Process * process);
             virtual ~Thread();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The Process to which this thread belongs
             Process *           process() const;
@@ -792,6 +790,21 @@ namespace hadesvm
                                            Oid & messageTypeAtomOid,
                                            QList<Message::Parameter> & params);
 
+                //  Performs idle=wait until the processing of the message with
+                //  the specified "messageOid" has been completed (and the Message
+                //  is in the Processed state). The Message must have been previously
+                //  posted to a Server by the current Process via a "postMessage".
+                //  Upon success, stores the "messageResult" and "messageOutputs"
+                //  and returns KErrno::OK. Upon failure returns the error indicator
+                //  without storing anything.
+                //  The "timeoutMs" specifies the maximum time, in milliseconds,
+                //  to idle-wait before giving up. "NoTimeout" here means "don't
+                //  wait", i.e. retrieve message completion status if it is immediately
+                //  available, else give up. The "InfiniteTimeout" means wait forever.
+                KErrno          waitForMessageCompletion(Oid messageOid, uint32_t timeoutMs,
+                                           KErrno & messageResult,
+                                           QList<Message::Parameter> & messageOutputs);
+
                 //////////
                 //  Operations (miscellaneous)
             public:
@@ -815,7 +828,7 @@ namespace hadesvm
             };
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             NativeThread(Kernel * kernel, Process * process);
             virtual ~NativeThread();
@@ -827,7 +840,7 @@ namespace hadesvm
             SystemCalls         systemCalls;
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  Starts the NativeThread by creating a new Qt thread and
             //  executing NativeThread::run() on that Qt thread.
@@ -839,7 +852,7 @@ namespace hadesvm
             //  Terminates the NativeThread immediately, setting its
             //  exitCode. Has no effect if the NativeThread is currently
             //  Constructed or Finished.
-            void                terminate(ExitCode exitCode);
+            void                terminate();
 
             //  Runs the thread to completion; teturns thread exit code.
             virtual ExitCode    run() = 0;
@@ -886,20 +899,19 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Atom)
 
-            friend class Kernel;
             friend class Process;
 
             //////////
-            //  Construction/destruction
+            //  Construction/destruction - in "kernel locked" state only
         public:
             Atom(Kernel * kernel, const QString & name);
             virtual ~Atom();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
             //  The name of this Atom
-            QString             name() const { return _name; }
+            QString             name() const;
 
             //////////
             //  Implementation

@@ -23,7 +23,7 @@ Kernel::SystemCalls::~SystemCalls()
 //  Operations (atoms)
 KErrno Kernel::SystemCalls::getAtom(Thread * thread, const QString & name, Oid & atomId)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
@@ -36,7 +36,7 @@ KErrno Kernel::SystemCalls::getAtom(Thread * thread, const QString & name, Oid &
 
 KErrno Kernel::SystemCalls::releaseAtom(Thread * thread, Oid atomOid)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
@@ -49,7 +49,7 @@ KErrno Kernel::SystemCalls::releaseAtom(Thread * thread, Oid atomOid)
 
 KErrno Kernel::SystemCalls::getAtomName(Oid /*atomOid*/, QString & /*name*/)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     Q_ASSERT(false);    //  TODO implement properly
     return KErrno::NotImplemented;
@@ -62,7 +62,7 @@ KErrno Kernel::SystemCalls::createService(Thread * thread,
                                           unsigned int maxParameters, unsigned int backlog,
                                           Handle & handle)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     //  Validate parameters
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
@@ -110,7 +110,7 @@ KErrno Kernel::SystemCalls::openService(Thread * thread,
                                         const QString & name, unsigned int version,
                                         Handle & handle)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
@@ -202,7 +202,7 @@ KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOi
                                           const QList<Message::Parameter> & params,
                                           Oid & messageOid)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
@@ -229,7 +229,7 @@ KErrno Kernel::SystemCalls::createMessage(Thread * thread, Oid messageTypeAtomOi
 
 KErrno Kernel::SystemCalls::postMessage(Thread * thread, Handle handle, Oid messageOid)
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
 
     if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
     {
@@ -268,7 +268,7 @@ KErrno Kernel::SystemCalls::postMessage(Thread * thread, Handle handle, Oid mess
 //  Operations (miscellaneous)
 QVersionNumber Kernel::SystemCalls::getSystemVersion()
 {
-    QMutexLocker lock(&_kernel->_runtimeStateGuard);
+    QMutexLocker lock(_kernel);
     return QVersionNumber(1, 0, 0);
 }
 

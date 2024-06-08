@@ -10,7 +10,7 @@ using namespace hadesvm::kernel;
 #define HANDLE_TERMINATION_REQUEST()                        \
     if (_nativeThread->_terminationRequested.load())        \
     {                                                       \
-        throw Thread::ExitCode::Unknown;                    \
+        throw Thread::ExitCode::Terminated;                 \
     }
 
 //////////
@@ -150,7 +150,7 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
     //  Prepare to wait
     Process * process;
     {
-        QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+        QMutexLocker lock(_nativeThread->_kernel);
         process = _nativeThread->process();
         process->incrementReferenceCount(); //  we'll be keeping the reference to "process" for now
     }
@@ -163,14 +163,14 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
         }
         catch (...)
         {
-            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            QMutexLocker lock(_nativeThread->_kernel);
             process->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
             throw;
         }
 
         Server * server;
         {
-            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            QMutexLocker lock(_nativeThread->_kernel);
             //  Is the Process still "live" ?
             if (!process->live())
             {   //  No - release reference and give up
@@ -185,12 +185,13 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
             }
             server->incrementReferenceCount();  //  for now
         }
+        //  TODO set thread's state to Waiting for the duration of the wait
 
         //  Wait for a Message to become available
         uint32_t waitChunkMs = qMin(timeoutMs, WaitChunkMs);
         if (server->_messageQueueSize.tryAcquire(1, waitChunkMs))
         {   //  There IS a message in the queue!
-            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            QMutexLocker lock(_nativeThread->_kernel);
 
             server->decrementReferenceCount();
             process->decrementReferenceCount();
@@ -209,7 +210,7 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
         }
         else
         {   //  No message - must drop the server ref made before we started waiting
-            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
+            QMutexLocker lock(_nativeThread->_kernel);
             server->decrementReferenceCount();
         }
 
@@ -220,8 +221,78 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
         }
         if (timeoutMs == 0)
         {   //  OOPS! Give up.
-            QMutexLocker lock(&_nativeThread->_kernel->_runtimeStateGuard);
-            process->decrementReferenceCount();
+            QMutexLocker lock(_nativeThread->_kernel);
+            process->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
+            return KErrno::Timeout;
+        }
+    }
+}
+
+KErrno NativeThread::SystemCalls::waitForMessageCompletion(Oid messageOid, uint32_t timeoutMs,
+                                KErrno & messageResult,
+                                QList<Message::Parameter> & messageOutputs)
+{
+    const uint32_t WaitChunkMs = 1000;
+
+    HANDLE_TERMINATION_REQUEST();
+
+    //  Prepare to wait
+    Kernel * kernel;
+    Message * message;
+    {
+        QMutexLocker lock(_nativeThread->_kernel);
+        kernel = _nativeThread->kernel();
+        if (!kernel->_liveObjects.contains(messageOid))
+        {
+            return KErrno::InvalidParameter;
+        }
+        message = dynamic_cast<Message*>(kernel->_liveObjects[messageOid]);
+        if (message == nullptr)
+        {
+            return KErrno::InvalidParameter;
+        }
+        message->incrementReferenceCount(); //  we'll be keeping the reference to "message" for now
+    }
+    //  TODO set thread's state to Waiting for the duration of the wait
+
+    for (; ; )
+    {
+        try
+        {
+            HANDLE_TERMINATION_REQUEST();
+        }
+        catch (...)
+        {
+            QMutexLocker lock(_nativeThread->_kernel);
+            message->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
+            throw;
+        }
+
+        uint32_t waitChunkMs = qMin(timeoutMs, WaitChunkMs);
+        if (message->_completionCount.tryAcquire(1, waitChunkMs))
+        {   //  Message is Processed...
+            QMutexLocker lock(_nativeThread->_kernel);
+            //  ...so keep its "processed" status...
+            Q_ASSERT(message->state() == Message::State::Processed);
+            message->_completionCount.release();    //  go back to 1 for the semaphore
+            //  ...store results...
+            messageResult = message->result(),
+                messageOutputs = message->outputs();
+            //  ...and we're done
+            message->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
+            return KErrno::OK;
+        }
+        //  ...else just keep waiting
+
+        //  Keep waiting
+        if (timeoutMs != InfiniteTimeout)
+        {
+            timeoutMs -= waitChunkMs;
+        }
+        if (timeoutMs == 0)
+        {   //  OOPS! Give up.
+            QMutexLocker lock(_nativeThread->_kernel);
+            message->decrementReferenceCount(); //  we've incremenented the ref counter before entering the loop
             return KErrno::Timeout;
         }
     }

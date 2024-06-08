@@ -26,11 +26,19 @@ Atom::~Atom()
     Kernel * kernel = this->kernel();
     Q_ASSERT(kernel->isLockedByCurrentThread());
 
-    Q_ASSERT(kernel->isLockedByCurrentThread());
     Q_ASSERT(!kernel->_atomsByName.contains(_name) && kernel->_atomsByName[_name] == this);
 
     kernel->_atomsByName.remove(_name);
     this->decrementReferenceCount();    //  we've just dropped a reference to this Atom
+}
+
+//////////
+//  Operations - in "kernel locked" state only
+QString Atom::name() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _name;
 }
 
 //  End of hadesvm-kernel/Atom.cpp

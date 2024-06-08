@@ -51,7 +51,10 @@ Message::Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOi
         _senderProcess(senderProcess),
         _messageTypeAtomOid(messageTypeAtomOid),
         _senderHandle(Handle::Invalid),
-        _parameters(params)
+        _parameters(params),
+        _completionCount(),
+        _result(KErrno::Unknown),
+        _outputs()
 {
     Q_ASSERT(kernel->isLockedByCurrentThread());
 
@@ -100,6 +103,20 @@ QList<Message::Parameter> Message::parameters() const
     Q_ASSERT(kernel()->isLockedByCurrentThread());
 
     return _parameters;
+}
+
+KErrno Message::result() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _result;
+}
+
+QList<Message::Parameter> Message::outputs() const
+{
+    Q_ASSERT(kernel()->isLockedByCurrentThread());
+
+    return _outputs;
 }
 
 //  End of hadesvm-kernel/Message.cpp
