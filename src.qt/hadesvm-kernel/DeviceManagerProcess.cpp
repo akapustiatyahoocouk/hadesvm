@@ -1,35 +1,36 @@
 //
-//  hadesvm-kernel/DeviceManagerMainThread.cpp
+//  hadesvm-kernel/DeviceManagerProcess.cpp
 //
-//  hadesvm::kernel::DeviceManagerMainThread class implementation
+//  hadesvm::kernel::DeviceManagerProcess class implementation
 //
 //////////
 #include "hadesvm-kernel/API.hpp"
 using namespace hadesvm::kernel;
 
 //////////
-//  Construction/destruction
-DeviceManagerMainThread::DeviceManagerMainThread(Kernel * kernel, Process * process)
-    :   NativeThread(kernel, process),
-        //  Atoms
-        _serviceNameAtomOid(Oid::Invalid),
-        //  Handles
-        _serviceHandle(Handle::Invalid)
-{
-}
-
-DeviceManagerMainThread::~DeviceManagerMainThread()
-{
-}
+//  Constants
+const QString DeviceManagerProcess::Name = "device manager";
 
 //////////
-//  NativeThread
-Thread::ExitCode DeviceManagerMainThread::run()
+//  DeviceManagerProcess::MainThread
+DeviceManagerProcess::MainThread::MainThread(Kernel * kernel, Process * process)
+    :   NativeThread(kernel, process)
+{
+}
+
+DeviceManagerProcess::MainThread::~MainThread()
+{
+}
+
+Thread::ExitCode DeviceManagerProcess::MainThread::run()
 {
     qDebug() << "Starting DeviceManagerMainThread";
 
     //  Create relevant atoms TODO examining error codes
-    systemCalls.getAtom(SystemServices::DeviceManager::Name, _serviceNameAtomOid);
+    systemCalls.getAtom(SystemInterfaces::IUnknown::Name, _interfaceAtomOid_IUnknown);
+    systemCalls.getAtom(SystemInterfaces::IUnknown::QueryInterface, _serviceAtomOid_IUnknown_QueryInterface);
+    systemCalls.getAtom(SystemInterfaces::IUnknown::HandleOpen, _serviceAtomOid_IUnknown_HandleOpen);
+    systemCalls.getAtom(SystemInterfaces::IUnknown::HandleClosed, _serviceAtomOid_IUnknown_HandleClosed);
 
     //  Create services TODO examining error codes
     systemCalls.createService(SystemServices::DeviceManager::Name,
@@ -37,6 +38,7 @@ Thread::ExitCode DeviceManagerMainThread::run()
                               1,
                               0,
                               _serviceHandle);
+
     for (; ; )
     {   //  TODO implement
         Oid messageOid;
@@ -50,6 +52,7 @@ Thread::ExitCode DeviceManagerMainThread::run()
         if (err == KErrno::OK)
         {
             qDebug() << static_cast<uint32_t>(messageOid) << ": " << static_cast<uint32_t>(messageTypeAtomOid);
+            systemCalls.completeMessage(messageOid, KErrno::OK, QList<Message::Parameter>());
         }
     }
 
@@ -58,4 +61,4 @@ Thread::ExitCode DeviceManagerMainThread::run()
     return ExitCode::Success;
 }
 
-//  End of hadesvm-kernel/DeviceManagerMainThread.cpp
+//  End of hadesvm-kernel/DeviceManagerProcess.cpp

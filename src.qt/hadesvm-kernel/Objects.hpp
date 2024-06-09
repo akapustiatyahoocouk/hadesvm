@@ -499,7 +499,7 @@ namespace hadesvm
         //  Processes and threads
 
         //  A generic Hades VM kernel process
-        class HADESVM_KERNEL_PUBLIC Process : public Object
+        class HADESVM_KERNEL_PUBLIC Process final : public Object
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Process)
 
@@ -801,9 +801,21 @@ namespace hadesvm
                 //  to idle-wait before giving up. "NoTimeout" here means "don't
                 //  wait", i.e. retrieve message completion status if it is immediately
                 //  available, else give up. The "InfiniteTimeout" means wait forever.
-                KErrno          waitForMessageCompletion(Oid messageOid, uint32_t timeoutMs,
-                                           KErrno & messageResult,
-                                           QList<Message::Parameter> & messageOutputs);
+                KErrno          waitForMessage(Oid messageOid, uint32_t timeoutMs,
+                                            KErrno & messageResult,
+                                            QList<Message::Parameter> & messageOutputs);
+
+                //  "completes" the processing of the specified Message by storing
+                //  its result and outputs. The Message must be obtained earlier by
+                //  an earlier call to getMessage(). It is an error to attempr to
+                //  complete a Message that is not in a Processing state or to
+                //  complete it from a Process other than that implementing the Server
+                //  through whose message queue the message was obtained by getMessage.
+                //  When a Server dies (because it is destroyed, or its implementing
+                //  Process dies, etc.) all messages pending in the Server's message
+                //  queue are automatically "completed" with result Kerrno::ServerDead.
+                KErrno          completeMessage(Oid messageOid, KErrno messageResult,
+                                                const QList<Message::Parameter> & messageOutputs);
 
                 //////////
                 //  Operations (miscellaneous)

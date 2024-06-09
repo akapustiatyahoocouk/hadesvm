@@ -20,7 +20,7 @@ namespace hadesvm
                 HADESVM_UTILITY_CLASS(DeviceManager)
 
                 //////////
-                //  Properties
+                //  Constants
             public:
                 //  The name of the service
                 static const QString        Name;

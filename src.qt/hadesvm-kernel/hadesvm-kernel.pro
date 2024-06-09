@@ -7,7 +7,7 @@ SOURCES += \
     Architecture.cpp \
     Atom.cpp \
     Device.cpp \
-    DeviceManagerMainThread.cpp \
+    DeviceManagerProcess.cpp \
     Kernel.SystemCalls.cpp \
     Kernel.Type.cpp \
     Kernel.cpp \

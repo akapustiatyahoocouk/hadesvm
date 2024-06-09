@@ -212,6 +212,19 @@ namespace hadesvm
                 //  is returned without any changes to the state of the Message.
                 KErrno          postMessage(Thread * thread, Handle handle, Oid messageOid);
 
+                //  "completes" the processing of the specified Message by storing
+                //  its result and outputs. The Message must be obtained earlier by
+                //  an earlier call to getMessage(). It is an error to attempr to
+                //  complete a Message that is not in a Processing state or to
+                //  complete it from a Process other than that implementing the Server
+                //  through whose message queue the message was obtained by getMessage.
+                //  When a Server dies (because it is destroyed, or its implementing
+                //  Process dies, etc.) all messages pending in the Server's message
+                //  queue are automatically "completed" with result Kerrno::ServerDead.
+                KErrno          completeMessage(Thread * thread,
+                                       Oid messageOid, KErrno messageResult,
+                                       const QList<Message::Parameter> & messageOutputs);
+
                 //////////
                 //  Operations (miscellaneous)
             public:

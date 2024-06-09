@@ -11,30 +11,47 @@ namespace hadesvm
     {
         //////////
         //  The "device manager" system process
-
-        //  The main thread of the "device manager" system process
-        class HADESVM_KERNEL_PUBLIC DeviceManagerMainThread : public NativeThread
+        class HADESVM_KERNEL_PUBLIC DeviceManagerProcess
         {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(DeviceManagerMainThread)
+            HADESVM_UTILITY_CLASS(DeviceManagerProcess)
 
             //////////
-            //  Construction/destruction
+            //  Constants
         public:
-            DeviceManagerMainThread(Kernel * kernel, Process * process);
-            virtual ~DeviceManagerMainThread();
+            //  The name of the process
+            static const QString    Name;
 
             //////////
-            //  NativeThread
+            //  Threads
         public:
-            virtual ExitCode    run() override;
+            //  The main thread of the "device manager" system process
+            class HADESVM_KERNEL_PUBLIC MainThread : public NativeThread
+            {
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(MainThread)
 
-            //////////
-            //  Implementation
-        private:
-            //  Atoms
-            Oid                 _serviceNameAtomOid;
-            //  Handles
-            Handle              _serviceHandle;
+                //////////
+                //  Construction/destruction
+            public:
+                MainThread(Kernel * kernel, Process * process);
+                virtual ~MainThread();
+
+                //////////
+                //  NativeThread
+            public:
+                virtual ExitCode    run() override;
+
+                //////////
+                //  Implementation
+            private:
+                //  Atoms
+                Oid                 _interfaceAtomOid_IUnknown = Oid::Invalid;
+                Oid                 _serviceAtomOid_IUnknown_QueryInterface = Oid::Invalid;
+                Oid                 _serviceAtomOid_IUnknown_HandleOpen = Oid::Invalid;
+                Oid                 _serviceAtomOid_IUnknown_HandleClosed = Oid::Invalid;
+
+                //  Handles
+                Handle              _serviceHandle = Handle::Invalid;
+            };
         };
     }
 }

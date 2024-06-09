@@ -228,7 +228,7 @@ KErrno NativeThread::SystemCalls::getMessage(Handle handle, uint32_t timeoutMs,
     }
 }
 
-KErrno NativeThread::SystemCalls::waitForMessageCompletion(Oid messageOid, uint32_t timeoutMs,
+KErrno NativeThread::SystemCalls::waitForMessage(Oid messageOid, uint32_t timeoutMs,
                                 KErrno & messageResult,
                                 QList<Message::Parameter> & messageOutputs)
 {
@@ -296,6 +296,15 @@ KErrno NativeThread::SystemCalls::waitForMessageCompletion(Oid messageOid, uint3
             return KErrno::Timeout;
         }
     }
+}
+
+KErrno NativeThread::SystemCalls::completeMessage(Oid messageOid, KErrno messageResult,
+                            const QList<Message::Parameter> & messageOutputs)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.completeMessage(_nativeThread, messageOid, messageResult, messageOutputs);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
 }
 
 //////////

@@ -51,6 +51,7 @@ Message::Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOi
         _senderProcess(senderProcess),
         _messageTypeAtomOid(messageTypeAtomOid),
         _senderHandle(Handle::Invalid),
+        _server(nullptr),
         _parameters(params),
         _completionCount(),
         _result(KErrno::Unknown),

@@ -257,10 +257,48 @@ KErrno Kernel::SystemCalls::postMessage(Thread * thread, Handle handle, Oid mess
     }
 
     message->_senderHandle = handle;
+    message->_server = server;
     server->_messageQueue.enqueue(message);
     server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
+    return KErrno::OK;
+}
+
+KErrno Kernel::SystemCalls::completeMessage(Thread * thread,
+                       Oid messageOid, KErrno messageResult,
+                       const QList<Message::Parameter> & messageOutputs)
+{
+    QMutexLocker lock(_kernel);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Kernel * kernel = thread->kernel();
+    Process * process = thread->process();
+
+    if (!kernel->_liveObjects.contains(messageOid))
+    {
+        return KErrno::InvalidParameter;
+    }
+    Message * message = dynamic_cast<Message*>(kernel->_liveObjects[messageOid]);
+    if (message == nullptr || message->senderProcess() != process ||
+        message->state() != Message::State::Processing)
+    {   //  Process must createMessage before it can post that Message
+        return KErrno::InvalidParameter;
+    }
+
+    Server * server = message->_server;
+    if (process != server->serverProcess())
+    {   //  Only a process where message was posted to can complete it
+        return KErrno::InvalidParameter;
+    }
+
+    message->_state = Message::State::Processed;
+    message->_result = messageResult;
+    message->_outputs = messageOutputs;
+    message->_completionCount.release();
     return KErrno::OK;
 }
 

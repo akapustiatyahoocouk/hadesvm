@@ -171,9 +171,9 @@ void Kernel::initialize() throws(hadesvm::core::VirtualApplianceException)
     }
 
     //  Create "device manager" system process
-    _deviceManagerProcess = new Process(this, nullptr, "device manager");
+    _deviceManagerProcess = new Process(this, nullptr, DeviceManagerProcess::Name);
     _deviceManagerProcess->incrementReferenceCount();   //  we've just created a new reference to "_localNode"
-    new DeviceManagerMainThread(this, _deviceManagerProcess);
+    new DeviceManagerProcess::MainThread(this, _deviceManagerProcess);
 
     //  Done
     _state = State::Initialized;

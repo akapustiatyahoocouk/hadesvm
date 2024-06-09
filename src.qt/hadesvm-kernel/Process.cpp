@@ -208,6 +208,7 @@ KErrno Process::openHandle(Server * server, Handle & handle)
         new Message(kernel, this, _handleOpenMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
     message->_senderHandle = handle;
+    message->_server = server;
     server->_messageQueue.enqueue(message);
     server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
@@ -238,6 +239,7 @@ KErrno Process::closeHandle(Handle handle)
         new Message(kernel, this, _handleClosedMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
     message->_senderHandle = handle;
+    message->_server = server;
     server->_messageQueue.enqueue(message);
     server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
