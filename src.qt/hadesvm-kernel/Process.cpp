@@ -24,6 +24,7 @@ Process::Process(Kernel * kernel, Process * parent, const QString & name)
         _openHandles(),
         //  Links to other kernel objects
         _implementedServers(),
+        _createdMessages(),
         _atomInterests(),
         //  Special atoms
         _handleOpenMethodAtomOid(Oid::Invalid),
@@ -203,16 +204,21 @@ KErrno Process::openHandle(Server * server, Handle & handle)
     server->incrementReferenceCount();  //  we've just created a new reference to "server"
     handle = static_cast<Handle>(unusedIndex);
     server->incrementOpenHandleCount(); //  we've just created a new handle to "server"
+
     //  ...post the HandleOpen message there...
     Message * message =
         new Message(kernel, this, _handleOpenMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
+    _createdMessages.insert(message);
+    message->incrementReferenceCount(); //  we've just created a new reference to "message"
+
     message->_senderHandle = handle;
     message->_server = server;
     server->_messageQueue.enqueue(message);
     server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
+
     //  ...and we're done
     return KErrno::OK;
 }
@@ -234,16 +240,21 @@ KErrno Process::closeHandle(Handle handle)
     _openHandles[index] = nullptr;
     server->decrementReferenceCount();  //  we've just dropped a reference to the "server"
     server->decrementOpenHandleCount(); //  we've just dropped a handle to the "server"
+
     //  ...notify the server that a handle has been closed...
     Message * message =
         new Message(kernel, this, _handleClosedMethodAtomOid,
                     Message::Parameter(Message::ParameterType::Handle, handle));
+    _createdMessages.insert(message);
+    message->incrementReferenceCount(); //  we've just created a new reference to "message"
+
     message->_senderHandle = handle;
     message->_server = server;
     server->_messageQueue.enqueue(message);
     server->_messageQueueSize.release();
     message->_state = Message::State::Posted;
     message->incrementReferenceCount(); //  we've just created a new reference to "message"
+
     //  ...and we're done
     return KErrno::OK;
 }

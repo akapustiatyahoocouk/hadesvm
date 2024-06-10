@@ -11,6 +11,8 @@ namespace hadesvm
 {
     namespace gui
     {
+        class VirtualApplianceWindow;
+
         //////////
         //  The main UI frame
         namespace Ui { class MainWindow; }
@@ -23,7 +25,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            explicit MainWindow(QWidget * parent = nullptr);
+            MainWindow();
             virtual ~MainWindow();
 
             //////////
@@ -36,8 +38,10 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
-            hadesvm::core::VirtualApplianceList     _virtualAppliances;
-            hadesvm::core::VirtualAppliance *         _currentVirtualAppliance;
+            hadesvm::core::VirtualApplianceList _virtualAppliances;
+            hadesvm::core::VirtualAppliance *   _currentVirtualAppliance;
+
+            QMap<hadesvm::core::VirtualAppliance*, VirtualApplianceWindow*> _virtualApplianceWindows;   //  for a;ll Running VAs
 
             QSettings           _settings;
 

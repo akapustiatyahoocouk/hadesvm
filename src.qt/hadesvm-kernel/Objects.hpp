@@ -106,7 +106,7 @@ namespace hadesvm
         private:
             const QUuid         _uuid;
             const QString       _name;
-            QMap<QString, Device*>  _devices;   //  name -> Device of devices attached at this Node
+            QMap<QString, Device*>  _devicesByName; //  name -> Device of devices attached at this Node
         };
 
         //  A "local" node represents the local hardware unit on which
@@ -435,7 +435,8 @@ namespace hadesvm
                 Constructed,    //  message has just been consructed
                 Posted,         //  message has been added to the sermer's message queue
                 Processing,     //  server has retrieved message from message queue and is processing it
-                Processed       //  server has signalled the end of message' processinf
+                Processed,      //  server has signalled the end of message' processing
+                Completed       //  the client has called releaseMessage on a message
             };
 
             //////////
@@ -583,6 +584,7 @@ namespace hadesvm
 
             //  Links to other kernel objects
             QSet<Server*>       _implementedServers;    //  Server "implemented by" this Process
+            QSet<Message*>      _createdMessages;       //  Messages created by this Process
 
             struct _AtomInterest
             {   //  represents an interest of a Process in an Atom
@@ -816,6 +818,10 @@ namespace hadesvm
                 //  queue are automatically "completed" with result Kerrno::ServerDead.
                 KErrno          completeMessage(Oid messageOid, KErrno messageResult,
                                                 const QList<Message::Parameter> & messageOutputs);
+
+                //  The client signals that it no longer needs a Mesage it had created
+                //  by an earlier call to createMessage.
+                KErrno          releaseMessage(Oid messageOid);
 
                 //////////
                 //  Operations (miscellaneous)

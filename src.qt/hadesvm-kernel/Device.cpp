@@ -20,7 +20,7 @@ Device::Device(Kernel * kernel, Node * node, const QString & name)
     //  Register with the Node
     Q_ASSERT(node->live() && kernel == node->kernel());
     Q_ASSERT(node->findDeviceByName(name) == nullptr);
-    node->_devices[name] = this;
+    node->_devicesByName[name] = this;
     this->incrementReferenceCount();    //  we've just created a new reference to this Device
 }
 
@@ -28,6 +28,10 @@ Device::~Device()
 {
     Kernel * kernel = this->kernel();
     Q_ASSERT(kernel->isLockedByCurrentThread());
+
+    Q_ASSERT(_node->findDeviceByName(_name) == this);
+    _node->_devicesByName.remove(_name);
+    this->decrementReferenceCount();    //  we've just dropped a reference to this Device
 }
 
 //  End of hadesvm-kernel/Device.cpp

@@ -15,15 +15,17 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(MountedFolderDevice)
 
             //////////
-            //  Construction/destruction - from friends only
-        protected:
-            MountedFolderDevice(Kernel * kernel,
+            //  Construction/destruction - in "kernel locked" state only
+        public:
+            MountedFolderDevice(Kernel * kernel, Node * node,
                                 const QString & deviceName, const QString & externalFolderPath);
             virtual ~MountedFolderDevice();
 
             //////////
-            //  Operations
+            //  Operations - in "kernel locked" state only
         public:
+            //  The full path to the external folder of the host OS.
+            QString         externalFolderPath() const;
 
             //////////
             //  Implementation

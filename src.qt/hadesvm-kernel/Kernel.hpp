@@ -225,6 +225,10 @@ namespace hadesvm
                                        Oid messageOid, KErrno messageResult,
                                        const QList<Message::Parameter> & messageOutputs);
 
+                //  The client signals that it no longer needs a Mesage it had created
+                //  by an earlier call to createMessage.
+                KErrno          releaseMessage(Thread * thread, Oid messageOid);
+
                 //////////
                 //  Operations (miscellaneous)
             public:

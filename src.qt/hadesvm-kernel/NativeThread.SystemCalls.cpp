@@ -307,6 +307,14 @@ KErrno NativeThread::SystemCalls::completeMessage(Oid messageOid, KErrno message
     return result;
 }
 
+KErrno NativeThread::SystemCalls::releaseMessage(Oid messageOid)
+{
+    HANDLE_TERMINATION_REQUEST();
+    auto result = _nativeThread->_kernel->systemCalls.releaseMessage(_nativeThread, messageOid);
+    HANDLE_TERMINATION_REQUEST();
+    return result;
+}
+
 //////////
 //  Operations (miscellaneous)
 QVersionNumber NativeThread::SystemCalls::getSystemVersion()

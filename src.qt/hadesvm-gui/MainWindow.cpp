@@ -10,11 +10,12 @@ using namespace hadesvm::gui;
 
 //////////
 //  Construction/destruction
-MainWindow::MainWindow(QWidget * parent)
-    :   QMainWindow(parent),
+MainWindow::MainWindow()
+    :   QMainWindow(nullptr),
         //  Implementation
         _virtualAppliances(),
         _currentVirtualAppliance(nullptr),
+        _virtualApplianceWindows(),
         _settings(this),
         //  Controls & resources
         _ui(new Ui::MainWindow),
@@ -31,13 +32,18 @@ MainWindow::MainWindow(QWidget * parent)
     _refresh();
 
     _refreshTimer.setInterval(1000);    //  1 sec
-    connect(&_refreshTimer, &QTimer::timeout,
-            this, &MainWindow::_onRefreshTimerTick);
+    connect(&_refreshTimer, &QTimer::timeout, this, &MainWindow::_onRefreshTimerTick);
     _refreshTimer.start();
 }
 
 MainWindow::~MainWindow()
 {
+    for (auto virtualApplianceWindow : _virtualApplianceWindows)
+    {
+        delete virtualApplianceWindow;
+    }
+    _virtualApplianceWindows.clear();
+
     _refreshTimer.stop();
     delete _ui;
 }
@@ -353,6 +359,13 @@ void MainWindow::_onCloseVm()
         }
     }
 
+    //  Make sure there's no VA window
+    if (_virtualApplianceWindows.contains(_currentVirtualAppliance))
+    {
+        delete _virtualApplianceWindows[_currentVirtualAppliance];
+        _virtualApplianceWindows.remove(_currentVirtualAppliance);
+    }
+
     //  Update UI
     _virtualAppliances.removeOne(_currentVirtualAppliance);
     delete _currentVirtualAppliance;
@@ -401,6 +414,9 @@ void MainWindow::_onStartVm()
     try
     {
         _currentVirtualAppliance->start();
+        auto virtualApplianceWindow = new VirtualApplianceWindow(_currentVirtualAppliance);
+        _virtualApplianceWindows.insert(_currentVirtualAppliance, virtualApplianceWindow);
+        virtualApplianceWindow->setVisible(true);
     }
     catch (const hadesvm::core::VirtualApplianceException & ex)
     {
@@ -415,6 +431,12 @@ void MainWindow::_onStopVm()
         _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped)
     {   //  Nothing to do
         return;
+    }
+
+    if (_virtualApplianceWindows.contains(_currentVirtualAppliance))
+    {
+        delete _virtualApplianceWindows[_currentVirtualAppliance];
+        _virtualApplianceWindows.remove(_currentVirtualAppliance);
     }
 
     _currentVirtualAppliance->stop();
@@ -478,6 +500,17 @@ void MainWindow::_onRefreshTimerTick()
             virtualAppliance->stop();
         }
     }
+    //  If any VA window represents a non-Running VA, kill that VA window
+    for (auto virtualAppliance : _virtualApplianceWindows.keys())
+    {
+        if (virtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Running)
+        {
+            delete _virtualApplianceWindows[virtualAppliance];
+            _virtualApplianceWindows.remove(virtualAppliance);
+            break;
+        }
+    }
+
     //  ...and refresh UI
     _refresh();
 }

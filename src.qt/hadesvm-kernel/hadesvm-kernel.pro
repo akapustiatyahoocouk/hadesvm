@@ -14,6 +14,7 @@ SOURCES += \
     KernelEditor.cpp \
     LocalNode.cpp \
     Message.cpp \
+    MountedFolderDevice.cpp \
     MountedFolderDialog.cpp \
     NativeThread.SystemCalls.cpp \
     NativeThread.cpp \

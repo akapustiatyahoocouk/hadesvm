@@ -147,16 +147,15 @@ void Kernel::initialize() throws(hadesvm::core::VirtualApplianceException)
     for (auto [volumeName, path] : _mountedFolders.asKeyValueRange())
     {
         QDir baseDir(virtualAppliance()->directory());
-        path = QFileInfo(baseDir, path).canonicalFilePath();
+        path = QFileInfo(baseDir, path).absoluteFilePath();
         if (_localNode->findDeviceByName(volumeName) != nullptr)
         {   //  OOPS!
             throw hadesvm::core::VirtualApplianceException(
                 "Device '" + volumeName +
                 "' already exists for node '" + _localNode->name() + "'");
         }
+        new MountedFolderDevice(this, _localNode, volumeName, path);
     }
-
-    //  TODO
 
     //  Create Device objects representing physical devices
     for (IDeviceComponent * deviceComponent : virtualAppliance()->componentsImplementing<IDeviceComponent>())

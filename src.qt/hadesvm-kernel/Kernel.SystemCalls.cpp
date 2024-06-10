@@ -283,9 +283,8 @@ KErrno Kernel::SystemCalls::completeMessage(Thread * thread,
         return KErrno::InvalidParameter;
     }
     Message * message = dynamic_cast<Message*>(kernel->_liveObjects[messageOid]);
-    if (message == nullptr || message->senderProcess() != process ||
-        message->state() != Message::State::Processing)
-    {   //  Process must createMessage before it can post that Message
+    if (message == nullptr || message->state() != Message::State::Processing)
+    {   //  Server must fetch Message for processing before it can complete thyat Message
         return KErrno::InvalidParameter;
     }
 
@@ -299,6 +298,46 @@ KErrno Kernel::SystemCalls::completeMessage(Thread * thread,
     message->_result = messageResult;
     message->_outputs = messageOutputs;
     message->_completionCount.release();
+    return KErrno::OK;
+}
+
+KErrno Kernel::SystemCalls::releaseMessage(Thread * thread, Oid messageOid)
+{
+    QMutexLocker lock(_kernel);
+
+    if (thread == nullptr || thread->kernel() != _kernel || !thread->live())
+    {
+        return KErrno::InvalidParameter;
+    }
+    Kernel * kernel = thread->kernel();
+    Process * process = thread->process();
+
+    if (!kernel->_liveObjects.contains(messageOid))
+    {
+        return KErrno::InvalidParameter;
+    }
+    Message * message = dynamic_cast<Message*>(kernel->_liveObjects[messageOid]);
+    if (message == nullptr || message->senderProcess() != process)
+    {   //  Process must createMessage before it can release that Message
+        return KErrno::InvalidParameter;
+    }
+    if (message->_state == Message::State::Completed)
+    {   //  Nothing to do
+        return KErrno::InvalidParameter;
+    }
+
+    if (message->_state == Message::State::Posted)
+    {   //  Must remove the Message from the Server's message queue
+        Server * server = message->_server;
+        Q_ASSERT(server != nullptr && server->_messageQueue.contains(message));
+        server->_messageQueue.removeOne(message);
+        message->decrementReferenceCount(); //  we've just dropped a reference to "message"
+        server->_messageQueueSize.acquire(1);
+    }
+
+    message->_state = Message::State::Completed;
+    Q_ASSERT(process->_createdMessages.contains(message));
+    process->_createdMessages.remove(message);
     return KErrno::OK;
 }
 

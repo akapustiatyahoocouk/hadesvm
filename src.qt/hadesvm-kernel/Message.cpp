@@ -50,6 +50,7 @@ Message::Message(Kernel * kernel, Process * senderProcess, Oid messageTypeAtomOi
     :   Object(kernel),
         _senderProcess(senderProcess),
         _messageTypeAtomOid(messageTypeAtomOid),
+        _state(State::Constructed),
         _senderHandle(Handle::Invalid),
         _server(nullptr),
         _parameters(params),

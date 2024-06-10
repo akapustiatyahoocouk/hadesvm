@@ -14,7 +14,7 @@ Node::Node(Kernel * kernel,
     :   Object(kernel),
         _uuid(uuid),
         _name(name),
-        _devices()
+        _devicesByName()
 {
     Q_ASSERT(kernel->isLockedByCurrentThread());
     Q_ASSERT(!kernel->_nodesByUuid.contains(uuid));
@@ -50,7 +50,7 @@ Device * Node::findDeviceByName(const QString & name) const
 {
     Q_ASSERT(kernel()->isLockedByCurrentThread());
 
-    return _devices.contains(name) ? _devices[name] : nullptr;;
+    return _devicesByName.contains(name) ? _devicesByName[name] : nullptr;;
 }
 
 //  End of hadesvm-kernel/Node.cpp

@@ -38,6 +38,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QCloseEvent>
 #include <QDialog>
 #include <QDir>
 #include <QDomDocument>
@@ -60,6 +61,7 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QTextEdit>
+#include <QTextStream>
 #include <QThread>
 #include <QTimer>
 #include <QTreeWidget>
