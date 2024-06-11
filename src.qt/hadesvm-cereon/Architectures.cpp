@@ -1,5 +1,5 @@
 //
-//  hadesvm-cereon/Architecture.cpp
+//  hadesvm-cereon/Architectures.cpp
 //
 //  hadesvm::cereon architectures
 //
@@ -23,4 +23,4 @@ QString CereonWorkstationArchitecture::displayName() const
     return "Cereon workstation";
 }
 
-//  End of hadesvm-cereon/Architecture.cpp
+//  End of hadesvm-cereon/Architectures.cpp

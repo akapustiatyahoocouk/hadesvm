@@ -1,5 +1,5 @@
 //
-//  hadesvm-cereon/Architecture.hpp
+//  hadesvm-cereon/Architectures.hpp
 //
 //  Cereon-based architectures
 //
@@ -24,4 +24,4 @@ namespace hadesvm
     }
 }
 
-//  End of hadesvm-cereon/Architecture.hpp
+//  End of hadesvm-cereon/Architectures.hpp

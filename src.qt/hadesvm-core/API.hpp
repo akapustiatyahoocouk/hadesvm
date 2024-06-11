@@ -16,6 +16,7 @@
 #include "hadesvm-core/Classes.hpp"
 
 #include "hadesvm-core/Exceptions.hpp"
+#include "hadesvm-core/Types.hpp"
 
 #include "hadesvm-core/ComponentCategory.hpp"
 #include "hadesvm-core/ComponentType.hpp"

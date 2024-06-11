@@ -94,6 +94,8 @@
 
 #include "hadesvm-util/StockObject.hpp"
 
+#include "hadesvm-util/ByteOrder.hpp"
+
 #include "hadesvm-util/Plugin.hpp"
 #include "hadesvm-util/PluginManager.hpp"
 

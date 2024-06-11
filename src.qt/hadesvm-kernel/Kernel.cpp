@@ -54,6 +54,11 @@ Kernel::Type * Kernel::type() const
     return Type::instance();
 }
 
+QString Kernel::shortStatusString() const
+{
+    return displayName();   //  TODO for now
+}
+
 QString Kernel::displayName() const
 {
     return Type::instance()->displayName();

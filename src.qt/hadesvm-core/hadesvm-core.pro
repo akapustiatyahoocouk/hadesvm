@@ -11,6 +11,7 @@ SOURCES += \
     ComponentEditor.cpp \
     ComponentType.cpp \
     Exceptions.cpp \
+    MemorySize.cpp \
     Plugins.cpp \
     RemoteTerminal.cpp \
     RemoteTerminalType.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     ComponentType.hpp \
     Exceptions.hpp \
     Linkage.hpp \
+    Types.hpp \
     VirtualAppliance.hpp \
     VirtualApplianceTemplate.hpp \
     VirtualApplianceType.hpp \

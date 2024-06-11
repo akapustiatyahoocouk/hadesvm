@@ -47,17 +47,18 @@ namespace hadesvm
                 Running
             };
 
+            //////////
             //  Component UI
-            class HADESVM_CORE_PUBLIC Ui : public QWidget
+            class HADESVM_CORE_PUBLIC Ui
             {
-                Q_OBJECT
                 HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Ui)
 
                 //////////
                 //  Construction/destruction
             public:
-                explicit Ui(QWidget * parent, Component * component);
-                virtual ~Ui();
+                explicit Ui(Component * component)
+                    :   _component(component) { Q_ASSERT(_component != nullptr); }
+                virtual ~Ui() = default;
 
                 //////////
                 //  Operations
@@ -82,6 +83,9 @@ namespace hadesvm
         public:
             //  The type of this component
             virtual ComponentType * type() const = 0;
+
+            //  The short (1 line) user-readable status of this Component.
+            virtual QString         shortStatusString() const = 0;
 
             //  Checks if this component can be "suspended".
             bool                    suspendable() const { return type()->suspendable(); }

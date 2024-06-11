@@ -17,8 +17,10 @@
 #include "hadesvm-cereon/Linkage.hpp"
 #include "hadesvm-cereon/Classes.hpp"
 
-#include "hadesvm-cereon/Architecture.hpp"
+#include "hadesvm-cereon/Architectures.hpp"
 
 #include "hadesvm-cereon/Alu.hpp"
+#include "hadesvm-cereon/Memory.hpp"
+#include "hadesvm-cereon/ProcessorCore.hpp"
 
 //  End of hadesvm-cereon/API.hpp

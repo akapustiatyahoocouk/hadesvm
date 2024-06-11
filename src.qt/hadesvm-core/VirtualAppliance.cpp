@@ -456,14 +456,14 @@ void VirtualAppliance::suspend() throws(VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
-    Q_ASSERT(false);    //  TODO implement
+    throw VirtualApplianceException("Not yet implemented");
 }
 
 void VirtualAppliance::resume() throws(VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
-    Q_ASSERT(false);    //  TODO implement
+    throw VirtualApplianceException("Not yet implemented");
 }
 
 //////////

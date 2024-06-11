@@ -6,10 +6,12 @@ DEFINES += HADESVM_UTIL_LIBRARY
 SOURCES += \
     Exceptions.cpp \
     Math.cpp \
-    PluginManager.cpp
+    PluginManager.cpp \
+    ToString.cpp
 
 HEADERS += \
     API.hpp \
+    ByteOrder.hpp \
     Exceptions.hpp \
     FromString.hpp \
     Linkage.hpp \

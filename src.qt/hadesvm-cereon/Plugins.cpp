@@ -42,6 +42,10 @@ namespace
     void Plugin::initialise()
     {
         hadesvm::core::VirtualArchitecture::register(CereonWorkstationArchitecture::instance());
+
+        hadesvm::core::ComponentType::register(MemoryBus::Type::instance());
+        //hadesvm::core::ComponentType::register(ResidentRamBlock::Type::instance());
+        //hadesvm::core::ComponentType::register(ResidentRomBlock::Type::instance());
     }
 }
 
