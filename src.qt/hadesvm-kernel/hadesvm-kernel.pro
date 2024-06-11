@@ -45,8 +45,8 @@ HEADERS += \
     SystemProcesses.hpp \
     SystemServices.hpp
 
-LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util
-
 FORMS += \
     KernelEditor.ui \
     MountedFolderDialog.ui
+
+LIBS += -L$$DESTDIR -lhadesvm-core -lhadesvm-util
