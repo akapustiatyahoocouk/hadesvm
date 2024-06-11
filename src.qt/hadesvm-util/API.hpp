@@ -34,6 +34,8 @@
     #error Unsupported compiler
 #endif
 
+#include <math.h>
+
 #include <QtCore/qglobal.h>
 
 #include <QApplication>
@@ -88,6 +90,7 @@
 
 #include "hadesvm-util/ToString.hpp"
 #include "hadesvm-util/FromString.hpp"
+#include "hadesvm-util/Math.hpp"
 
 #include "hadesvm-util/StockObject.hpp"
 

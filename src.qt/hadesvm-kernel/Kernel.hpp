@@ -258,6 +258,7 @@ namespace hadesvm
             virtual void        serialiseConfiguration(QDomElement componentElement) override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual Component::Ui * createUi() override { return nullptr; }
 
             //////////
             //  hadesvm::core::Component (state management)

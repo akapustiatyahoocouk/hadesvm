@@ -27,6 +27,7 @@ namespace hadesvm
             //////////
             //  Types
         public:
+            //  Component states
             enum class State
             {
                 //  Component has been constructed, but not yet connected to
@@ -44,6 +45,30 @@ namespace hadesvm
                 //  Component has been constructed, connected to other components
                 //  of the VA, has a runtime state and is running.
                 Running
+            };
+
+            //  Component UI
+            class HADESVM_CORE_PUBLIC Ui : public QWidget
+            {
+                Q_OBJECT
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Ui)
+
+                //////////
+                //  Construction/destruction
+            public:
+                explicit Ui(QWidget * parent, Component * component);
+                virtual ~Ui();
+
+                //////////
+                //  Operations
+            private:
+                //  Returns the Component to which this UI belongs
+                Component *         component() const { return _component; }
+
+                //////////
+                //  Implementation
+            private:
+                Component *const    _component;
             };
 
             //////////
@@ -81,8 +106,16 @@ namespace hadesvm
             //  Creates a new editor widget for viewing and editing the
             //  configuration of this component.
             //  Returns nullptr if this component has no configuration
-            //  to view/modify in an editor.
+            //  to view/modify in an editor. Otherwise the caller is responsible
+            //  for eventually deleting the returned ComponentEditor.
             virtual ComponentEditor*createEditor(QWidget * parent) = 0;
+
+            //  Creates a new UI for this Component.
+            //  Returns nullptr if this component has no UI. Otherwise the
+            //  caller is responsible for eventually deleting the returned UI.
+            //  Widgets that form the UI are created as parent-less and will
+            //  normally be re-parented by the called to fit into the caller's UI.
+            virtual Ui *            createUi() = 0;
 
             //////////
             //  Operations (state management)

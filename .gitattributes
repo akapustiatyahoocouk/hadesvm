@@ -195,6 +195,7 @@ Procfile text
 *.hpp text
 *.h text
 *.h++ text
+*.hxx text
 *.hh text
 *.slo binary
 *.lo binary
