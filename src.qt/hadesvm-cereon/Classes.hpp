@@ -21,6 +21,7 @@ namespace hadesvm
         //  Adopt a few types from dependency components for cleaner reading
         using StandardComponentCategories = hadesvm::core::StandardComponentCategories;
         using MemorySize = hadesvm::core::MemorySize;
+        using ComponentEditor = hadesvm::core::ComponentEditor;
 
         using ByteOrder = hadesvm::util::ByteOrder;
     }

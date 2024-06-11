@@ -2,5 +2,6 @@
 <VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" Version="1">
  <Components>
   <Component Type="CereonMemoryBus"/>
+  <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamBlock"/>
  </Components>
 </VirtualMachine>

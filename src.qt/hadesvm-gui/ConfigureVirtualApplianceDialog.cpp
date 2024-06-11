@@ -374,6 +374,7 @@ void ConfigureVirtualApplianceDialog::_onEditorContentChanged()
 
 void ConfigureVirtualApplianceDialog::_onOk()
 {
+    //  TODO validate configuration by temporarily bringing all components to Initialized state
     //  Apply the changes
     _virtualAppliance->setName(_ui->nameLineEdit->text());
     for (auto editor : _componentEditors.values())

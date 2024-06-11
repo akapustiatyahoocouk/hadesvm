@@ -23,4 +23,6 @@
 #include "hadesvm-cereon/Memory.hpp"
 #include "hadesvm-cereon/ProcessorCore.hpp"
 
+#include "hadesvm-cereon/ResidentRamBlockEditor.hpp"
+
 //  End of hadesvm-cereon/API.hpp

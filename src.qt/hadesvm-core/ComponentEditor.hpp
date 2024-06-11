@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            explicit ComponentEditor(QWidget * parent);
+            explicit ComponentEditor(QWidget * parent); //  TODO can we create the editor WITHOUT the parent? It'll be re-parented by ConfigureVirtualApplianceDialog anyway
             virtual ~ComponentEditor();
 
             //////////

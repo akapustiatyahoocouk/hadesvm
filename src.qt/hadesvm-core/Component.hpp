@@ -84,9 +84,6 @@ namespace hadesvm
             //  The type of this component
             virtual ComponentType * type() const = 0;
 
-            //  The short (1 line) user-readable status of this Component.
-            virtual QString         shortStatusString() const = 0;
-
             //  Checks if this component can be "suspended".
             bool                    suspendable() const { return type()->suspendable(); }
 

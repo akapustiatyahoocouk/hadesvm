@@ -22,11 +22,6 @@ MemoryBus::~MemoryBus() noexcept
 
 //////////
 //  hadesvm::core::Component
-QString MemoryBus::shortStatusString() const
-{
-    return displayName();   //  for now
-}
-
 QString MemoryBus::displayName() const
 {
     return Type::instance()->displayName();
@@ -40,7 +35,7 @@ void MemoryBus::deserialiseConfiguration(QDomElement /*componentElement*/)
 {   //  Nothing to do
 }
 
-hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * parent)
+ComponentEditor * MemoryBus::createEditor(QWidget * parent)
 {
     return nullptr;
 }

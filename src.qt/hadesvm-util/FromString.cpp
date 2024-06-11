@@ -62,6 +62,7 @@ HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype 
         }
         temp = next;
         numDigits++;
+        prescan++;
     }
     if (numDigits > 0)
     {
@@ -108,17 +109,18 @@ HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype 
         while (prescan < s.length())
         {
             int digit = charToDight(s[prescan]);
-            if (digit < 0 || digit > radix)
+            if (digit < 0 || digit >= radix)
             {
                 break;
             }
-            unsigned long next = temp * 10 + digit;
-            if (next / 10 != temp)
+            unsigned long next = temp * radix + digit;
+            if (next / radix != temp)
             {   //  OOPS! Overflow!
                 return false;
             }
             temp = next;
             numDigits++;
+            prescan++;
         }
         if (numDigits > 0)
         {

@@ -101,11 +101,10 @@ namespace hadesvm
             //  hadesvm::core::Component
         public:
             virtual Type *      type() const override { return Type::instance(); }
-            virtual QString     shortStatusString() const override;
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual ComponentEditor *   createEditor(QWidget * parent) override;
             virtual Ui *        createUi() override;
 
             //////////
@@ -256,7 +255,7 @@ namespace hadesvm
             //////////
             //  Constants
         public:
-            static const uint64_t   DefaultStartAddress = 0;
+            static const uint64_t   DefaultStartAddress;
             static const MemorySize DefaultSize;
 
             //////////
@@ -293,37 +292,10 @@ namespace hadesvm
             //  hadesvm::core::Component
         public:
             virtual Type *      type() const override { return Type::instance(); }
-            virtual QString     shortStatusString() const override;
+            virtual QString     displayName() const override;
+            virtual ComponentEditor *   createEditor(QWidget * parent) override;
+            virtual Ui *        createUi() override;
         };
-
-#if 0
-//  TODO define in a separate header
-        //  The editor of resident RAM block properties
-        class HADESVM_CEREON_PUBLIC ResidentRamBlockEditor final : public hadesvm::core::ComponentEditor
-        {
-            Q_OBJECT
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRamBlockEditor)
-
-            //////////
-            //  Construction/destruction
-        public:
-            explicit ResidentRamBlockEditor(QWidget * parent);
-
-            //////////
-            //  hadesvm::core::ComponentEditor
-        public:
-            virtual void    loadComponentConfiguration() override;
-            virtual bool    canSaveComponentConfiguration() const override;
-            virtual void    saveComponentConfiguration() override;
-
-            //////////
-            //  Implementation
-        private:
-            ResidentRamBlock *  _residentRamBlock;    //  nullptr == none
-
-            //  Helpers
-        };
-#endif
 
         //////////
         //  A ROM block whose content is loaded from a file and kept entirely in host RAM
@@ -366,7 +338,6 @@ namespace hadesvm
             //  hadesvm::core::Component
         public:
             virtual Type *      type() const override { return Type::instance(); }
-            virtual QString     shortStatusString() const override;
 
             //////////
             //  MemoryBlock
