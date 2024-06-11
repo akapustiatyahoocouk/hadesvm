@@ -68,6 +68,20 @@ namespace hadesvm
             Unit                _unit;
         };
     }
+
+    //  Formatting and parsing
+    namespace util
+    {
+        HADESVM_CORE_PUBLIC QString toString(const core::MemorySize & value);
+
+        HADESVM_CORE_PUBLIC bool fromString(const QString & s, qsizetype & scan, core::MemorySize & value);
+
+        inline bool fromEntireString(const QString & s, core::MemorySize & value)
+        {
+            qsizetype scan = 0;
+            return hadesvm::util::fromString(s, scan, value) && scan == s.length();
+        }
+    }
 }
 
 //  End of hadesvm-core/Types.hpp

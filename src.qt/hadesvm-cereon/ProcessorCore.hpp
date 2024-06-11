@@ -194,7 +194,7 @@ namespace hadesvm
             //  Construction/destruction
         public:
             ProcessorCore(Processor * processor, uint8_t id, const Features & features,
-                          hadesvm::util::ByteOrder initialByteOrder, bool canChangeByteOrder,
+                          ByteOrder initialByteOrder, bool canChangeByteOrder,
                           Mmu * mmu);
             virtual ~ProcessorCore() noexcept;
 
@@ -213,7 +213,7 @@ namespace hadesvm
             Processor *const        _processor; //  ...to which this core belongs
             const uint8_t           _id;        //  ...of this core
             const Features          _features;  //  ...of this core
-            const hadesvm::util::ByteOrder  _initialByteOrder;
+            const ByteOrder  _initialByteOrder;
             const bool              _canChangeByteOrder;
             const bool              _isPrimaryCore;
 
@@ -273,10 +273,10 @@ namespace hadesvm
                 void                setTrapMode() { _value |= TrapMask; _replicateBitFields(); }
                 bool                isInPendingTrapMode() const { return _pendingTrapMode; }
                 void                clearPendingTrapMode() { _value &= ~PendingTrapMask; _replicateBitFields(); }
-                hadesvm::util::ByteOrder    getByteOrder() const { return _byteOrder; }
-                void                setByteOrder(hadesvm::util::ByteOrder byteOrder)
+                ByteOrder    getByteOrder() const { return _byteOrder; }
+                void                setByteOrder(ByteOrder byteOrder)
                 {
-                    _value = (byteOrder == hadesvm::util::ByteOrder::BigEndian) ?
+                    _value = (byteOrder == ByteOrder::BigEndian) ?
                                 (_value | BigEndianModeMask) :
                                 (_value & ~BigEndianModeMask);
                     _replicateBitFields();
@@ -320,7 +320,7 @@ namespace hadesvm
                 bool                _trapMode = false;
                 bool                _pendingTrapMode = false;
                 bool                _workingMode = false;
-                hadesvm::util::ByteOrder    _byteOrder = hadesvm::util::ByteOrder::Unknown; //  replicates B bit of $state for faster access
+                ByteOrder    _byteOrder = ByteOrder::Unknown; //  replicates B bit of $state for faster access
                 uint32_t            _contextId = 0; //  replicates CID bits of $state for faster access
 
                 //  Helpers
@@ -330,7 +330,7 @@ namespace hadesvm
                     _trapMode = (_value & TrapMask) != 0;
                     _pendingTrapMode = (_value & PendingTrapMask) != 0;
                     _workingMode = (_value & WorkingModeMask) != 0;
-                    _byteOrder = ((_value & BigEndianModeMask) != 0) ? hadesvm::util::ByteOrder::BigEndian : hadesvm::util::ByteOrder::LittleEndian;
+                    _byteOrder = ((_value & BigEndianModeMask) != 0) ? ByteOrder::BigEndian : ByteOrder::LittleEndian;
                     _contextId = static_cast<uint32_t>(_value >> 32);;
                     //  TODO the rest of them
                 }

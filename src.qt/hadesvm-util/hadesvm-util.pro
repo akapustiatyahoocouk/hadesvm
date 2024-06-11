@@ -5,6 +5,7 @@ DEFINES += HADESVM_UTIL_LIBRARY
 
 SOURCES += \
     Exceptions.cpp \
+    FromString.cpp \
     Math.cpp \
     PluginManager.cpp \
     ToString.cpp

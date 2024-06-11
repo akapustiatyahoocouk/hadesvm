@@ -41,23 +41,23 @@ namespace hadesvm
             virtual uint64_t    startAddress() const = 0;
 
             //  Returns the size of this memory block
-            virtual hadesvm::core::MemorySize   size() const = 0;
+            virtual MemorySize  size() const = 0;
 
             //  Loads a naturally aligned data item from the specified offset
             //  in this memory block.
             //  Throws MemoryAccessError if an error occurs
             virtual uint8_t     loadByte(size_t offset) throws(MemoryAccessError) = 0;
-            virtual uint16_t    loadHalfWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
-            virtual uint32_t    loadWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
-            virtual uint64_t    loadLongWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual uint16_t    loadHalfWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual uint32_t    loadWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual uint64_t    loadLongWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
 
             //  Stores a naturally aligned data item into this memory block
             //  at the specified offset.
             //  Throws MemoryAccessError if an error occurs
             virtual void        storeByte(size_t offset, uint8_t value) throws(MemoryAccessError) = 0;
-            virtual void        storeHalfWord(size_t offset, uint16_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
-            virtual void        storeWord(size_t offset, uint32_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
-            virtual void        storeLongWord(size_t offset, uint64_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual void        storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual void        storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
+            virtual void        storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError) = 0;
         };
 
         //////////
@@ -103,7 +103,7 @@ namespace hadesvm
             virtual Type *      type() const override { return Type::instance(); }
             virtual QString     shortStatusString() const override;
             virtual QString     displayName() const override;
-            virtual void        serialiseConfiguration(QDomElement componentElement) override;
+            virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
             virtual Ui *        createUi() override;
@@ -136,16 +136,16 @@ namespace hadesvm
             //  Loads a naturally aligned data item at the specified address.
             //  Throws MemoryAccessError
             uint8_t             loadByte(uint64_t address) throws(MemoryAccessError);
-            uint16_t            loadHalfWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
-            uint32_t            loadWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
-            uint64_t            loadLongWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
+            uint16_t            loadHalfWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError);
+            uint32_t            loadWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError);
+            uint64_t            loadLongWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError);
 
             //  Stores a naturally aligned data item at the specified address.
             //  Throws MemoryAccessError if an error occurs
             void                storeByte(uint64_t address, uint8_t value) throws(MemoryAccessError);
-            void                storeHalfWord(uint64_t address, uint16_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
-            void                storeWord(uint64_t address, uint32_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
-            void                storeLongWord(uint64_t address, uint64_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError);
+            void                storeHalfWord(uint64_t address, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError);
+            void                storeWord(uint64_t address, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError);
+            void                storeLongWord(uint64_t address, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError);
 
             //////////
             //  Implementation
@@ -191,41 +191,55 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            ResidentMemoryBlock(uint64_t defaultStartAddress, const hadesvm::core::MemorySize & defaultSize);
+            ResidentMemoryBlock(uint64_t startAddress, const MemorySize & size);
             virtual ~ResidentMemoryBlock() noexcept;
 
             //////////
             //  hadesvm::core::Component
         public:
-            virtual void        serialiseConfiguration(QDomElement componentElement) override;
+            virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
+
+            //////////
+            //  hadesvm::core::Component (state management)
+            //  Must only be called from the QApplication's main thread (except state())
+        public:
+            virtual State       state() const noexcept override;
+            virtual void        connect() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        initialize() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        start() throws(hadesvm::core::VirtualApplianceException) override;
+            virtual void        stop() noexcept override;
+            virtual void        deinitialize() noexcept override;
+            virtual void        disconnect() noexcept override;
 
             //////////
             //  MemoryBlock
         public:
             virtual uint64_t    startAddress() const override { return _startAddress; }
-            virtual hadesvm::core::MemorySize   size() const override { return _size; }
+            virtual MemorySize  size() const override { return _size; }
             virtual uint8_t     loadByte(size_t offset) throws(MemoryAccessError) override;
-            virtual uint16_t    loadHalfWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual uint32_t    loadWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual uint64_t    loadLongWord(size_t offset, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual uint16_t    loadHalfWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual uint32_t    loadWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual uint64_t    loadLongWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) override;
             virtual void        storeByte(size_t offset, uint8_t value) throws(MemoryAccessError) override;
-            virtual void        storeHalfWord(size_t offset, uint16_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeWord(size_t offset, uint32_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeLongWord(size_t offset, uint64_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
 
             //////////
             //  Operations (configuration)
         public:
             void                setStartAddress(uint64_t startAddress);
-            void                setSize(const hadesvm::core::MemorySize & size);
+            void                setSize(const MemorySize & size);
 
             //////////
             //  Implementation
         private:
+            State               _state = State::Constructed;
+
             //  Configuration
             uint64_t            _startAddress;
-            hadesvm::core::MemorySize   _size;
+            MemorySize          _size;
 
             size_t              _sizeInBytes;   //  same as "_size", but expressed in bytes
 
@@ -243,7 +257,7 @@ namespace hadesvm
             //  Constants
         public:
             static const uint64_t   DefaultStartAddress = 0;
-            static const hadesvm::core::MemorySize  DefaultSize;
+            static const MemorySize DefaultSize;
 
             //////////
             //  Types
@@ -321,7 +335,7 @@ namespace hadesvm
             //  Constants
         public:
             static const uint64_t   DefaultStartAddress = 0xFFFFFFFFFFF00000;
-            static const hadesvm::core::MemorySize  DefaultSize;
+            static const MemorySize DefaultSize;
             static const QString    DefailtContentFilePath;
 
             //////////
@@ -358,9 +372,9 @@ namespace hadesvm
             //  MemoryBlock
         public:
             virtual void        storeByte(size_t offset, uint8_t value) throws(MemoryAccessError) override;
-            virtual void        storeHalfWord(size_t offset, uint16_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeWord(size_t offset, uint32_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeLongWord(size_t offset, uint64_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            virtual void        storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
 
             //////////
             //  Operations (configuration)

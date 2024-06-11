@@ -256,7 +256,7 @@ namespace hadesvm
             virtual Type *      type() const override;
             virtual QString     shortStatusString() const override;
             virtual QString     displayName() const override;
-            virtual void        serialiseConfiguration(QDomElement componentElement) override;
+            virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
             virtual Component::Ui * createUi() override { return nullptr; }

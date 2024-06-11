@@ -31,12 +31,33 @@ namespace hadesvm
         HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, QChar & value);
         HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, QString& value);
 
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed char & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned char & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed short & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned short & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed int & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned int & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed long & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned long & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed long long & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned long long & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, float & value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, const char * crtFormat, double & value);
+
         //  Shortcuts for parsing
+        //  Parse in an assumption that the entire string must be consumed in the process.
         template <class T>
-        bool fromString(const QString & s, T & value)
+        bool fromEntireString(const QString & s, T & value)
         {
             qsizetype scan = 0;
-            return fromString(s, scan, value) && scan == s.length();
+            return hadesvm::util::fromString(s, scan, value) && scan == s.length();
+        }
+
+        template <class T>
+        bool fromEntireString(const QString & s, const char * crtFormat, T & value)
+        {
+            qsizetype scan = 0;
+            return hadesvm::util::fromString(s, scan, crtFormat, value) && scan == s.length();
         }
     }
 }

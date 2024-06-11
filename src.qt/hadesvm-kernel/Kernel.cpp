@@ -64,7 +64,7 @@ QString Kernel::displayName() const
     return Type::instance()->displayName();
 }
 
-void Kernel::serialiseConfiguration(QDomElement componentElement)
+void Kernel::serialiseConfiguration(QDomElement componentElement) const
 {
     componentElement.setAttribute("UUID", _nodeUuid.toString());
     componentElement.setAttribute("Name", _nodeName);

@@ -32,12 +32,12 @@ QString MemoryBus::displayName() const
     return Type::instance()->displayName();
 }
 
-void MemoryBus::serialiseConfiguration(QDomElement /*componentElement*/)
-{
+void MemoryBus::serialiseConfiguration(QDomElement /*componentElement*/) const
+{   //  Nothing to do
 }
 
 void MemoryBus::deserialiseConfiguration(QDomElement /*componentElement*/)
-{
+{   //  Nothing to do
 }
 
 hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * parent)
@@ -235,7 +235,7 @@ uint8_t MemoryBus::loadByte(uint64_t address) throws(MemoryAccessError)
     throw MemoryAccessError::InvalidAddress;
 }
 
-uint16_t MemoryBus::loadHalfWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+uint16_t MemoryBus::loadHalfWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -244,7 +244,7 @@ uint16_t MemoryBus::loadHalfWord(uint64_t address, hadesvm::util::ByteOrder byte
     throw MemoryAccessError::InvalidAddress;
 }
 
-uint32_t MemoryBus::loadWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+uint32_t MemoryBus::loadWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -253,7 +253,7 @@ uint32_t MemoryBus::loadWord(uint64_t address, hadesvm::util::ByteOrder byteOrde
     throw MemoryAccessError::InvalidAddress;
 }
 
-uint64_t MemoryBus::loadLongWord(uint64_t address, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+uint64_t MemoryBus::loadLongWord(uint64_t address, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -272,7 +272,7 @@ void MemoryBus::storeByte(uint64_t address, uint8_t value) throws(MemoryAccessEr
     throw MemoryAccessError::InvalidAddress;
 }
 
-void MemoryBus::storeHalfWord(uint64_t address, uint16_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+void MemoryBus::storeHalfWord(uint64_t address, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -282,7 +282,7 @@ void MemoryBus::storeHalfWord(uint64_t address, uint16_t value, hadesvm::util::B
     throw MemoryAccessError::InvalidAddress;
 }
 
-void MemoryBus::storeWord(uint64_t address, uint32_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+void MemoryBus::storeWord(uint64_t address, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -292,7 +292,7 @@ void MemoryBus::storeWord(uint64_t address, uint32_t value, hadesvm::util::ByteO
     throw MemoryAccessError::InvalidAddress;
 }
 
-void MemoryBus::storeLongWord(uint64_t address, uint64_t value, hadesvm::util::ByteOrder byteOrder) throws(MemoryAccessError)
+void MemoryBus::storeLongWord(uint64_t address, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     if (_Mapping * mapping = _findMapping(address))
     {
@@ -320,7 +320,7 @@ QString MemoryBus::Type::displayName() const
 
 hadesvm::core::ComponentCategory * MemoryBus::Type::category() const
 {
-    hadesvm::core::StandardComponentCategories::Memory;
+    return StandardComponentCategories::Memory;
 }
 
 bool MemoryBus::Type::suspendable() const

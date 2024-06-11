@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" Version="1">
- <Components/>
+ <Components>
+  <Component Type="CereonMemoryBus"/>
+ </Components>
 </VirtualMachine>

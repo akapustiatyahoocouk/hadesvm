@@ -7,7 +7,8 @@ SOURCES += \
     Alu.cpp \
     Architectures.cpp \
     MemoryBus.cpp \
-    Plugins.cpp
+    Plugins.cpp \
+    ResidentMemoryBlock.cpp
 
 HEADERS += \
     API.hpp \
