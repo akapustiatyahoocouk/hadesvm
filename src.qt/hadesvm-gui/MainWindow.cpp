@@ -445,10 +445,40 @@ void MainWindow::_onStopVm()
 
 void MainWindow::_onSuspendVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Running)
+    {   //  Nothing to do
+        return;
+    }
+
+    try
+    {
+        _currentVirtualAppliance->suspend();
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+    }
+    _refresh();
 }
 
 void MainWindow::_onResumeVm()
 {
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Suspended)
+    {   //  Nothing to do
+        return;
+    }
+
+    try
+    {
+        _currentVirtualAppliance->resume();
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+    }
+    _refresh();
 }
 
 void MainWindow::_onConfigureVm()

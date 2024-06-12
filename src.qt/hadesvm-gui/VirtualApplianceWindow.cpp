@@ -30,6 +30,15 @@ VirtualApplianceWindow::~VirtualApplianceWindow()
 }
 
 //////////
+//  Implementatiuon helpers
+void VirtualApplianceWindow::_refresh()
+{
+    _ui->actionStop->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
+    _ui->actionSuspend->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
+                                   _virtualAppliance->suspendable());
+}
+
+//////////
 //  QWidget
 void VirtualApplianceWindow::closeEvent(QCloseEvent * event)
 {
@@ -37,6 +46,27 @@ void VirtualApplianceWindow::closeEvent(QCloseEvent * event)
     //  just confirm whether to stop it
     _virtualAppliance->stop();
     event->ignore();    //  MainWindow will destroy this VA window when VA is no longer Running
+}
+
+//////////
+//  Signal handlers
+void VirtualApplianceWindow::_onStopVm()
+{
+    _virtualAppliance->stop();
+    _refresh();
+}
+
+void VirtualApplianceWindow::_onSuspendVm()
+{
+    try
+    {
+        _virtualAppliance->suspend();
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+    }
+    _refresh();
 }
 
 //  End of hadesvm-gui/VirtualApplianceWindow.cpp

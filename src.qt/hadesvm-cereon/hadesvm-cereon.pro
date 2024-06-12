@@ -10,7 +10,9 @@ SOURCES += \
     Plugins.cpp \
     ResidentMemoryBlock.cpp \
     ResidentRamBlock.cpp \
-    ResidentRamBlockEditor.cpp
+    ResidentRamBlockEditor.cpp \
+    ResidentRomBlock.cpp \
+    ResidentRomBlockEditor.cpp
 
 HEADERS += \
     API.hpp \
@@ -20,9 +22,11 @@ HEADERS += \
     Linkage.hpp \
     Memory.hpp \
     ProcessorCore.hpp \
-    ResidentRamBlockEditor.hpp
+    ResidentRamBlockEditor.hpp \
+    ResidentRomBlockEditor.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
 FORMS += \
-    ResidentRamBlockEditor.ui
+    ResidentRamBlockEditor.ui \
+    ResidentRomBlockEditor.ui

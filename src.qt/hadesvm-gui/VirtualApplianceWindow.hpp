@@ -36,10 +36,19 @@ namespace hadesvm
         private:
             hadesvm::core::VirtualAppliance *   _virtualAppliance;
 
+            //  Helpers
+            void                _refresh();
+
             //////////
             //  Controls & resources
         private:
             Ui::VirtualApplianceWindow *    _ui;
+
+            //////////
+            //  Signal handlers
+        private slots:
+            void                _onStopVm();
+            void                _onSuspendVm();
         };
     }
 }

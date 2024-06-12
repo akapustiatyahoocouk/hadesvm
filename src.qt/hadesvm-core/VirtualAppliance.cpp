@@ -7,6 +7,11 @@
 #include "hadesvm-core/API.hpp"
 using namespace hadesvm::core;
 
+namespace
+{
+    const QString VaDirectoryPrefix = "./";
+}
+
 //////////
 //  Constants
 const QString VirtualAppliance::PreferredExtension = ".hadesvm";
@@ -262,6 +267,41 @@ VirtualArchitecture * VirtualAppliance::architecture() const
     return _architecture;
 }
 
+QString VirtualAppliance::toRelativePath(const QString & path)
+{
+    QDir baseDir(_directory);
+    QString relativePath = baseDir.relativeFilePath(path);
+    if (!relativePath.contains("/") && !relativePath.contains("\\") && relativePath != ".")
+    {
+        relativePath = VaDirectoryPrefix + relativePath;
+    }
+    else if (relativePath.contains("..") && QFileInfo(path).isAbsolute())
+    {
+        relativePath = path;
+    }
+    qDebug() << path << " -> " << relativePath;   //  TODO kill off
+    return relativePath;
+}
+
+QString VirtualAppliance::toAbsolutePath(const QString & path)
+{
+    QDir baseDir(_directory);
+
+    QString absolutePath = path;
+    if (absolutePath == ".")
+    {
+        absolutePath = _directory;
+    }
+    else if (absolutePath.startsWith(VaDirectoryPrefix))
+    {
+        absolutePath = absolutePath.mid(VaDirectoryPrefix.length());
+    }
+    absolutePath = baseDir.absoluteFilePath(absolutePath);
+
+    qDebug() << path << " -> " << absolutePath;   //  TODO kill off
+    return absolutePath;
+}
+
 ComponentList VirtualAppliance::compatibleComponents() const
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
@@ -418,6 +458,15 @@ void VirtualAppliance::stop() noexcept
             _deinitializeComponents();
             _disconnectComponents();
             _state = State::Stopped;
+            try
+            {   //  While VA was running, some floppy images may have been
+                //  mounted, optional devices connected, etc. - so save VA
+                //  configuration
+                save();
+            }
+            catch (...)
+            {   //  OOPS! Suppress, though TODO but log ?
+            }
             break;
         default:
             Q_ASSERT(false);

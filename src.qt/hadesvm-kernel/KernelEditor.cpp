@@ -11,7 +11,6 @@ using namespace hadesvm::kernel;
 namespace
 {
     const QString NamePathSeparator = " -> ";
-    const QString VaDirectoryPrefix = "./";
 }
 
 //////////
@@ -87,13 +86,7 @@ void KernelEditor::_refresh()
 
 void KernelEditor::_addMountedFolder(const QString & volumeName, const QString & path)
 {
-    QDir baseDir(_kernel->virtualAppliance()->directory());
-    QString relativePath = baseDir.relativeFilePath(path);
-    if (!relativePath.contains("/") && !relativePath.contains("\\") && relativePath != ".")
-    {
-        relativePath = VaDirectoryPrefix + relativePath;
-    }
-    qDebug() << relativePath;
+    QString relativePath = _kernel->virtualAppliance()->toRelativePath(path);
 
     //  Is there an item with the same volume name already ?
     for (int i = 0; i < _ui->volumesListWidget->count(); i++)
@@ -151,18 +144,8 @@ void KernelEditor::_onModifyVolumePushButtonClicked()
 {
     QListWidgetItem * item = _ui->volumesListWidget->currentItem();
     QStringList volumeNameAndPath = item->text().split(NamePathSeparator);
-    QDir baseDir(_kernel->virtualAppliance()->directory());
 
-    QString absolutePath = volumeNameAndPath[1];
-    if (absolutePath == ".")
-    {
-        absolutePath = _kernel->virtualAppliance()->directory();
-    }
-    else if (absolutePath.startsWith(VaDirectoryPrefix))
-    {
-        absolutePath = absolutePath.mid(VaDirectoryPrefix.length());
-    }
-    absolutePath = baseDir.absoluteFilePath(absolutePath);
+    QString absolutePath = _kernel->virtualAppliance()->toAbsolutePath(volumeNameAndPath[1]);
 
     MountedFolderDialog dlg(this, volumeNameAndPath[0], absolutePath);
     if (dlg.exec() == QDialog::DialogCode::Accepted)

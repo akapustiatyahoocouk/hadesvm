@@ -35,7 +35,7 @@ void MemoryBus::deserialiseConfiguration(QDomElement /*componentElement*/)
 {   //  Nothing to do
 }
 
-ComponentEditor * MemoryBus::createEditor(QWidget * parent)
+ComponentEditor * MemoryBus::createEditor(QWidget * /*parent*/)
 {
     return nullptr;
 }
@@ -214,7 +214,7 @@ void MemoryBus::detachMemoryBlock(MemoryBlock * memoryBlock)
     }
 
     size_t numMappings = _endMappings - _mappings;
-    for (size_t i = index; index + 1 < numMappings; i++)
+    for (size_t i = index; i + 1 < numMappings; i++)
     {
         _mappings[i] = _mappings[i + 1];
     }

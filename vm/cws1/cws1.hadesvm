@@ -3,5 +3,6 @@
  <Components>
   <Component Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamBlock"/>
+  <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomBlock"/>
  </Components>
 </VirtualMachine>

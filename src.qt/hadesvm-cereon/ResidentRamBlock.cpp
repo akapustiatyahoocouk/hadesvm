@@ -55,7 +55,7 @@ QString ResidentRamBlock::Type::mnemonic() const
 
 QString ResidentRamBlock::Type::displayName() const
 {
-    return "Cereon Resident Ram Block";
+    return "Cereon Resident RAM Block";
 }
 
 hadesvm::core::ComponentCategory * ResidentRamBlock::Type::category() const

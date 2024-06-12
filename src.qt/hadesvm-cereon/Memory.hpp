@@ -306,7 +306,7 @@ namespace hadesvm
             //////////
             //  Constants
         public:
-            static const uint64_t   DefaultStartAddress = 0xFFFFFFFFFFF00000;
+            static const uint64_t   DefaultStartAddress;
             static const MemorySize DefaultSize;
             static const QString    DefailtContentFilePath;
 
@@ -317,6 +317,12 @@ namespace hadesvm
             class HADESVM_CEREON_PUBLIC Type final : public hadesvm::core::ComponentType
             {
                 HADESVM_DECLARE_SINGLETON(Type)
+
+                //////////
+                //  hadesvm::util::StockObject
+            public:
+                virtual QString mnemonic() const override;
+                virtual QString displayName() const override;
 
                 //////////
                 //  hadesvm::core::ComponentType
@@ -338,19 +344,30 @@ namespace hadesvm
             //  hadesvm::core::Component
         public:
             virtual Type *      type() const override { return Type::instance(); }
+            virtual QString     displayName() const override;
+            virtual void        serialiseConfiguration(QDomElement componentElement) const override;
+            virtual void        deserialiseConfiguration(QDomElement componentElement) override;
+            virtual ComponentEditor *   createEditor(QWidget * parent) override;
+            virtual Ui *        createUi() override;
+
+            //////////
+            //  hadesvm::core::Component (state management)
+            //  Must only be called from the QApplication's main thread (except state())
+        public:
+            virtual void        initialize() throws(hadesvm::core::VirtualApplianceException) override;
 
             //////////
             //  MemoryBlock
         public:
-            virtual void        storeByte(size_t offset, uint8_t value) throws(MemoryAccessError) override;
-            virtual void        storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
-            virtual void        storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            Q_NORETURN virtual void storeByte(size_t offset, uint8_t value) throws(MemoryAccessError) override;
+            Q_NORETURN virtual void storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            Q_NORETURN virtual void storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
+            Q_NORETURN virtual void storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError) override;
 
             //////////
             //  Operations (configuration)
         public:
-            QString             contentFilePath() const { return _contentFilePath; }
+            QString             contentFilePath() const;
             void                setContentFilePath(const QString & contentFilePath);
 
             //////////
@@ -361,33 +378,6 @@ namespace hadesvm
             //  Helpers
             QString             _resolveContentFilePath(const QString & path) const;
         };
-
-#if 0
-//  TODO define in a separate header
-        //  The editor of resident ROM block properties
-        class HADESVM_CEREON_PUBLIC ResidentRomBlockEditor final : public hadesvm::core::ComponentEditor
-        {
-            Q_OBJECT
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRomBlockEditor)
-
-            //////////
-            //  Construction/destruction
-        public:
-            explicit ResidentRomBlockEditor(QWidget * parent);
-
-            //////////
-            //  hadesvm::core::ComponentEditor
-        public:
-            virtual void    loadComponentConfiguration() override;
-            virtual bool    canSaveComponentConfiguration() const override;
-            virtual void    saveComponentConfiguration() override;
-
-            //////////
-            //  Implementation
-        private:
-            ResidentRomBlock *  _residentRomBlock;  //  nullptr == none
-        };
-#endif
     }
 }
 

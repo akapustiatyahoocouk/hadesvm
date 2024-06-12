@@ -66,6 +66,11 @@ namespace hadesvm
 
             //  TODO document
             //  Must only be called from the QApplication's main thread
+            QString                 toRelativePath(const QString & path);
+            QString                 toAbsolutePath(const QString & path);
+
+            //  TODO document
+            //  Must only be called from the QApplication's main thread
             ComponentList           compatibleComponents() const;
             ComponentList           adaptedComponents() const;
 

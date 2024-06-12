@@ -56,9 +56,65 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuVm">
+    <property name="title">
+     <string>&amp;VM</string>
+    </property>
+    <addaction name="actionStop"/>
+    <addaction name="separator"/>
+    <addaction name="actionSuspend"/>
+   </widget>
+   <addaction name="menuVm"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionSuspend">
+   <property name="text">
+    <string>S&amp;uspend</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="text">
+    <string>S&amp;top</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionStop</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
+   <slot>_onStopVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSuspend</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
+   <slot>_onSuspendVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onStopVm()</slot>
+  <slot>_onSuspendVm()</slot>
+ </slots>
 </ui>
