@@ -4,6 +4,7 @@ TEMPLATE = lib
 DEFINES += HADESVM_CORE_LIBRARY
 
 SOURCES += \
+    ClockFrequency.cpp \
     Component.cpp \
     ComponentAdaptor.cpp \
     ComponentAdaptorType.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     Component.hpp \
     ComponentAdaptor.hpp \
     ComponentAdaptorType.hpp \
+    ComponentAspect.hpp \
     ComponentCategory.hpp \
     ComponentEditor.hpp \
     ComponentType.hpp \

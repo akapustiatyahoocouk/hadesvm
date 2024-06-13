@@ -506,6 +506,8 @@ void MainWindow::_onConfigureVm()
 
 void MainWindow::_onHelpAbout()
 {
+    AboutDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::_onCurrentVmChanged(int)

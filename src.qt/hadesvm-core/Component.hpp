@@ -31,7 +31,7 @@ namespace hadesvm
             enum class State
             {
                 //  Component has been constructed, but not yet connected to
-                //  otther components, has no rintime state and is not running.
+                //  other components, has no rintime state and is not running.
                 Constructed,
 
                 //  Component has been constructed and connected to other

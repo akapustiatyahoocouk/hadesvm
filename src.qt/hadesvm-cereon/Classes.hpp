@@ -17,13 +17,10 @@ namespace hadesvm
         class HADESVM_CEREON_PUBLIC Kis1Keyboard;
 
         using ProcessorCoreList = QList<ProcessorCore*>;
+        using IoPortList = QList<IIoPort*>;
 
         //  Adopt a few types from dependency components for cleaner reading
-        using StandardComponentCategories = hadesvm::core::StandardComponentCategories;
-        using MemorySize = hadesvm::core::MemorySize;
-        using ComponentEditor = hadesvm::core::ComponentEditor;
-
-        using ByteOrder = hadesvm::util::ByteOrder;
+        using ByteOrder = hadesvm::util::ByteOrder; //  TODO kill off this alias
     }
 }
 

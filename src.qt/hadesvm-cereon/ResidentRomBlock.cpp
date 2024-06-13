@@ -10,7 +10,7 @@ using namespace hadesvm::cereon;
 //////////
 //  Constants
 const uint64_t   ResidentRomBlock::DefaultStartAddress = UINT64_C(0xFFFFFFFFFFF00000);
-const MemorySize ResidentRomBlock::DefaultSize = MemorySize::megabytes(1);
+const hadesvm::core::MemorySize ResidentRomBlock::DefaultSize = hadesvm::core::MemorySize::megabytes(1);
 const QString    ResidentRomBlock::DefailtContentFilePath = "./rom.bin";
 
 //////////
@@ -46,7 +46,7 @@ void ResidentRomBlock::deserialiseConfiguration(QDomElement componentElement)
     _contentFilePath = componentElement.attribute("ContentFilePath");
 }
 
-ComponentEditor * ResidentRomBlock::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * ResidentRomBlock::createEditor(QWidget * parent)
 {
     return new ResidentRomBlockEditor(parent, this);
 }
@@ -82,7 +82,7 @@ void ResidentRomBlock::initialize() throws(hadesvm::core::VirtualApplianceExcept
         {   //  EOF
             break;
         }
-        for (size_t i = 0; i < chunkSize; i++)
+        for (int i = 0; i < chunkSize; i++)
         {
             ResidentMemoryBlock::storeByte(offset++, chunk[i]);
         }
@@ -145,7 +145,7 @@ QString ResidentRomBlock::Type::displayName() const
 
 hadesvm::core::ComponentCategory * ResidentRomBlock::Type::category() const
 {
-    return StandardComponentCategories::Memory;
+    return hadesvm::core::StandardComponentCategories::Memory;
 }
 
 bool ResidentRomBlock::Type::suspendable() const
@@ -168,4 +168,4 @@ ResidentRomBlock * ResidentRomBlock::Type::createComponent()
     return new ResidentRomBlock();
 }
 
-//  End of hadesvm-cereon/ResidentMemoryBlock.cpp
+//  End of hadesvm-cereon/ResidentRomBlock.cpp

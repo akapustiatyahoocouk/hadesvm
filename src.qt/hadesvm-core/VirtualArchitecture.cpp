@@ -18,6 +18,14 @@ VirtualArchitecture::~VirtualArchitecture()
 }
 
 //////////
+//  Operations
+void VirtualArchitecture::validateVirtualAppliance(VirtualAppliance * virtualAppliance)
+{
+    Q_ASSERT(virtualAppliance != nullptr);
+    Q_ASSERT(virtualAppliance->architecture() == this);
+}
+
+//////////
 //  Registry
 namespace
 {

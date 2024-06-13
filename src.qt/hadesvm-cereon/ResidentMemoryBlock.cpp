@@ -9,7 +9,7 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-ResidentMemoryBlock::ResidentMemoryBlock(uint64_t startAddress, const MemorySize & size)
+ResidentMemoryBlock::ResidentMemoryBlock(uint64_t startAddress, const hadesvm::core::MemorySize & size)
     :   //  Configuration
         _startAddress(startAddress),
         _size(size),
@@ -40,7 +40,7 @@ void ResidentMemoryBlock::deserialiseConfiguration(QDomElement componentElement)
         _startAddress = startAddress;
     }
 
-    MemorySize size = _size;
+    hadesvm::core::MemorySize size = _size;
     if (hadesvm::util::fromEntireString(componentElement.attribute("Size"), size))
     {   //  TODO validate size - must be a multiple of 8 and >0
         _size = size;
@@ -303,7 +303,7 @@ void ResidentMemoryBlock::setStartAddress(uint64_t startAddress)
     _startAddress = startAddress;
 }
 
-void ResidentMemoryBlock::setSize(const MemorySize & size)
+void ResidentMemoryBlock::setSize(const hadesvm::core::MemorySize & size)
 {
     Q_ASSERT(_state == State::Constructed);
 

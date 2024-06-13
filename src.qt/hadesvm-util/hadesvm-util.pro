@@ -4,6 +4,7 @@ TEMPLATE = lib
 DEFINES += HADESVM_UTIL_LIBRARY
 
 SOURCES += \
+    ByteOrder.cpp \
     Exceptions.cpp \
     FromString.cpp \
     Math.cpp \

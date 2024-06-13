@@ -1,7 +1,7 @@
 //
 //  hadesvm-util/Math.cpp
 //
-//  The vsm::util::Math class implementation
+//  The hadesvm::util::Math class implementation
 //
 //////////
 #include "hadesvm-util/API.hpp"

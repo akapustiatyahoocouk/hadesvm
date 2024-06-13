@@ -24,6 +24,13 @@ namespace hadesvm
             //////////
             //  Operations
         public:
+            //  Performs validation of a Stopped VA.
+            //  Concrete VirtualArchitectures will impose their own rules in
+            //  addition to the basic rules enforced by the default implementation
+            //  of this method; therefore an overriding method MUYST call this
+            //  base method before performing extra validations.
+            //  Throws VirtualApplianceException is VA validation fails.
+            virtual void        validateVirtualAppliance(VirtualAppliance * virtualAppliance) throws(VirtualApplianceException);
 
             //////////
             //  Registry

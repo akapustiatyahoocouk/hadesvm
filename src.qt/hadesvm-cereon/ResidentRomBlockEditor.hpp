@@ -15,7 +15,7 @@ namespace hadesvm
         //  The editor for a ResidentRomBlock component
         namespace Ui { class ResidentRomBlockEditor; }
 
-        class HADESVM_CEREON_PUBLIC ResidentRomBlockEditor : public ComponentEditor
+        class HADESVM_CEREON_PUBLIC ResidentRomBlockEditor : public hadesvm::core::ComponentEditor
         {
             Q_OBJECT
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRomBlockEditor)
@@ -39,8 +39,8 @@ namespace hadesvm
             ResidentRomBlock *const _residentRomBlock;
 
             //  Helpers
-            MemorySize::Unit    _selectedMemorySizeUnit() const;
-            void                _setSelectedMemorySizeUnit(MemorySize::Unit unit);
+            hadesvm::core::MemorySize::Unit _selectedMemorySizeUnit() const;
+            void                _setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit);
 
             //////////
             //  Controls & resources

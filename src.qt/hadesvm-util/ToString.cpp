@@ -6,6 +6,13 @@
 //////////
 #include "hadesvm-util/API.hpp"
 
+#if defined(Q_CC_GNU)
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#elif defined(Q_CC_MSVC)
+#else
+    #error Unsupported compiler
+#endif
+
 //////////
 //  API
 HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(bool value)
@@ -117,9 +124,40 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(const QString & value)
 
 //  TODO uncomment & implement
 //HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(signed char value, const char * crtFormat);
-//HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned char value, const char * crtFormat);
+
+HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned char value, const char * crtFormat)
+{
+    static QRegularExpression re("%?[-+0 #]*[0-9]*[diouxX]");
+
+    QRegularExpressionMatch match = re.match(crtFormat);
+    if (match.hasMatch())
+    {
+        return QString::asprintf(crtFormat, value);
+    }
+    else
+    {   //  OOPS! Be defensive in release mode, though
+        Q_ASSERT(false);
+        return hadesvm::util::toString(value);
+    }
+}
+
 //HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(signed short value, const char * crtFormat);
-//HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned short value, const char * crtFormat);
+HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned short value, const char * crtFormat)
+{
+    static QRegularExpression re("%?[-+0 #]*[0-9]*[diouxX]");
+
+    QRegularExpressionMatch match = re.match(crtFormat);
+    if (match.hasMatch())
+    {
+        return QString::asprintf(crtFormat, value);
+    }
+    else
+    {   //  OOPS! Be defensive in release mode, though
+        Q_ASSERT(false);
+        return hadesvm::util::toString(value);
+    }
+}
+
 //HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(signed int value, const char * crtFormat);
 //HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned int value, const char * crtFormat);
 //HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(signed long value, const char * crtFormat);

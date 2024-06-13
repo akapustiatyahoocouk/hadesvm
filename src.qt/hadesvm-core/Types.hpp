@@ -67,16 +67,83 @@ namespace hadesvm
             uint64_t            _numberOfUnits;
             Unit                _unit;
         };
+
+        //////////
+        //  Represents a clock frequency
+        class HADESVM_CORE_PUBLIC ClockFrequency final
+        {
+            //////////
+            //  Types
+        public:
+            enum class Unit : uint64_t
+            {
+                Hz = UINT64_C(1),
+                KHz = UINT64_C(1000),
+                MHz = UINT64_C(1000) * UINT64_C(1000),
+                GHz = UINT64_C(1000) * UINT64_C(1000) * UINT64_C(1000)
+            };
+
+            //////////
+            //  Construction/destruction
+        public:
+            ClockFrequency(uint64_t numberOfUnits, Unit unit);
+            virtual ~ClockFrequency() = default;
+
+            //////////
+            //  Operators
+        public:
+            bool                operator == (const ClockFrequency & op2) const { return compare(op2) == 0; }
+            bool                operator != (const ClockFrequency & op2) const { return compare(op2) != 0; }
+            bool                operator <  (const ClockFrequency & op2) const { return compare(op2) <  0; }
+            bool                operator <= (const ClockFrequency & op2) const { return compare(op2) <= 0; }
+            bool                operator >  (const ClockFrequency & op2) const { return compare(op2) >  0; }
+            bool                operator >= (const ClockFrequency & op2) const { return compare(op2) >= 0; }
+
+            //////////
+            //  Operations
+        public:
+            //  The number of units / unit
+            uint64_t            numberOfUnits() const { return _numberOfUnits; }
+            Unit                unit() const { return _unit; }
+
+            //  Converts the ClockFrequency to the specified Unit
+            uint64_t            toHz() const;
+
+            //  Builds the ClockFrequency from the specified Unit count
+            static ClockFrequency   hertz(uint64_t count);
+            static ClockFrequency   kilohertz(uint64_t count);
+            static ClockFrequency   megahertz(uint64_t count);
+            static ClockFrequency   gigahertz(uint64_t count);
+
+            //  Compares two ClockFrequencys; returns a negative, zero or positive
+            //  value if the 1st ClockFrequency is less than, equal to or greater
+            //  than the 2nd ClockFrequency.
+            int                 compare(const ClockFrequency & op2) const;
+
+            //////////
+            //  Implementation
+        private:
+            uint64_t            _numberOfUnits;
+            Unit                _unit;
+        };
     }
 
     //  Formatting and parsing
     namespace util
     {
         HADESVM_CORE_PUBLIC QString toString(const core::MemorySize & value);
+        HADESVM_CORE_PUBLIC QString toString(const core::ClockFrequency & value);
 
         HADESVM_CORE_PUBLIC bool fromString(const QString & s, qsizetype & scan, core::MemorySize & value);
+        HADESVM_CORE_PUBLIC bool fromString(const QString & s, qsizetype & scan, core::ClockFrequency & value);
 
         inline bool fromEntireString(const QString & s, core::MemorySize & value)
+        {
+            qsizetype scan = 0;
+            return hadesvm::util::fromString(s, scan, value) && scan == s.length();
+        }
+
+        inline bool fromEntireString(const QString & s, core::ClockFrequency & value)
         {
             qsizetype scan = 0;
             return hadesvm::util::fromString(s, scan, value) && scan == s.length();

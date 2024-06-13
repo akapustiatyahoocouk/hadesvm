@@ -35,7 +35,7 @@ void MemoryBus::deserialiseConfiguration(QDomElement /*componentElement*/)
 {   //  Nothing to do
 }
 
-ComponentEditor * MemoryBus::createEditor(QWidget * /*parent*/)
+hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * /*parent*/)
 {
     return nullptr;
 }
@@ -315,7 +315,7 @@ QString MemoryBus::Type::displayName() const
 
 hadesvm::core::ComponentCategory * MemoryBus::Type::category() const
 {
-    return StandardComponentCategories::Memory;
+    return hadesvm::core::StandardComponentCategories::InternalDevices;
 }
 
 bool MemoryBus::Type::suspendable() const

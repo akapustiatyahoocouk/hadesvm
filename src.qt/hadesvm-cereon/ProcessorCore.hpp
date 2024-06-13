@@ -202,23 +202,23 @@ namespace hadesvm
             //  Operations
         public:
             //  Resets this processor core to post-bootstrapping state
-            void                    reset();
+            void                reset();
 
             //  Called on every clock tick
-            void                    onClockTick();
+            void                onClockTick();
 
             //////////
             //  Implementation
         private:
-            Processor *const        _processor; //  ...to which this core belongs
-            const uint8_t           _id;        //  ...of this core
-            const Features          _features;  //  ...of this core
-            const ByteOrder  _initialByteOrder;
-            const bool              _canChangeByteOrder;
-            const bool              _isPrimaryCore;
+            Processor *const    _processor; //  ...to which this core belongs
+            const uint8_t       _id;        //  ...of this core
+            const Features      _features;  //  ...of this core
+            const ByteOrder     _initialByteOrder;
+            const bool          _canChangeByteOrder;
+            const bool          _isPrimaryCore;
 
             //  Links to other processor components
-            Mmu *                   _mmu;
+            Mmu *               _mmu;
 
             //  Registers & state
             class _StateRegister final
@@ -257,74 +257,75 @@ namespace hadesvm
                 //////////
                 //  Operators
             public:
-                _StateRegister &    operator = (uint64_t value) { _value = value; _replicateBitFields(); return *this; }
-                                    operator uint64_t () const { return _value; }
+                _StateRegister &operator = (uint64_t value) { _value = value; _replicateBitFields(); return *this; }
+                                operator uint64_t () const { return _value; }
 
                 //////////
                 //  Operations
             public:
-                uint64_t &          value() { return _value; }
-                bool                isInKernelMode() const { return (_value & KernelModeMask) != 0; }
-                bool                isInUserMode() const { return (_value & KernelModeMask) == 0; }
-                void                setKernelMode() { _value |= KernelModeMask; _replicateBitFields(); }
-                bool                isInRealMode() const { return !_virtualMode; }
-                bool                isInVirtualMode() const { return _virtualMode; }
-                bool                isInTrapMode() const { return _trapMode; }
-                void                setTrapMode() { _value |= TrapMask; _replicateBitFields(); }
-                bool                isInPendingTrapMode() const { return _pendingTrapMode; }
-                void                clearPendingTrapMode() { _value &= ~PendingTrapMask; _replicateBitFields(); }
-                ByteOrder    getByteOrder() const { return _byteOrder; }
-                void                setByteOrder(ByteOrder byteOrder)
+                uint64_t &      value() { return _value; }
+                bool            isInKernelMode() const { return (_value & KernelModeMask) != 0; }
+                bool            isInUserMode() const { return (_value & KernelModeMask) == 0; }
+                void            setKernelMode() { _value |= KernelModeMask; _replicateBitFields(); }
+                bool            isInRealMode() const { return !_virtualMode; }
+                bool            isInVirtualMode() const { return _virtualMode; }
+                bool            isInTrapMode() const { return _trapMode; }
+                void            setTrapMode() { _value |= TrapMask; _replicateBitFields(); }
+                bool            isInPendingTrapMode() const { return _pendingTrapMode; }
+                void            clearPendingTrapMode() { _value &= ~PendingTrapMask; _replicateBitFields(); }
+                ByteOrder       getByteOrder() const { return _byteOrder; }
+                void            setByteOrder(ByteOrder byteOrder)
                 {
+                    Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
                     _value = (byteOrder == ByteOrder::BigEndian) ?
                                 (_value | BigEndianModeMask) :
                                 (_value & ~BigEndianModeMask);
                     _replicateBitFields();
                 }
-                bool                isInWorkingMode() const { return _workingMode; }
-                bool                isInIdleMode() const { return !_workingMode; }
-                void                setWorkingMode() { _value |= WorkingModeMask; _replicateBitFields(); }
-                void                setIdleMode() { _value &= ~WorkingModeMask; _replicateBitFields(); }
+                bool            isInWorkingMode() const { return _workingMode; }
+                bool            isInIdleMode() const { return !_workingMode; }
+                void            setWorkingMode() { _value |= WorkingModeMask; _replicateBitFields(); }
+                void            setIdleMode() { _value &= ~WorkingModeMask; _replicateBitFields(); }
 
-                bool                isDebugEventsAllowed() const { return (_value & DebugEventsMask) != 0; }
-                bool                isRealOperandExceptionAllowed() const { return (_value & RealOperandExceptionMask) != 0; }
-                bool                isRealDivisionByZeroExceptionAllowed() const { return (_value & RealDivisionByZeroExceptionMask) != 0; }
-                bool                isRealOverflowExceptionAllowed() const { return (_value & RealOverflowExceptionMask) != 0; }
-                bool                isRealUnderflowExceptionAllowed() const { return (_value & RealUnderflowExceptionMask) != 0; }
-                bool                isRealInexactExceptionAllowed() const { return (_value & RealInexactExceptionMask) != 0; }
-                bool                isIntegerDivisionByZeroExceptionAllowed() const { return (_value & IntegerDivisionByZeroExceptionMask) != 0; }
-                bool                isIntegerOverflowExceptionAllowed() const { return (_value & IntegerOverflowExceptionMask) != 0; }
+                bool            isDebugEventsAllowed() const { return (_value & DebugEventsMask) != 0; }
+                bool            isRealOperandExceptionAllowed() const { return (_value & RealOperandExceptionMask) != 0; }
+                bool            isRealDivisionByZeroExceptionAllowed() const { return (_value & RealDivisionByZeroExceptionMask) != 0; }
+                bool            isRealOverflowExceptionAllowed() const { return (_value & RealOverflowExceptionMask) != 0; }
+                bool            isRealUnderflowExceptionAllowed() const { return (_value & RealUnderflowExceptionMask) != 0; }
+                bool            isRealInexactExceptionAllowed() const { return (_value & RealInexactExceptionMask) != 0; }
+                bool            isIntegerDivisionByZeroExceptionAllowed() const { return (_value & IntegerDivisionByZeroExceptionMask) != 0; }
+                bool            isIntegerOverflowExceptionAllowed() const { return (_value & IntegerOverflowExceptionMask) != 0; }
 
-                bool                isHardwareInterruptsEnabled() const { return (_value & HardwareInterruptsEnabledMask) != 0; }
-                void                enableHardwareInterrupts() { _value |= HardwareInterruptsEnabledMask; }
-                bool                isExternalInterruptsEnabled() const { return (_value & ExternalInterruptsEnabledMask) != 0; }
-                void                enableExternalInterrupts() { _value |= ExternalInterruptsEnabledMask; }
-                bool                isProgramInterruptsEnabled() const { return (_value & ProgramInterruptsEnabledMask) != 0; }
-                void                enableProgramInterrupts() { _value |= ProgramInterruptsEnabledMask; }
-                bool                isSvcInterruptsEnabled() const { return (_value & SvcInterruptsEnabledMask) != 0; }
-                void                enableSvcInterrupts() { _value |= SvcInterruptsEnabledMask; }
-                bool                isIoInterruptsEnabled() const { return (_value & IoInterruptsEnabledMask) != 0; }
-                void                enableIoInterrupts() { _value |= IoInterruptsEnabledMask; }
-                bool                isTimerInterruptsEnabled() const { return (_value & TimerInterruptsEnabledMask) != 0; }
-                void                enableTimerInterrupts() { _value |= TimerInterruptsEnabledMask; }
+                bool            isHardwareInterruptsEnabled() const { return (_value & HardwareInterruptsEnabledMask) != 0; }
+                void            enableHardwareInterrupts() { _value |= HardwareInterruptsEnabledMask; }
+                bool            isExternalInterruptsEnabled() const { return (_value & ExternalInterruptsEnabledMask) != 0; }
+                void            enableExternalInterrupts() { _value |= ExternalInterruptsEnabledMask; }
+                bool            isProgramInterruptsEnabled() const { return (_value & ProgramInterruptsEnabledMask) != 0; }
+                void            enableProgramInterrupts() { _value |= ProgramInterruptsEnabledMask; }
+                bool            isSvcInterruptsEnabled() const { return (_value & SvcInterruptsEnabledMask) != 0; }
+                void            enableSvcInterrupts() { _value |= SvcInterruptsEnabledMask; }
+                bool            isIoInterruptsEnabled() const { return (_value & IoInterruptsEnabledMask) != 0; }
+                void            enableIoInterrupts() { _value |= IoInterruptsEnabledMask; }
+                bool            isTimerInterruptsEnabled() const { return (_value & TimerInterruptsEnabledMask) != 0; }
+                void            enableTimerInterrupts() { _value |= TimerInterruptsEnabledMask; }
 
-                uint32_t            getContextId() const { return _contextId; }
+                uint32_t        getContextId() const { return _contextId; }
 
                 //////////
                 //  Implementation
             private:
-                uint64_t            _value; //  the underlying control register
+                uint64_t        _value; //  the underlying control register
 
                 //  Most frequently used $state fields - replicated for faster access
-                bool                _virtualMode = false;
-                bool                _trapMode = false;
-                bool                _pendingTrapMode = false;
-                bool                _workingMode = false;
-                ByteOrder    _byteOrder = ByteOrder::Unknown; //  replicates B bit of $state for faster access
-                uint32_t            _contextId = 0; //  replicates CID bits of $state for faster access
+                bool            _virtualMode = false;
+                bool            _trapMode = false;
+                bool            _pendingTrapMode = false;
+                bool            _workingMode = false;
+                ByteOrder       _byteOrder = ByteOrder::Unknown; //  replicates B bit of $state for faster access
+                uint32_t        _contextId = 0; //  replicates CID bits of $state for faster access
 
                 //  Helpers
-                void                _replicateBitFields()
+                void            _replicateBitFields()
                 {
                     _virtualMode = (_value & VirtualModeMask) != 0;
                     _trapMode = (_value & TrapMask) != 0;
@@ -338,38 +339,38 @@ namespace hadesvm
 
             uint64_t            _r[32];
 
-            _StateRegister      _state;
-            uint64_t            _pth;
-            uint64_t            _itc;
-            uint64_t            _cc;
-            uint64_t            _isaveipTm;
-            uint64_t            _isavestateTm;
-            uint64_t            _ihstateTm;
-            uint64_t            _ihaTm;
-            uint64_t            _isaveipIo;
-            uint64_t            _isavestateIo;
-            uint64_t            _ihstateIo;
-            uint64_t            _ihaIo;
-            uint64_t            _iscIo;
-            uint64_t            _isaveipSvc;
-            uint64_t            _isavestateSvc;
-            uint64_t            _ihstateSvc;
-            uint64_t            _ihaSvc;
-            uint64_t            _isaveipPrg;
-            uint64_t            _isavestatePrg;
-            uint64_t            _ihstatePrg;
-            uint64_t            _ihaPrg;
-            uint64_t            _iscPrg;
-            uint64_t            _isaveipExt;
-            uint64_t            _isavestateExt;
-            uint64_t            _ihstateExt;
-            uint64_t            _ihaExt;
-            uint64_t            _iscExt;
-            uint64_t            _isaveipHw;
-            uint64_t            _isavestateHw;
-            uint64_t            _ihstateHw;
-            uint64_t            _ihaHw;
-            uint64_t            _iscHw;
+            _StateRegister      _state = {};
+            uint64_t            _pth = 0;
+            uint64_t            _itc = 0;
+            uint64_t            _cc = 0;
+            uint64_t            _isaveipTm = 0;
+            uint64_t            _isavestateTm = 0;
+            uint64_t            _ihstateTm = 0;
+            uint64_t            _ihaTm = 0;
+            uint64_t            _isaveipIo = 0;
+            uint64_t            _isavestateIo = 0;
+            uint64_t            _ihstateIo = 0;
+            uint64_t            _ihaIo = 0;
+            uint64_t            _iscIo = 0;
+            uint64_t            _isaveipSvc = 0;
+            uint64_t            _isavestateSvc = 0;
+            uint64_t            _ihstateSvc = 0;
+            uint64_t            _ihaSvc = 0;
+            uint64_t            _isaveipPrg = 0;
+            uint64_t            _isavestatePrg = 0;
+            uint64_t            _ihstatePrg = 0;
+            uint64_t            _ihaPrg = 0;
+            uint64_t            _iscPrg = 0;
+            uint64_t            _isaveipExt = 0;
+            uint64_t            _isavestateExt = 0;
+            uint64_t            _ihstateExt = 0;
+            uint64_t            _ihaExt = 0;
+            uint64_t            _iscExt = 0;
+            uint64_t            _isaveipHw = 0;
+            uint64_t            _isavestateHw = 0;
+            uint64_t            _ihstateHw = 0;
+            uint64_t            _ihaHw = 0;
+            uint64_t            _iscHw = 0;
             uint64_t *const     _cPtr[32];
 
             uint64_t            _d[32];
@@ -581,28 +582,28 @@ namespace hadesvm
             //  Can throw ProgramInterrupt, HardwareInterrupt, ForceHalt
             typedef unsigned (ProcessorCore::*_InstructionHandler)(uint32_t instruction);
 
-            unsigned                _fetchAndExecuteInstruction();
-            unsigned                _handleInvalidInstruction(uint32_t instruction);
-            unsigned                _handleCop1(uint32_t instruction);
-            unsigned                _handleShift1(uint32_t instruction);
-            unsigned                _handleShift2(uint32_t instruction);
-            unsigned                _handleBase1(uint32_t instruction);
-            unsigned                _handleBase2(uint32_t instruction);
-            unsigned                _handleBase3(uint32_t instruction);
-            unsigned                _handleBase4(uint32_t instruction);
-            unsigned                _handleBase5(uint32_t instruction);
-            unsigned                _handleFp1(uint32_t instruction);
+            unsigned            _fetchAndExecuteInstruction();
+            unsigned            _handleInvalidInstruction(uint32_t instruction);
+            unsigned            _handleCop1(uint32_t instruction);
+            unsigned            _handleShift1(uint32_t instruction);
+            unsigned            _handleShift2(uint32_t instruction);
+            unsigned            _handleBase1(uint32_t instruction);
+            unsigned            _handleBase2(uint32_t instruction);
+            unsigned            _handleBase3(uint32_t instruction);
+            unsigned            _handleBase4(uint32_t instruction);
+            unsigned            _handleBase5(uint32_t instruction);
+            unsigned            _handleFp1(uint32_t instruction);
 
             //  BASE (data movement)
-            unsigned                _handleMovL(uint32_t instruction);
-            unsigned                _handleMovCR(uint32_t instruction);
-            unsigned                _handleMovRC(uint32_t instruction);
-            unsigned                _handleLiL(uint32_t instruction);
-            unsigned                _handleSwapH(uint32_t instruction);
-            unsigned                _handleSwapUH(uint32_t instruction);
-            unsigned                _handleSwapW(uint32_t instruction);
-            unsigned                _handleSwapUW(uint32_t instruction);
-            unsigned                _handleSwapL(uint32_t instruction);
+            unsigned            _handleMovL(uint32_t instruction);
+            unsigned            _handleMovCR(uint32_t instruction);
+            unsigned            _handleMovRC(uint32_t instruction);
+            unsigned            _handleLiL(uint32_t instruction);
+            unsigned            _handleSwapH(uint32_t instruction);
+            unsigned            _handleSwapUH(uint32_t instruction);
+            unsigned            _handleSwapW(uint32_t instruction);
+            unsigned            _handleSwapUW(uint32_t instruction);
+            unsigned            _handleSwapL(uint32_t instruction);
 
             //  BASE (arithmetic)
             void                    _handleIntegerOverflow(bool overflow)
@@ -766,98 +767,98 @@ namespace hadesvm
                         overflow);
             }
 
-            unsigned                _handleAddB(uint32_t instruction);
-            unsigned                _handleAddUB(uint32_t instruction);
-            unsigned                _handleAddH(uint32_t instruction);
-            unsigned                _handleAddUH(uint32_t instruction);
-            unsigned                _handleAddW(uint32_t instruction);
-            unsigned                _handleAddUW(uint32_t instruction);
-            unsigned                _handleAddL(uint32_t instruction);
-            unsigned                _handleAddUL(uint32_t instruction);
-            unsigned                _handleSubB(uint32_t instruction);
-            unsigned                _handleSubUB(uint32_t instruction);
-            unsigned                _handleSubH(uint32_t instruction);
-            unsigned                _handleSubUH(uint32_t instruction);
-            unsigned                _handleSubW(uint32_t instruction);
-            unsigned                _handleSubUW(uint32_t instruction);
-            unsigned                _handleSubL(uint32_t instruction);
-            unsigned                _handleSubUL(uint32_t instruction);
-            unsigned                _handleMulB(uint32_t instruction);
-            unsigned                _handleMulUB(uint32_t instruction);
-            unsigned                _handleMulH(uint32_t instruction);
-            unsigned                _handleMulUH(uint32_t instruction);
-            unsigned                _handleMulW(uint32_t instruction);
-            unsigned                _handleMulUW(uint32_t instruction);
-            unsigned                _handleMulL(uint32_t instruction);
-            unsigned                _handleMulUL(uint32_t instruction);
-            unsigned                _handleDivB(uint32_t instruction);
-            unsigned                _handleDivUB(uint32_t instruction);
-            unsigned                _handleDivH(uint32_t instruction);
-            unsigned                _handleDivUH(uint32_t instruction);
-            unsigned                _handleDivW(uint32_t instruction);
-            unsigned                _handleDivUW(uint32_t instruction);
-            unsigned                _handleDivL(uint32_t instruction);
-            unsigned                _handleDivUL(uint32_t instruction);
-            unsigned                _handleModB(uint32_t instruction);
-            unsigned                _handleModUB(uint32_t instruction);
-            unsigned                _handleModH(uint32_t instruction);
-            unsigned                _handleModUH(uint32_t instruction);
-            unsigned                _handleModW(uint32_t instruction);
-            unsigned                _handleModUW(uint32_t instruction);
-            unsigned                _handleModL(uint32_t instruction);
-            unsigned                _handleModUL(uint32_t instruction);
-            unsigned                _handleAbsB(uint32_t instruction);
-            unsigned                _handleAbsH(uint32_t instruction);
-            unsigned                _handleAbsW(uint32_t instruction);
-            unsigned                _handleAbsL(uint32_t instruction);
-            unsigned                _handleNegB(uint32_t instruction);
-            unsigned                _handleCpl2UB(uint32_t instruction);
-            unsigned                _handleNegH(uint32_t instruction);
-            unsigned                _handleCpl2UH(uint32_t instruction);
-            unsigned                _handleNegW(uint32_t instruction);
-            unsigned                _handleCpl2UW(uint32_t instruction);
-            unsigned                _handleNegL(uint32_t instruction);
-            unsigned                _handleCpl2UL(uint32_t instruction);
-            unsigned                _handleAddiB(uint32_t instruction);
-            unsigned                _handleAddiUB(uint32_t instruction);
-            unsigned                _handleAddiH(uint32_t instruction);
-            unsigned                _handleAddiUH(uint32_t instruction);
-            unsigned                _handleAddiW(uint32_t instruction);
-            unsigned                _handleAddiUW(uint32_t instruction);
-            unsigned                _handleAddiL(uint32_t instruction);
-            unsigned                _handleAddiUL(uint32_t instruction);
-            unsigned                _handleSubiB(uint32_t instruction);
-            unsigned                _handleSubiUB(uint32_t instruction);
-            unsigned                _handleSubiH(uint32_t instruction);
-            unsigned                _handleSubiUH(uint32_t instruction);
-            unsigned                _handleSubiW(uint32_t instruction);
-            unsigned                _handleSubiUW(uint32_t instruction);
-            unsigned                _handleSubiL(uint32_t instruction);
-            unsigned                _handleSubiUL(uint32_t instruction);
-            unsigned                _handleMuliB(uint32_t instruction);
-            unsigned                _handleMuliUB(uint32_t instruction);
-            unsigned                _handleMuliH(uint32_t instruction);
-            unsigned                _handleMuliUH(uint32_t instruction);
-            unsigned                _handleMuliW(uint32_t instruction);
-            unsigned                _handleMuliUW(uint32_t instruction);
-            unsigned                _handleMuliL(uint32_t instruction);
-            unsigned                _handleMuliUL(uint32_t instruction);
-            unsigned                _handleDiviB(uint32_t instruction);
-            unsigned                _handleDiviUB(uint32_t instruction);
-            unsigned                _handleDiviH(uint32_t instruction);
-            unsigned                _handleDiviUH(uint32_t instruction);
-            unsigned                _handleDiviW(uint32_t instruction);
-            unsigned                _handleDiviUW(uint32_t instruction);
-            unsigned                _handleDiviL(uint32_t instruction);
-            unsigned                _handleDiviUL(uint32_t instruction);
-            unsigned                _handleModiB(uint32_t instruction);
-            unsigned                _handleModiUB(uint32_t instruction);
-            unsigned                _handleModiH(uint32_t instruction);
-            unsigned                _handleModiUH(uint32_t instruction);
-            unsigned                _handleModiW(uint32_t instruction);
-            unsigned                _handleModiUW(uint32_t instruction);
-            unsigned                _handleModiL(uint32_t instruction);
-            unsigned                _handleModiUL(uint32_t instruction);
+            unsigned            _handleAddB(uint32_t instruction);
+            unsigned            _handleAddUB(uint32_t instruction);
+            unsigned            _handleAddH(uint32_t instruction);
+            unsigned            _handleAddUH(uint32_t instruction);
+            unsigned            _handleAddW(uint32_t instruction);
+            unsigned            _handleAddUW(uint32_t instruction);
+            unsigned            _handleAddL(uint32_t instruction);
+            unsigned            _handleAddUL(uint32_t instruction);
+            unsigned            _handleSubB(uint32_t instruction);
+            unsigned            _handleSubUB(uint32_t instruction);
+            unsigned            _handleSubH(uint32_t instruction);
+            unsigned            _handleSubUH(uint32_t instruction);
+            unsigned            _handleSubW(uint32_t instruction);
+            unsigned            _handleSubUW(uint32_t instruction);
+            unsigned            _handleSubL(uint32_t instruction);
+            unsigned            _handleSubUL(uint32_t instruction);
+            unsigned            _handleMulB(uint32_t instruction);
+            unsigned            _handleMulUB(uint32_t instruction);
+            unsigned            _handleMulH(uint32_t instruction);
+            unsigned            _handleMulUH(uint32_t instruction);
+            unsigned            _handleMulW(uint32_t instruction);
+            unsigned            _handleMulUW(uint32_t instruction);
+            unsigned            _handleMulL(uint32_t instruction);
+            unsigned            _handleMulUL(uint32_t instruction);
+            unsigned            _handleDivB(uint32_t instruction);
+            unsigned            _handleDivUB(uint32_t instruction);
+            unsigned            _handleDivH(uint32_t instruction);
+            unsigned            _handleDivUH(uint32_t instruction);
+            unsigned            _handleDivW(uint32_t instruction);
+            unsigned            _handleDivUW(uint32_t instruction);
+            unsigned            _handleDivL(uint32_t instruction);
+            unsigned            _handleDivUL(uint32_t instruction);
+            unsigned            _handleModB(uint32_t instruction);
+            unsigned            _handleModUB(uint32_t instruction);
+            unsigned            _handleModH(uint32_t instruction);
+            unsigned            _handleModUH(uint32_t instruction);
+            unsigned            _handleModW(uint32_t instruction);
+            unsigned            _handleModUW(uint32_t instruction);
+            unsigned            _handleModL(uint32_t instruction);
+            unsigned            _handleModUL(uint32_t instruction);
+            unsigned            _handleAbsB(uint32_t instruction);
+            unsigned            _handleAbsH(uint32_t instruction);
+            unsigned            _handleAbsW(uint32_t instruction);
+            unsigned            _handleAbsL(uint32_t instruction);
+            unsigned            _handleNegB(uint32_t instruction);
+            unsigned            _handleCpl2UB(uint32_t instruction);
+            unsigned            _handleNegH(uint32_t instruction);
+            unsigned            _handleCpl2UH(uint32_t instruction);
+            unsigned            _handleNegW(uint32_t instruction);
+            unsigned            _handleCpl2UW(uint32_t instruction);
+            unsigned            _handleNegL(uint32_t instruction);
+            unsigned            _handleCpl2UL(uint32_t instruction);
+            unsigned            _handleAddiB(uint32_t instruction);
+            unsigned            _handleAddiUB(uint32_t instruction);
+            unsigned            _handleAddiH(uint32_t instruction);
+            unsigned            _handleAddiUH(uint32_t instruction);
+            unsigned            _handleAddiW(uint32_t instruction);
+            unsigned            _handleAddiUW(uint32_t instruction);
+            unsigned            _handleAddiL(uint32_t instruction);
+            unsigned            _handleAddiUL(uint32_t instruction);
+            unsigned            _handleSubiB(uint32_t instruction);
+            unsigned            _handleSubiUB(uint32_t instruction);
+            unsigned            _handleSubiH(uint32_t instruction);
+            unsigned            _handleSubiUH(uint32_t instruction);
+            unsigned            _handleSubiW(uint32_t instruction);
+            unsigned            _handleSubiUW(uint32_t instruction);
+            unsigned            _handleSubiL(uint32_t instruction);
+            unsigned            _handleSubiUL(uint32_t instruction);
+            unsigned            _handleMuliB(uint32_t instruction);
+            unsigned            _handleMuliUB(uint32_t instruction);
+            unsigned            _handleMuliH(uint32_t instruction);
+            unsigned            _handleMuliUH(uint32_t instruction);
+            unsigned            _handleMuliW(uint32_t instruction);
+            unsigned            _handleMuliUW(uint32_t instruction);
+            unsigned            _handleMuliL(uint32_t instruction);
+            unsigned            _handleMuliUL(uint32_t instruction);
+            unsigned            _handleDiviB(uint32_t instruction);
+            unsigned            _handleDiviUB(uint32_t instruction);
+            unsigned            _handleDiviH(uint32_t instruction);
+            unsigned            _handleDiviUH(uint32_t instruction);
+            unsigned            _handleDiviW(uint32_t instruction);
+            unsigned            _handleDiviUW(uint32_t instruction);
+            unsigned            _handleDiviL(uint32_t instruction);
+            unsigned            _handleDiviUL(uint32_t instruction);
+            unsigned            _handleModiB(uint32_t instruction);
+            unsigned            _handleModiUB(uint32_t instruction);
+            unsigned            _handleModiH(uint32_t instruction);
+            unsigned            _handleModiUH(uint32_t instruction);
+            unsigned            _handleModiW(uint32_t instruction);
+            unsigned            _handleModiUW(uint32_t instruction);
+            unsigned            _handleModiL(uint32_t instruction);
+            unsigned            _handleModiUL(uint32_t instruction);
 
             //  BASE (boolean)
             template <class DataType>
@@ -908,131 +909,131 @@ namespace hadesvm
                 result = DataType::normalizeUnsigned(~op1 | op2);
             }
 
-            unsigned                _handleAndB(uint32_t instruction);
-            unsigned                _handleAndUB(uint32_t instruction);
-            unsigned                _handleAndH(uint32_t instruction);
-            unsigned                _handleAndUH(uint32_t instruction);
-            unsigned                _handleAndW(uint32_t instruction);
-            unsigned                _handleAndUW(uint32_t instruction);
-            unsigned                _handleAndL(uint32_t instruction);
-            unsigned                _handleOrB(uint32_t instruction);
-            unsigned                _handleOrUB(uint32_t instruction);
-            unsigned                _handleOrH(uint32_t instruction);
-            unsigned                _handleOrUH(uint32_t instruction);
-            unsigned                _handleOrW(uint32_t instruction);
-            unsigned                _handleOrUW(uint32_t instruction);
-            unsigned                _handleOrL(uint32_t instruction);
-            unsigned                _handleXorB(uint32_t instruction);
-            unsigned                _handleXorUB(uint32_t instruction);
-            unsigned                _handleXorH(uint32_t instruction);
-            unsigned                _handleXorUH(uint32_t instruction);
-            unsigned                _handleXorW(uint32_t instruction);
-            unsigned                _handleXorUW(uint32_t instruction);
-            unsigned                _handleXorL(uint32_t instruction);
-            unsigned                _handleImplB(uint32_t instruction);
-            unsigned                _handleImplUB(uint32_t instruction);
-            unsigned                _handleImplH(uint32_t instruction);
-            unsigned                _handleImplUH(uint32_t instruction);
-            unsigned                _handleImplW(uint32_t instruction);
-            unsigned                _handleImplUW(uint32_t instruction);
-            unsigned                _handleImplL(uint32_t instruction);
-            unsigned                _handleAndiL(uint32_t instruction);
-            unsigned                _handleOriL(uint32_t instruction);
-            unsigned                _handleXoriL(uint32_t instruction);
-            unsigned                _handleImpliL(uint32_t instruction);
-            unsigned                _handleNotB(uint32_t instruction);
-            unsigned                _handleNotUB(uint32_t instruction);
-            unsigned                _handleNotH(uint32_t instruction);
-            unsigned                _handleNotUH(uint32_t instruction);
-            unsigned                _handleNotW(uint32_t instruction);
-            unsigned                _handleNotUW(uint32_t instruction);
-            unsigned                _handleNotL(uint32_t instruction);
+            unsigned            _handleAndB(uint32_t instruction);
+            unsigned            _handleAndUB(uint32_t instruction);
+            unsigned            _handleAndH(uint32_t instruction);
+            unsigned            _handleAndUH(uint32_t instruction);
+            unsigned            _handleAndW(uint32_t instruction);
+            unsigned            _handleAndUW(uint32_t instruction);
+            unsigned            _handleAndL(uint32_t instruction);
+            unsigned            _handleOrB(uint32_t instruction);
+            unsigned            _handleOrUB(uint32_t instruction);
+            unsigned            _handleOrH(uint32_t instruction);
+            unsigned            _handleOrUH(uint32_t instruction);
+            unsigned            _handleOrW(uint32_t instruction);
+            unsigned            _handleOrUW(uint32_t instruction);
+            unsigned            _handleOrL(uint32_t instruction);
+            unsigned            _handleXorB(uint32_t instruction);
+            unsigned            _handleXorUB(uint32_t instruction);
+            unsigned            _handleXorH(uint32_t instruction);
+            unsigned            _handleXorUH(uint32_t instruction);
+            unsigned            _handleXorW(uint32_t instruction);
+            unsigned            _handleXorUW(uint32_t instruction);
+            unsigned            _handleXorL(uint32_t instruction);
+            unsigned            _handleImplB(uint32_t instruction);
+            unsigned            _handleImplUB(uint32_t instruction);
+            unsigned            _handleImplH(uint32_t instruction);
+            unsigned            _handleImplUH(uint32_t instruction);
+            unsigned            _handleImplW(uint32_t instruction);
+            unsigned            _handleImplUW(uint32_t instruction);
+            unsigned            _handleImplL(uint32_t instruction);
+            unsigned            _handleAndiL(uint32_t instruction);
+            unsigned            _handleOriL(uint32_t instruction);
+            unsigned            _handleXoriL(uint32_t instruction);
+            unsigned            _handleImpliL(uint32_t instruction);
+            unsigned            _handleNotB(uint32_t instruction);
+            unsigned            _handleNotUB(uint32_t instruction);
+            unsigned            _handleNotH(uint32_t instruction);
+            unsigned            _handleNotUH(uint32_t instruction);
+            unsigned            _handleNotW(uint32_t instruction);
+            unsigned            _handleNotUW(uint32_t instruction);
+            unsigned            _handleNotL(uint32_t instruction);
 
             //  BASE (shifts)
-            unsigned                _handleShlB(uint32_t instruction);
-            unsigned                _handleShlUB(uint32_t instruction);
-            unsigned                _handleShlH(uint32_t instruction);
-            unsigned                _handleShlUH(uint32_t instruction);
-            unsigned                _handleShlW(uint32_t instruction);
-            unsigned                _handleShlUW(uint32_t instruction);
-            unsigned                _handleShlL(uint32_t instruction);
-            unsigned                _handleShrB(uint32_t instruction);
-            unsigned                _handleShrUB(uint32_t instruction);
-            unsigned                _handleShrH(uint32_t instruction);
-            unsigned                _handleShrUH(uint32_t instruction);
-            unsigned                _handleShrW(uint32_t instruction);
-            unsigned                _handleShrUW(uint32_t instruction);
-            unsigned                _handleShrL(uint32_t instruction);
-            unsigned                _handleAslB(uint32_t instruction);
-            unsigned                _handleAslUB(uint32_t instruction);
-            unsigned                _handleAslH(uint32_t instruction);
-            unsigned                _handleAslUH(uint32_t instruction);
-            unsigned                _handleAslW(uint32_t instruction);
-            unsigned                _handleAslUW(uint32_t instruction);
-            unsigned                _handleAslL(uint32_t instruction);
-            unsigned                _handleAsrB(uint32_t instruction);
-            unsigned                _handleAsrUB(uint32_t instruction);
-            unsigned                _handleAsrH(uint32_t instruction);
-            unsigned                _handleAsrUH(uint32_t instruction);
-            unsigned                _handleAsrW(uint32_t instruction);
-            unsigned                _handleAsrUW(uint32_t instruction);
-            unsigned                _handleAsrL(uint32_t instruction);
-            unsigned                _handleRolB(uint32_t instruction);
-            unsigned                _handleRolUB(uint32_t instruction);
-            unsigned                _handleRolH(uint32_t instruction);
-            unsigned                _handleRolUH(uint32_t instruction);
-            unsigned                _handleRolW(uint32_t instruction);
-            unsigned                _handleRolUW(uint32_t instruction);
-            unsigned                _handleRolL(uint32_t instruction);
-            unsigned                _handleRorB(uint32_t instruction);
-            unsigned                _handleRorUB(uint32_t instruction);
-            unsigned                _handleRorH(uint32_t instruction);
-            unsigned                _handleRorUH(uint32_t instruction);
-            unsigned                _handleRorW(uint32_t instruction);
-            unsigned                _handleRorUW(uint32_t instruction);
-            unsigned                _handleRorL(uint32_t instruction);
-            unsigned                _handleShliB(uint32_t instruction);
-            unsigned                _handleShliUB(uint32_t instruction);
-            unsigned                _handleShliH(uint32_t instruction);
-            unsigned                _handleShliUH(uint32_t instruction);
-            unsigned                _handleShliW(uint32_t instruction);
-            unsigned                _handleShliUW(uint32_t instruction);
-            unsigned                _handleShliL(uint32_t instruction);
-            unsigned                _handleShriB(uint32_t instruction);
-            unsigned                _handleShriUB(uint32_t instruction);
-            unsigned                _handleShriH(uint32_t instruction);
-            unsigned                _handleShriUH(uint32_t instruction);
-            unsigned                _handleShriW(uint32_t instruction);
-            unsigned                _handleShriUW(uint32_t instruction);
-            unsigned                _handleShriL(uint32_t instruction);
-            unsigned                _handleAsliB(uint32_t instruction);
-            unsigned                _handleAsliUB(uint32_t instruction);
-            unsigned                _handleAsliH(uint32_t instruction);
-            unsigned                _handleAsliUH(uint32_t instruction);
-            unsigned                _handleAsliW(uint32_t instruction);
-            unsigned                _handleAsliUW(uint32_t instruction);
-            unsigned                _handleAsliL(uint32_t instruction);
-            unsigned                _handleAsriB(uint32_t instruction);
-            unsigned                _handleAsriUB(uint32_t instruction);
-            unsigned                _handleAsriH(uint32_t instruction);
-            unsigned                _handleAsriUH(uint32_t instruction);
-            unsigned                _handleAsriW(uint32_t instruction);
-            unsigned                _handleAsriUW(uint32_t instruction);
-            unsigned                _handleAsriL(uint32_t instruction);
-            unsigned                _handleRoliB(uint32_t instruction);
-            unsigned                _handleRoliUB(uint32_t instruction);
-            unsigned                _handleRoliH(uint32_t instruction);
-            unsigned                _handleRoliUH(uint32_t instruction);
-            unsigned                _handleRoliW(uint32_t instruction);
-            unsigned                _handleRoliUW(uint32_t instruction);
-            unsigned                _handleRoliL(uint32_t instruction);
-            unsigned                _handleRoriB(uint32_t instruction);
-            unsigned                _handleRoriUB(uint32_t instruction);
-            unsigned                _handleRoriH(uint32_t instruction);
-            unsigned                _handleRoriUH(uint32_t instruction);
-            unsigned                _handleRoriW(uint32_t instruction);
-            unsigned                _handleRoriUW(uint32_t instruction);
-            unsigned                _handleRoriL(uint32_t instruction);
+            unsigned            _handleShlB(uint32_t instruction);
+            unsigned            _handleShlUB(uint32_t instruction);
+            unsigned            _handleShlH(uint32_t instruction);
+            unsigned            _handleShlUH(uint32_t instruction);
+            unsigned            _handleShlW(uint32_t instruction);
+            unsigned            _handleShlUW(uint32_t instruction);
+            unsigned            _handleShlL(uint32_t instruction);
+            unsigned            _handleShrB(uint32_t instruction);
+            unsigned            _handleShrUB(uint32_t instruction);
+            unsigned            _handleShrH(uint32_t instruction);
+            unsigned            _handleShrUH(uint32_t instruction);
+            unsigned            _handleShrW(uint32_t instruction);
+            unsigned            _handleShrUW(uint32_t instruction);
+            unsigned            _handleShrL(uint32_t instruction);
+            unsigned            _handleAslB(uint32_t instruction);
+            unsigned            _handleAslUB(uint32_t instruction);
+            unsigned            _handleAslH(uint32_t instruction);
+            unsigned            _handleAslUH(uint32_t instruction);
+            unsigned            _handleAslW(uint32_t instruction);
+            unsigned            _handleAslUW(uint32_t instruction);
+            unsigned            _handleAslL(uint32_t instruction);
+            unsigned            _handleAsrB(uint32_t instruction);
+            unsigned            _handleAsrUB(uint32_t instruction);
+            unsigned            _handleAsrH(uint32_t instruction);
+            unsigned            _handleAsrUH(uint32_t instruction);
+            unsigned            _handleAsrW(uint32_t instruction);
+            unsigned            _handleAsrUW(uint32_t instruction);
+            unsigned            _handleAsrL(uint32_t instruction);
+            unsigned            _handleRolB(uint32_t instruction);
+            unsigned            _handleRolUB(uint32_t instruction);
+            unsigned            _handleRolH(uint32_t instruction);
+            unsigned            _handleRolUH(uint32_t instruction);
+            unsigned            _handleRolW(uint32_t instruction);
+            unsigned            _handleRolUW(uint32_t instruction);
+            unsigned            _handleRolL(uint32_t instruction);
+            unsigned            _handleRorB(uint32_t instruction);
+            unsigned            _handleRorUB(uint32_t instruction);
+            unsigned            _handleRorH(uint32_t instruction);
+            unsigned            _handleRorUH(uint32_t instruction);
+            unsigned            _handleRorW(uint32_t instruction);
+            unsigned            _handleRorUW(uint32_t instruction);
+            unsigned            _handleRorL(uint32_t instruction);
+            unsigned            _handleShliB(uint32_t instruction);
+            unsigned            _handleShliUB(uint32_t instruction);
+            unsigned            _handleShliH(uint32_t instruction);
+            unsigned            _handleShliUH(uint32_t instruction);
+            unsigned            _handleShliW(uint32_t instruction);
+            unsigned            _handleShliUW(uint32_t instruction);
+            unsigned            _handleShliL(uint32_t instruction);
+            unsigned            _handleShriB(uint32_t instruction);
+            unsigned            _handleShriUB(uint32_t instruction);
+            unsigned            _handleShriH(uint32_t instruction);
+            unsigned            _handleShriUH(uint32_t instruction);
+            unsigned            _handleShriW(uint32_t instruction);
+            unsigned            _handleShriUW(uint32_t instruction);
+            unsigned            _handleShriL(uint32_t instruction);
+            unsigned            _handleAsliB(uint32_t instruction);
+            unsigned            _handleAsliUB(uint32_t instruction);
+            unsigned            _handleAsliH(uint32_t instruction);
+            unsigned            _handleAsliUH(uint32_t instruction);
+            unsigned            _handleAsliW(uint32_t instruction);
+            unsigned            _handleAsliUW(uint32_t instruction);
+            unsigned            _handleAsliL(uint32_t instruction);
+            unsigned            _handleAsriB(uint32_t instruction);
+            unsigned            _handleAsriUB(uint32_t instruction);
+            unsigned            _handleAsriH(uint32_t instruction);
+            unsigned            _handleAsriUH(uint32_t instruction);
+            unsigned            _handleAsriW(uint32_t instruction);
+            unsigned            _handleAsriUW(uint32_t instruction);
+            unsigned            _handleAsriL(uint32_t instruction);
+            unsigned            _handleRoliB(uint32_t instruction);
+            unsigned            _handleRoliUB(uint32_t instruction);
+            unsigned            _handleRoliH(uint32_t instruction);
+            unsigned            _handleRoliUH(uint32_t instruction);
+            unsigned            _handleRoliW(uint32_t instruction);
+            unsigned            _handleRoliUW(uint32_t instruction);
+            unsigned            _handleRoliL(uint32_t instruction);
+            unsigned            _handleRoriB(uint32_t instruction);
+            unsigned            _handleRoriUB(uint32_t instruction);
+            unsigned            _handleRoriH(uint32_t instruction);
+            unsigned            _handleRoriUH(uint32_t instruction);
+            unsigned            _handleRoriW(uint32_t instruction);
+            unsigned            _handleRoriUW(uint32_t instruction);
+            unsigned            _handleRoriL(uint32_t instruction);
 
             //  BASE (bit manipulation)
             template <class DataType>
@@ -1047,140 +1048,140 @@ namespace hadesvm
                 result = DataType::normalizeUnsigned(DataType::reverseBits(op));
             }
 
-            unsigned                _handleClz(uint32_t instruction);
-            unsigned                _handleCtz(uint32_t instruction);
-            unsigned                _handleClo(uint32_t instruction);
-            unsigned                _handleCto(uint32_t instruction);
-            unsigned                _handleBfeL(uint32_t instruction);
-            unsigned                _handleBfeUL(uint32_t instruction);
-            unsigned                _handleBfiL(uint32_t instruction);
-            unsigned                _handleBrevB(uint32_t instruction);
-            unsigned                _handleBrevUB(uint32_t instruction);
-            unsigned                _handleBrevH(uint32_t instruction);
-            unsigned                _handleBrevUH(uint32_t instruction);
-            unsigned                _handleBrevW(uint32_t instruction);
-            unsigned                _handleBrevUW(uint32_t instruction);
-            unsigned                _handleBrevL(uint32_t instruction);
+            unsigned            _handleClz(uint32_t instruction);
+            unsigned            _handleCtz(uint32_t instruction);
+            unsigned            _handleClo(uint32_t instruction);
+            unsigned            _handleCto(uint32_t instruction);
+            unsigned            _handleBfeL(uint32_t instruction);
+            unsigned            _handleBfeUL(uint32_t instruction);
+            unsigned            _handleBfiL(uint32_t instruction);
+            unsigned            _handleBrevB(uint32_t instruction);
+            unsigned            _handleBrevUB(uint32_t instruction);
+            unsigned            _handleBrevH(uint32_t instruction);
+            unsigned            _handleBrevUH(uint32_t instruction);
+            unsigned            _handleBrevW(uint32_t instruction);
+            unsigned            _handleBrevUW(uint32_t instruction);
+            unsigned            _handleBrevL(uint32_t instruction);
 
             //  BASE (conversions)
-            unsigned                _handleCvtBL(uint32_t instruction);
-            unsigned                _handleCvtUBL(uint32_t instruction);
-            unsigned                _handleCvtHL(uint32_t instruction);
-            unsigned                _handleCvtUHL(uint32_t instruction);
-            unsigned                _handleCvtWL(uint32_t instruction);
-            unsigned                _handleCvtUWL(uint32_t instruction);
+            unsigned            _handleCvtBL(uint32_t instruction);
+            unsigned            _handleCvtUBL(uint32_t instruction);
+            unsigned            _handleCvtHL(uint32_t instruction);
+            unsigned            _handleCvtUHL(uint32_t instruction);
+            unsigned            _handleCvtWL(uint32_t instruction);
+            unsigned            _handleCvtUWL(uint32_t instruction);
 
             //  BASE (comparison)
-            unsigned                _handleSeqL(uint32_t instruction);
-            unsigned                _handleSneL(uint32_t instruction);
-            unsigned                _handleSltL(uint32_t instruction);
-            unsigned                _handleSleL(uint32_t instruction);
-            unsigned                _handleSgtL(uint32_t instruction);
-            unsigned                _handleSgeL(uint32_t instruction);
-            unsigned                _handleSltUL(uint32_t instruction);
-            unsigned                _handleSleUL(uint32_t instruction);
-            unsigned                _handleSgtUL(uint32_t instruction);
-            unsigned                _handleSgeUL(uint32_t instruction);
-            unsigned                _handleSeqiL(uint32_t instruction);
-            unsigned                _handleSneiL(uint32_t instruction);
-            unsigned                _handleSltiL(uint32_t instruction);
-            unsigned                _handleSleiL(uint32_t instruction);
-            unsigned                _handleSgtiL(uint32_t instruction);
-            unsigned                _handleSgeiL(uint32_t instruction);
-            unsigned                _handleSltiUL(uint32_t instruction);
-            unsigned                _handleSleiUL(uint32_t instruction);
-            unsigned                _handleSgtiUL(uint32_t instruction);
-            unsigned                _handleSgeiUL(uint32_t instruction);
+            unsigned            _handleSeqL(uint32_t instruction);
+            unsigned            _handleSneL(uint32_t instruction);
+            unsigned            _handleSltL(uint32_t instruction);
+            unsigned            _handleSleL(uint32_t instruction);
+            unsigned            _handleSgtL(uint32_t instruction);
+            unsigned            _handleSgeL(uint32_t instruction);
+            unsigned            _handleSltUL(uint32_t instruction);
+            unsigned            _handleSleUL(uint32_t instruction);
+            unsigned            _handleSgtUL(uint32_t instruction);
+            unsigned            _handleSgeUL(uint32_t instruction);
+            unsigned            _handleSeqiL(uint32_t instruction);
+            unsigned            _handleSneiL(uint32_t instruction);
+            unsigned            _handleSltiL(uint32_t instruction);
+            unsigned            _handleSleiL(uint32_t instruction);
+            unsigned            _handleSgtiL(uint32_t instruction);
+            unsigned            _handleSgeiL(uint32_t instruction);
+            unsigned            _handleSltiUL(uint32_t instruction);
+            unsigned            _handleSleiUL(uint32_t instruction);
+            unsigned            _handleSgtiUL(uint32_t instruction);
+            unsigned            _handleSgeiUL(uint32_t instruction);
 
             //  BASE (load/store)
-            unsigned                _handleLB(uint32_t instruction);
-            unsigned                _handleLUB(uint32_t instruction);
-            unsigned                _handleLH(uint32_t instruction);
-            unsigned                _handleLUH(uint32_t instruction);
-            unsigned                _handleLW(uint32_t instruction);
-            unsigned                _handleLUW(uint32_t instruction);
-            unsigned                _handleLL(uint32_t instruction);
-            unsigned                _handleXchg(uint32_t instruction);
-            unsigned                _handleSB(uint32_t instruction);
-            unsigned                _handleSH(uint32_t instruction);
-            unsigned                _handleSW(uint32_t instruction);
-            unsigned                _handleSL(uint32_t instruction);
-            unsigned                _handleLir(uint32_t instruction);
-            unsigned                _handleLdm(uint32_t instruction);
-            unsigned                _handleStm(uint32_t instruction);
+            unsigned            _handleLB(uint32_t instruction);
+            unsigned            _handleLUB(uint32_t instruction);
+            unsigned            _handleLH(uint32_t instruction);
+            unsigned            _handleLUH(uint32_t instruction);
+            unsigned            _handleLW(uint32_t instruction);
+            unsigned            _handleLUW(uint32_t instruction);
+            unsigned            _handleLL(uint32_t instruction);
+            unsigned            _handleXchg(uint32_t instruction);
+            unsigned            _handleSB(uint32_t instruction);
+            unsigned            _handleSH(uint32_t instruction);
+            unsigned            _handleSW(uint32_t instruction);
+            unsigned            _handleSL(uint32_t instruction);
+            unsigned            _handleLir(uint32_t instruction);
+            unsigned            _handleLdm(uint32_t instruction);
+            unsigned            _handleStm(uint32_t instruction);
 
             //  BASE (flow control)
-            unsigned                _handleJ(uint32_t instruction);
-            unsigned                _handleJal(uint32_t instruction);
-            unsigned                _handleJr(uint32_t instruction);
-            unsigned                _handleJalr(uint32_t instruction);
-            unsigned                _handleBeqL(uint32_t instruction);
-            unsigned                _handleBneL(uint32_t instruction);
-            unsigned                _handleBltL(uint32_t instruction);
-            unsigned                _handleBleL(uint32_t instruction);
-            unsigned                _handleBgtL(uint32_t instruction);
-            unsigned                _handleBgeL(uint32_t instruction);
-            unsigned                _handleBltUL(uint32_t instruction);
-            unsigned                _handleBleUL(uint32_t instruction);
-            unsigned                _handleBgtUL(uint32_t instruction);
-            unsigned                _handleBgeUL(uint32_t instruction);
-            unsigned                _handleBeqiL(uint32_t instruction);
-            unsigned                _handleBneiL(uint32_t instruction);
-            unsigned                _handleBltiL(uint32_t instruction);
-            unsigned                _handleBleiL(uint32_t instruction);
-            unsigned                _handleBgtiL(uint32_t instruction);
-            unsigned                _handleBgeiL(uint32_t instruction);
-            unsigned                _handleBltiUL(uint32_t instruction);
-            unsigned                _handleBleiUL(uint32_t instruction);
-            unsigned                _handleBgtiUL(uint32_t instruction);
-            unsigned                _handleBgeiUL(uint32_t instruction);
+            unsigned            _handleJ(uint32_t instruction);
+            unsigned            _handleJal(uint32_t instruction);
+            unsigned            _handleJr(uint32_t instruction);
+            unsigned            _handleJalr(uint32_t instruction);
+            unsigned            _handleBeqL(uint32_t instruction);
+            unsigned            _handleBneL(uint32_t instruction);
+            unsigned            _handleBltL(uint32_t instruction);
+            unsigned            _handleBleL(uint32_t instruction);
+            unsigned            _handleBgtL(uint32_t instruction);
+            unsigned            _handleBgeL(uint32_t instruction);
+            unsigned            _handleBltUL(uint32_t instruction);
+            unsigned            _handleBleUL(uint32_t instruction);
+            unsigned            _handleBgtUL(uint32_t instruction);
+            unsigned            _handleBgeUL(uint32_t instruction);
+            unsigned            _handleBeqiL(uint32_t instruction);
+            unsigned            _handleBneiL(uint32_t instruction);
+            unsigned            _handleBltiL(uint32_t instruction);
+            unsigned            _handleBleiL(uint32_t instruction);
+            unsigned            _handleBgtiL(uint32_t instruction);
+            unsigned            _handleBgeiL(uint32_t instruction);
+            unsigned            _handleBltiUL(uint32_t instruction);
+            unsigned            _handleBleiUL(uint32_t instruction);
+            unsigned            _handleBgtiUL(uint32_t instruction);
+            unsigned            _handleBgeiUL(uint32_t instruction);
 
             //  BASE (TLB control)
-            unsigned                _handleIitlb(uint32_t instruction);
-            unsigned                _handleIdtlb(uint32_t instruction);
-            unsigned                _handleIitlbe(uint32_t instruction);
-            unsigned                _handleIdtlbe(uint32_t instruction);
-            unsigned                _handleIitlbc(uint32_t instruction);
-            unsigned                _handleIdtlbc(uint32_t instruction);
-            unsigned                _handleIitlbec(uint32_t instruction);
-            unsigned                _handleIdtlbec(uint32_t instruction);
+            unsigned            _handleIitlb(uint32_t instruction);
+            unsigned            _handleIdtlb(uint32_t instruction);
+            unsigned            _handleIitlbe(uint32_t instruction);
+            unsigned            _handleIdtlbe(uint32_t instruction);
+            unsigned            _handleIitlbc(uint32_t instruction);
+            unsigned            _handleIdtlbc(uint32_t instruction);
+            unsigned            _handleIitlbec(uint32_t instruction);
+            unsigned            _handleIdtlbec(uint32_t instruction);
 
             //  BASE (cache control)
-            unsigned                _handleImb(uint32_t instruction);
-            unsigned                _handleDmb(uint32_t instruction);
-            unsigned                _handleImbc(uint32_t instruction);
-            unsigned                _handleDmbc(uint32_t instruction);
+            unsigned            _handleImb(uint32_t instruction);
+            unsigned            _handleDmb(uint32_t instruction);
+            unsigned            _handleImbc(uint32_t instruction);
+            unsigned            _handleDmbc(uint32_t instruction);
 
             //  BASE (I/O)
-            unsigned                _handleInB(uint32_t instruction);
-            unsigned                _handleInUB(uint32_t instruction);
-            unsigned                _handleInH(uint32_t instruction);
-            unsigned                _handleInUH(uint32_t instruction);
-            unsigned                _handleInW(uint32_t instruction);
-            unsigned                _handleInUW(uint32_t instruction);
-            unsigned                _handleInL(uint32_t instruction);
-            unsigned                _handleOutB(uint32_t instruction);
-            unsigned                _handleOutH(uint32_t instruction);
-            unsigned                _handleOutW(uint32_t instruction);
-            unsigned                _handleOutL(uint32_t instruction);
-            unsigned                _handleTstp(uint32_t instruction);
-            unsigned                _handleSetp(uint32_t instruction);
+            unsigned            _handleInB(uint32_t instruction);
+            unsigned            _handleInUB(uint32_t instruction);
+            unsigned            _handleInH(uint32_t instruction);
+            unsigned            _handleInUH(uint32_t instruction);
+            unsigned            _handleInW(uint32_t instruction);
+            unsigned            _handleInUW(uint32_t instruction);
+            unsigned            _handleInL(uint32_t instruction);
+            unsigned            _handleOutB(uint32_t instruction);
+            unsigned            _handleOutH(uint32_t instruction);
+            unsigned            _handleOutW(uint32_t instruction);
+            unsigned            _handleOutL(uint32_t instruction);
+            unsigned            _handleTstp(uint32_t instruction);
+            unsigned            _handleSetp(uint32_t instruction);
 
             //  BASE (Misc)
-            unsigned                _handleHalt(uint32_t instruction);
-            unsigned                _handleIret(uint32_t instruction);
-            unsigned                _handleGetfl(uint32_t instruction);
-            unsigned                _handleSetfl(uint32_t instruction);
-            unsigned                _handleRstfl(uint32_t instruction);
-            unsigned                _handleSvc(uint32_t instruction);
-            unsigned                _handleBrk(uint32_t instruction);
-            unsigned                _handleCpuid(uint32_t instruction);
-            unsigned                _handleSigp(uint32_t instruction);
-            unsigned                _handleNop(uint32_t instruction);
+            unsigned            _handleHalt(uint32_t instruction);
+            unsigned            _handleIret(uint32_t instruction);
+            unsigned            _handleGetfl(uint32_t instruction);
+            unsigned            _handleSetfl(uint32_t instruction);
+            unsigned            _handleRstfl(uint32_t instruction);
+            unsigned            _handleSvc(uint32_t instruction);
+            unsigned            _handleBrk(uint32_t instruction);
+            unsigned            _handleCpuid(uint32_t instruction);
+            unsigned            _handleSigp(uint32_t instruction);
+            unsigned            _handleNop(uint32_t instruction);
 
             //  FLOATING POINT (data movement)
-            unsigned                _handleMovD(uint32_t instruction);
-            unsigned                _handleLiD(uint32_t instruction);
+            unsigned            _handleMovD(uint32_t instruction);
+            unsigned            _handleLiD(uint32_t instruction);
 
             //  FLOATING POINT (arithmetics)
             void                    _handleFloatingPointConditions(const hadesvm::ieee754::Environment & fpEnvironment)
@@ -1234,77 +1235,77 @@ namespace hadesvm
                 }
             }
 
-            unsigned                _handleAddF(uint32_t instruction);
-            unsigned                _handleAddD(uint32_t instruction);
-            unsigned                _handleSubF(uint32_t instruction);
-            unsigned                _handleSubD(uint32_t instruction);
-            unsigned                _handleMulF(uint32_t instruction);
-            unsigned                _handleMulD(uint32_t instruction);
-            unsigned                _handleDivF(uint32_t instruction);
-            unsigned                _handleDivD(uint32_t instruction);
-            unsigned                _handleAbsF(uint32_t instruction);
-            unsigned                _handleAbsD(uint32_t instruction);
-            unsigned                _handleNegF(uint32_t instruction);
-            unsigned                _handleNegD(uint32_t instruction);
-            unsigned                _handleSqrtF(uint32_t instruction);
-            unsigned                _handleSqrtD(uint32_t instruction);
+            unsigned            _handleAddF(uint32_t instruction);
+            unsigned            _handleAddD(uint32_t instruction);
+            unsigned            _handleSubF(uint32_t instruction);
+            unsigned            _handleSubD(uint32_t instruction);
+            unsigned            _handleMulF(uint32_t instruction);
+            unsigned            _handleMulD(uint32_t instruction);
+            unsigned            _handleDivF(uint32_t instruction);
+            unsigned            _handleDivD(uint32_t instruction);
+            unsigned            _handleAbsF(uint32_t instruction);
+            unsigned            _handleAbsD(uint32_t instruction);
+            unsigned            _handleNegF(uint32_t instruction);
+            unsigned            _handleNegD(uint32_t instruction);
+            unsigned            _handleSqrtF(uint32_t instruction);
+            unsigned            _handleSqrtD(uint32_t instruction);
 
             //  FLOATING POINT (conversions)
-            unsigned                _handleCvtFB(uint32_t instruction);
-            unsigned                _handleCvtFUB(uint32_t instruction);
-            unsigned                _handleCvtFH(uint32_t instruction);
-            unsigned                _handleCvtFUH(uint32_t instruction);
-            unsigned                _handleCvtFW(uint32_t instruction);
-            unsigned                _handleCvtFUW(uint32_t instruction);
-            unsigned                _handleCvtFL(uint32_t instruction);
-            unsigned                _handleCvtFUL(uint32_t instruction);
-            unsigned                _handleCvtDB(uint32_t instruction);
-            unsigned                _handleCvtDUB(uint32_t instruction);
-            unsigned                _handleCvtDH(uint32_t instruction);
-            unsigned                _handleCvtDUH(uint32_t instruction);
-            unsigned                _handleCvtDW(uint32_t instruction);
-            unsigned                _handleCvtDUW(uint32_t instruction);
-            unsigned                _handleCvtDL(uint32_t instruction);
-            unsigned                _handleCvtDUL(uint32_t instruction);
-            unsigned                _handleCvtBF(uint32_t instruction);
-            unsigned                _handleCvtUBF(uint32_t instruction);
-            unsigned                _handleCvtHF(uint32_t instruction);
-            unsigned                _handleCvtUHF(uint32_t instruction);
-            unsigned                _handleCvtWF(uint32_t instruction);
-            unsigned                _handleCvtUWF(uint32_t instruction);
-            unsigned                _handleCvtLF(uint32_t instruction);
-            unsigned                _handleCvtULF(uint32_t instruction);
-            unsigned                _handleCvtBD(uint32_t instruction);
-            unsigned                _handleCvtUBD(uint32_t instruction);
-            unsigned                _handleCvtHD(uint32_t instruction);
-            unsigned                _handleCvtUHD(uint32_t instruction);
-            unsigned                _handleCvtWD(uint32_t instruction);
-            unsigned                _handleCvtUWD(uint32_t instruction);
-            unsigned                _handleCvtLD(uint32_t instruction);
-            unsigned                _handleCvtULD(uint32_t instruction);
-            unsigned                _handleCvtDF(uint32_t instruction);
+            unsigned            _handleCvtFB(uint32_t instruction);
+            unsigned            _handleCvtFUB(uint32_t instruction);
+            unsigned            _handleCvtFH(uint32_t instruction);
+            unsigned            _handleCvtFUH(uint32_t instruction);
+            unsigned            _handleCvtFW(uint32_t instruction);
+            unsigned            _handleCvtFUW(uint32_t instruction);
+            unsigned            _handleCvtFL(uint32_t instruction);
+            unsigned            _handleCvtFUL(uint32_t instruction);
+            unsigned            _handleCvtDB(uint32_t instruction);
+            unsigned            _handleCvtDUB(uint32_t instruction);
+            unsigned            _handleCvtDH(uint32_t instruction);
+            unsigned            _handleCvtDUH(uint32_t instruction);
+            unsigned            _handleCvtDW(uint32_t instruction);
+            unsigned            _handleCvtDUW(uint32_t instruction);
+            unsigned            _handleCvtDL(uint32_t instruction);
+            unsigned            _handleCvtDUL(uint32_t instruction);
+            unsigned            _handleCvtBF(uint32_t instruction);
+            unsigned            _handleCvtUBF(uint32_t instruction);
+            unsigned            _handleCvtHF(uint32_t instruction);
+            unsigned            _handleCvtUHF(uint32_t instruction);
+            unsigned            _handleCvtWF(uint32_t instruction);
+            unsigned            _handleCvtUWF(uint32_t instruction);
+            unsigned            _handleCvtLF(uint32_t instruction);
+            unsigned            _handleCvtULF(uint32_t instruction);
+            unsigned            _handleCvtBD(uint32_t instruction);
+            unsigned            _handleCvtUBD(uint32_t instruction);
+            unsigned            _handleCvtHD(uint32_t instruction);
+            unsigned            _handleCvtUHD(uint32_t instruction);
+            unsigned            _handleCvtWD(uint32_t instruction);
+            unsigned            _handleCvtUWD(uint32_t instruction);
+            unsigned            _handleCvtLD(uint32_t instruction);
+            unsigned            _handleCvtULD(uint32_t instruction);
+            unsigned            _handleCvtDF(uint32_t instruction);
 
             //  FLOATING POINT (comparison)
-            unsigned                _handleSeqD(uint32_t instruction);
-            unsigned                _handleSneD(uint32_t instruction);
-            unsigned                _handleSltD(uint32_t instruction);
-            unsigned                _handleSleD(uint32_t instruction);
-            unsigned                _handleSgtD(uint32_t instruction);
-            unsigned                _handleSgeD(uint32_t instruction);
+            unsigned            _handleSeqD(uint32_t instruction);
+            unsigned            _handleSneD(uint32_t instruction);
+            unsigned            _handleSltD(uint32_t instruction);
+            unsigned            _handleSleD(uint32_t instruction);
+            unsigned            _handleSgtD(uint32_t instruction);
+            unsigned            _handleSgeD(uint32_t instruction);
 
             //  FLOATING POINT (load/store)
-            unsigned                _handleLF(uint32_t instruction);
-            unsigned                _handleLD(uint32_t instruction);
-            unsigned                _handleSF(uint32_t instruction);
-            unsigned                _handleSD(uint32_t instruction);
+            unsigned            _handleLF(uint32_t instruction);
+            unsigned            _handleLD(uint32_t instruction);
+            unsigned            _handleSF(uint32_t instruction);
+            unsigned            _handleSD(uint32_t instruction);
 
             //  FLOATING POINT (flow control)
-            unsigned                _handleBeqD(uint32_t instruction);
-            unsigned                _handleBneD(uint32_t instruction);
-            unsigned                _handleBltD(uint32_t instruction);
-            unsigned                _handleBleD(uint32_t instruction);
-            unsigned                _handleBgtD(uint32_t instruction);
-            unsigned                _handleBgeD(uint32_t instruction);
+            unsigned            _handleBeqD(uint32_t instruction);
+            unsigned            _handleBneD(uint32_t instruction);
+            unsigned            _handleBltD(uint32_t instruction);
+            unsigned            _handleBleD(uint32_t instruction);
+            unsigned            _handleBgtD(uint32_t instruction);
+            unsigned            _handleBgeD(uint32_t instruction);
         };
     }
 }

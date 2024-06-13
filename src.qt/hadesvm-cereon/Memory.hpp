@@ -7,6 +7,8 @@
 #pragma once
 #include "hadesvm-cereon/API.hpp"
 
+static_assert(sizeof(size_t) >= 4);
+
 namespace hadesvm
 {
     namespace cereon
@@ -41,7 +43,7 @@ namespace hadesvm
             virtual uint64_t    startAddress() const = 0;
 
             //  Returns the size of this memory block
-            virtual MemorySize  size() const = 0;
+            virtual hadesvm::core::MemorySize   size() const = 0;
 
             //  Loads a naturally aligned data item from the specified offset
             //  in this memory block.
@@ -84,11 +86,11 @@ namespace hadesvm
                 //////////
                 //  hadesvm::core::ComponentType
             public:
-                virtual hadesvm::core::ComponentCategory * category() const override;
-                virtual bool    suspendable() const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
-                virtual MemoryBus *  createComponent() override;
+                virtual hadesvm::core::ComponentCategory *  category() const override;
+                virtual bool                suspendable() const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
+                virtual MemoryBus *         createComponent() override;
             };
 
             //////////
@@ -104,7 +106,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual ComponentEditor *   createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
             virtual Ui *        createUi() override;
 
             //////////
@@ -190,7 +192,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            ResidentMemoryBlock(uint64_t startAddress, const MemorySize & size);
+            ResidentMemoryBlock(uint64_t startAddress, const hadesvm::core::MemorySize & size);
             virtual ~ResidentMemoryBlock() noexcept;
 
             //////////
@@ -215,7 +217,7 @@ namespace hadesvm
             //  MemoryBlock
         public:
             virtual uint64_t    startAddress() const override { return _startAddress; }
-            virtual MemorySize  size() const override { return _size; }
+            virtual hadesvm::core::MemorySize   size() const override { return _size; }
             virtual uint8_t     loadByte(size_t offset) throws(MemoryAccessError) override;
             virtual uint16_t    loadHalfWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) override;
             virtual uint32_t    loadWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError) override;
@@ -229,7 +231,7 @@ namespace hadesvm
             //  Operations (configuration)
         public:
             void                setStartAddress(uint64_t startAddress);
-            void                setSize(const MemorySize & size);
+            void                setSize(const hadesvm::core::MemorySize & size);
 
             //////////
             //  Implementation
@@ -238,7 +240,7 @@ namespace hadesvm
 
             //  Configuration
             uint64_t            _startAddress;
-            MemorySize          _size;
+            hadesvm::core::MemorySize   _size;
 
             size_t              _sizeInBytes;   //  same as "_size", but expressed in bytes
 
@@ -256,7 +258,7 @@ namespace hadesvm
             //  Constants
         public:
             static const uint64_t   DefaultStartAddress;
-            static const MemorySize DefaultSize;
+            static const hadesvm::core::MemorySize  DefaultSize;
 
             //////////
             //  Types
@@ -275,10 +277,10 @@ namespace hadesvm
                 //////////
                 //  hadesvm::core::ComponentType
             public:
-                virtual hadesvm::core::ComponentCategory * category() const override;
-                virtual bool    suspendable() const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
+                virtual hadesvm::core::ComponentCategory *  category() const override;
+                virtual bool                suspendable() const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual ResidentRamBlock *  createComponent() override;
             };
 
@@ -293,7 +295,7 @@ namespace hadesvm
         public:
             virtual Type *      type() const override { return Type::instance(); }
             virtual QString     displayName() const override;
-            virtual ComponentEditor *   createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
             virtual Ui *        createUi() override;
         };
 
@@ -307,7 +309,7 @@ namespace hadesvm
             //  Constants
         public:
             static const uint64_t   DefaultStartAddress;
-            static const MemorySize DefaultSize;
+            static const hadesvm::core::MemorySize DefaultSize;
             static const QString    DefailtContentFilePath;
 
             //////////
@@ -327,10 +329,10 @@ namespace hadesvm
                 //////////
                 //  hadesvm::core::ComponentType
             public:
-                virtual hadesvm::core::ComponentCategory * category() const override;
-                virtual bool    suspendable() const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
-                virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
+                virtual hadesvm::core::ComponentCategory *  category() const override;
+                virtual bool                suspendable() const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
+                virtual bool                isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual ResidentRomBlock *  createComponent() override;
             };
 
@@ -347,7 +349,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual ComponentEditor *   createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
             virtual Ui *        createUi() override;
 
             //////////

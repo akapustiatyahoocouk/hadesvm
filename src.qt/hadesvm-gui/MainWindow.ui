@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>HADES VM</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="Resources.qrc">
+    <normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
@@ -215,7 +219,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionNewVm</sender>

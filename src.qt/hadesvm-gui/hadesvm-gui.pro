@@ -1,6 +1,7 @@
 include(../hadesvm.pri)
 
 SOURCES += \
+    AboutDialog.cpp \
     ConfigureVirtualApplianceDialog.cpp \
     Main.cpp \
     MainWindow.cpp \
@@ -9,15 +10,20 @@ SOURCES += \
 
 HEADERS += \
     API.hpp \
+    AboutDialog.hpp \
     ConfigureVirtualApplianceDialog.hpp \
     MainWindow.hpp \
     NewVirtualApplianceDialog.hpp \
     VirtualApplianceWindow.hpp
 
 FORMS += \
+    AboutDialog.ui \
     ConfigureVirtualApplianceDialog.ui \
     MainWindow.ui \
     NewVirtualApplianceDialog.ui \
     VirtualApplianceWindow.ui
 
 LIBS += -L$$DESTDIR -lhadesvm-kernel -lhadesvm-core -lhadesvm-util
+
+RESOURCES += \
+    Resources.qrc

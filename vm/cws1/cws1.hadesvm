@@ -4,5 +4,7 @@
   <Component Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamBlock"/>
   <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomBlock"/>
+  <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="20MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
+  <Component Type="CereonIoBus"/>
  </Components>
 </VirtualMachine>

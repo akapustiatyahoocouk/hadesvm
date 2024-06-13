@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/hadesvm/gui">
+        <file>images/objects/ComputerHuge.png</file>
+        <file>images/objects/ComputerLarge.png</file>
+        <file>images/objects/ComputerSmall.png</file>
+    </qresource>
+</RCC>

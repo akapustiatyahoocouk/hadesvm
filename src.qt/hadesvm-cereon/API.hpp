@@ -21,7 +21,9 @@
 
 #include "hadesvm-cereon/Alu.hpp"
 #include "hadesvm-cereon/Memory.hpp"
+#include "hadesvm-cereon/Io.hpp"
 #include "hadesvm-cereon/ProcessorCore.hpp"
+#include "hadesvm-cereon/Processor.hpp"
 
 #include "hadesvm-cereon/ResidentRamBlockEditor.hpp"
 #include "hadesvm-cereon/ResidentRomBlockEditor.hpp"

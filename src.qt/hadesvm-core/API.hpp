@@ -24,6 +24,7 @@
 #include "hadesvm-core/ComponentAdaptorType.hpp"
 #include "hadesvm-core/ComponentAdaptor.hpp"
 #include "hadesvm-core/ComponentEditor.hpp"
+#include "hadesvm-core/ComponentAspect.hpp"
 
 #include "hadesvm-core/VirtualArchitecture.hpp"
 #include "hadesvm-core/VirtualApplianceType.hpp"

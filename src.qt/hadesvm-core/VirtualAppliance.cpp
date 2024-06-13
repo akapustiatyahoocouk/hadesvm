@@ -412,6 +412,33 @@ VirtualAppliance::State VirtualAppliance::state() const
     return _state;
 }
 
+void VirtualAppliance::testConfiguration() throws(VirtualApplianceException)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Stopped)
+    {   //  Can't
+        return;
+    }
+
+    try
+    {
+        _connectComponents();       //  may throw
+        _initializeComponents();    //  may throw
+
+        architecture()->validateVirtualAppliance(this); //  may throw
+
+        _deinitializeComponents();
+        _disconnectComponents();
+    }
+    catch (...)
+    {
+        _deinitializeComponents();
+        _disconnectComponents();
+        throw;
+    }
+}
+
 void VirtualAppliance::start() throws(VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
@@ -425,9 +452,9 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
     {
         _stopRequested = false;
 
-        _connectComponents();
-        _initializeComponents();
-        _startComponents();
+        _connectComponents();       //  may throw
+        _initializeComponents();    //  may throw
+        _startComponents();         //  may throw
 
         _state = State::Running;
     }

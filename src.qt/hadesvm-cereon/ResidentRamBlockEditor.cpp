@@ -20,10 +20,10 @@ ResidentRamBlockEditor::ResidentRamBlockEditor(QWidget * parent, ResidentRamBloc
     _ui->setupUi(this);
 
     //  Fill in the "memory size unit" combo box
-    _ui->sizeUnitComboBox->addItem("B", QVariant::fromValue(static_cast<uint64_t>(MemorySize::Unit::B)));
-    _ui->sizeUnitComboBox->addItem("KB", QVariant::fromValue(static_cast<uint64_t>(MemorySize::Unit::KB)));
-    _ui->sizeUnitComboBox->addItem("MB", QVariant::fromValue(static_cast<uint64_t>(MemorySize::Unit::MB)));
-    _ui->sizeUnitComboBox->addItem("GB", QVariant::fromValue(static_cast<uint64_t>(MemorySize::Unit::GB)));
+    _ui->sizeUnitComboBox->addItem("B", QVariant::fromValue(static_cast<uint64_t>(hadesvm::core::MemorySize::Unit::B)));
+    _ui->sizeUnitComboBox->addItem("KB", QVariant::fromValue(static_cast<uint64_t>(hadesvm::core::MemorySize::Unit::KB)));
+    _ui->sizeUnitComboBox->addItem("MB", QVariant::fromValue(static_cast<uint64_t>(hadesvm::core::MemorySize::Unit::MB)));
+    _ui->sizeUnitComboBox->addItem("GB", QVariant::fromValue(static_cast<uint64_t>(hadesvm::core::MemorySize::Unit::GB)));
     _ui->sizeUnitComboBox->setCurrentIndex(2);  //  MB
 }
 
@@ -66,43 +66,43 @@ void ResidentRamBlockEditor::saveComponentConfiguration()
         _ui->sizeUnitComboBox->currentIndex() != -1)
     {
         _residentRamBlock->setStartAddress(startAddress);
-        _residentRamBlock->setSize(MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
+        _residentRamBlock->setSize(hadesvm::core::MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
     }
 }
 
 //////////
 //  Implementation helpers
-MemorySize::Unit ResidentRamBlockEditor::_selectedMemorySizeUnit() const
+hadesvm::core::MemorySize::Unit ResidentRamBlockEditor::_selectedMemorySizeUnit() const
 {
     switch (_ui->sizeUnitComboBox->currentIndex())
     {
         case 0:
-            return MemorySize::Unit::B;
+            return hadesvm::core::MemorySize::Unit::B;
         case 1:
-            return MemorySize::Unit::KB;
+            return hadesvm::core::MemorySize::Unit::KB;
         case 2:
-            return MemorySize::Unit::MB;
+            return hadesvm::core::MemorySize::Unit::MB;
         case 3:
-            return MemorySize::Unit::GB;
+            return hadesvm::core::MemorySize::Unit::GB;
         default:
-            return MemorySize::Unit::B;
+            return hadesvm::core::MemorySize::Unit::B;
     }
 }
 
-void ResidentRamBlockEditor::_setSelectedMemorySizeUnit(MemorySize::Unit unit)
+void ResidentRamBlockEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit)
 {
     switch (unit)
     {
-        case MemorySize::Unit::B:
+        case hadesvm::core::MemorySize::Unit::B:
             _ui->sizeUnitComboBox->setCurrentIndex(0);
             break;
-        case MemorySize::Unit::KB:
+        case hadesvm::core::MemorySize::Unit::KB:
             _ui->sizeUnitComboBox->setCurrentIndex(1);
             break;
-        case MemorySize::Unit::MB:
+        case hadesvm::core::MemorySize::Unit::MB:
             _ui->sizeUnitComboBox->setCurrentIndex(2);
             break;
-        case MemorySize::Unit::GB:
+        case hadesvm::core::MemorySize::Unit::GB:
             _ui->sizeUnitComboBox->setCurrentIndex(3);
             break;
         default:

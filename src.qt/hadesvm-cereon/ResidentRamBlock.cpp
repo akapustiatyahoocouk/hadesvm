@@ -10,7 +10,7 @@ using namespace hadesvm::cereon;
 //////////
 //  Constants
 const uint64_t   ResidentRamBlock::DefaultStartAddress = 0;
-const MemorySize ResidentRamBlock::DefaultSize = MemorySize::megabytes(64);
+const hadesvm::core::MemorySize ResidentRamBlock::DefaultSize = hadesvm::core::MemorySize::megabytes(64);
 
 //////////
 //  Construction/destruction
@@ -32,7 +32,7 @@ QString ResidentRamBlock::displayName() const
            hadesvm::util::toString(startAddress(), "%016X");
 }
 
-ComponentEditor * ResidentRamBlock::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * ResidentRamBlock::createEditor(QWidget * parent)
 {
     return new ResidentRamBlockEditor(parent, this);
 }
@@ -60,7 +60,7 @@ QString ResidentRamBlock::Type::displayName() const
 
 hadesvm::core::ComponentCategory * ResidentRamBlock::Type::category() const
 {
-    return StandardComponentCategories::Memory;
+    return hadesvm::core::StandardComponentCategories::Memory;
 }
 
 bool ResidentRamBlock::Type::suspendable() const
@@ -83,4 +83,4 @@ ResidentRamBlock * ResidentRamBlock::Type::createComponent()
     return new ResidentRamBlock();
 }
 
-//  End of hadesvm-cereon/ResidentMemoryBlock.cpp
+//  End of hadesvm-cereon/ResidentRamBlock.cpp

@@ -125,6 +125,11 @@ namespace hadesvm
             //  The current state of this VM; can be called from any thread
             State                   state() const;
 
+            //  "Tests" a configuration of a Stopped VA by connecting and
+            //  initializing all its components temporarily.
+            //  Must only be called from the QApplication's main thread
+            virtual void            testConfiguration() throws(VirtualApplianceException);
+
             //  Starts the VA if Stopped, otherwise has no effect.
             //  Must only be called from the QApplication's main thread
             void                    start() throws(VirtualApplianceException);

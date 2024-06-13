@@ -6,8 +6,13 @@ DEFINES += HADESVM_CEREON_LIBRARY
 SOURCES += \
     Alu.cpp \
     Architectures.cpp \
+    Cereon1P1B.cpp \
+    IoBus.cpp \
+    IoPort.cpp \
     MemoryBus.cpp \
     Plugins.cpp \
+    Processor.cpp \
+    ProcessorCore.cpp \
     ResidentMemoryBlock.cpp \
     ResidentRamBlock.cpp \
     ResidentRamBlockEditor.cpp \
@@ -19,8 +24,10 @@ HEADERS += \
     Alu.hpp \
     Architectures.hpp \
     Classes.hpp \
+    Io.hpp \
     Linkage.hpp \
     Memory.hpp \
+    Processor.hpp \
     ProcessorCore.hpp \
     ResidentRamBlockEditor.hpp \
     ResidentRomBlockEditor.hpp

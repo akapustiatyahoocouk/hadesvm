@@ -20,6 +20,11 @@ namespace hadesvm
             Native = LittleEndian
 #endif
         };
+
+        //////////
+        //  Formatting and parsing
+        HADESVM_UTIL_PUBLIC QString toString(ByteOrder value);
+        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, ByteOrder & value);
     }
 }
 

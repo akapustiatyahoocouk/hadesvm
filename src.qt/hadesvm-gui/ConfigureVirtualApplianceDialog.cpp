@@ -374,12 +374,21 @@ void ConfigureVirtualApplianceDialog::_onEditorContentChanged()
 
 void ConfigureVirtualApplianceDialog::_onOk()
 {
-    //  TODO validate configuration by temporarily bringing all components to Initialized state
     //  Apply the changes
     _virtualAppliance->setName(_ui->nameLineEdit->text());
     for (auto editor : _componentEditors.values())
     {
         editor->saveComponentConfiguration();
+    }
+    //  Make sure VM configuration is sane
+    try
+    {
+        _virtualAppliance->testConfiguration();
+    }
+    catch (const hadesvm::core::VirtualApplianceException & ex)
+    {
+        QMessageBox::critical(this, "OOPS!", ex.message());
+        return;
     }
     //  If some component were removed from the VA, we must destroy them now
     for (auto removedComponent : _removedComponents)
