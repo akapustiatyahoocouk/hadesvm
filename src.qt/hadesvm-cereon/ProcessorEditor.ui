@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::cereon::ProcessorEditor</class>
+ <widget class="QWidget" name="hadesvm::cereon::ProcessorEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>318</width>
+    <height>229</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="idLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>81</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ID (hex):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="idLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>0</y>
+     <width>31</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="restartAddressLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>90</y>
+     <width>81</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Restart (hex):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="restartAddressLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>90</y>
+     <width>231</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="primaryCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>0</y>
+     <width>211</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>This is a Primary processor</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="clockUnitComboBox">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>30</y>
+     <width>61</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="clockLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>30</y>
+     <width>81</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Master clock:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="clockNumberOfUnitsLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>30</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="byteOrderLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>81</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Byte order:</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="bigEndianRadioButton">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>60</y>
+     <width>96</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Big-Endian</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="littleEndianRadioButton">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>60</y>
+     <width>96</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Little-endian</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="featuresGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>120</y>
+     <width>311</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Features</string>
+   </property>
+   <widget class="QCheckBox" name="baseCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Base</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="floatingPointCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>20</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Floating point</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="unalignedOperandsCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Unaligned operands</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="virtualMemoryCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>60</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Virtual memory</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="protectedMemoryCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Protected memory</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="byteOrderChangeCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>80</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Byte order change</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="performanceMonitoringCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>161</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Performance monitoring</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="debugCheckBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>40</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Debug</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>restartAddressLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onRestartAddressLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockNumberOfUnitsLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockUnitComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>idLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onIdLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>primaryCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onPrimaryCheckBoxToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bigEndianRadioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onBigEndianRadioButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>littleEndianRadioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::cereon::ProcessorEditor</receiver>
+   <slot>_onLittleEndianRadioButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onRestartAddressLineEditTextChanged(QString)</slot>
+  <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+  <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+  <slot>_onIdLineEditTextChanged(QString)</slot>
+  <slot>_onPrimaryCheckBoxToggled(bool)</slot>
+  <slot>_onBigEndianRadioButtonClicked()</slot>
+  <slot>_onLittleEndianRadioButtonClicked()</slot>
+ </slots>
+</ui>

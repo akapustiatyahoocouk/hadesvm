@@ -36,8 +36,8 @@ namespace hadesvm
             //////////
             //  Operators
         public:
-            Features &          operator += (Features & op2);
-            Features &          operator -= (Features & op2);
+            Features &          operator += (const Features & op2);
+            Features &          operator -= (const Features & op2);
 
             Features            operator + (const Features & op2) const;
             Features            operator - (const Features & op2) const;
@@ -201,6 +201,9 @@ namespace hadesvm
             //////////
             //  Operations
         public:
+            //  TODO document
+            Features            features() const { return _features; }
+
             //  Resets this processor core to post-bootstrapping state
             void                reset();
 

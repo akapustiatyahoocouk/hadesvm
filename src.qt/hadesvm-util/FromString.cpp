@@ -82,7 +82,21 @@ HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype 
 //HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, QString& value);
 
 //HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed char & value);
-//HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned char & value);
+
+HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned char & value)
+{
+    unsigned long temp = 0;
+    qsizetype prescan = scan;
+    if (fromString(s, prescan, crtFormat, temp) &&
+        temp <= UINT8_MAX)
+    {
+        scan = prescan;
+        value = static_cast<uint8_t>(temp);
+        return true;
+    }
+    return false;
+}
+
 //HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed short & value);
 //HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, unsigned short & value);
 //HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, const char * crtFormat, signed int & value);

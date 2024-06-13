@@ -29,11 +29,25 @@ void CereonWorkstationArchitecture::validateVirtualAppliance(hadesvm::core::Virt
 {
     VirtualArchitecture::validateVirtualAppliance(virtualAppliance);    //  may thow
 
-    if (virtualAppliance->componentsImplementing<Processor>().size() < 1 ||
-        virtualAppliance->componentsImplementing<Processor>().size() > 256)
+    QList<Processor*> processors = virtualAppliance->componentsImplementing<Processor>();
+    if (processors.size() < 1 || processors.size() > 256)
     {
         throw hadesvm::core::VirtualApplianceException(displayName() +
                                                        " must contain between 1 and 256 processors");
+    }
+    //  TODO no processor ID conflicts!!!
+    int numPrimaryProcessors = 0;
+    for (Processor * processor : processors)
+    {
+        if (processor->isPrimaryProcessor())
+        {
+            numPrimaryProcessors++;
+        }
+    }
+    if (numPrimaryProcessors != 1)
+    {
+        throw hadesvm::core::VirtualApplianceException(displayName() +
+                                                       " must contain exactly 1 primary processor");
     }
 
     if (virtualAppliance->componentsImplementing<MemoryBus>().size() != 1)

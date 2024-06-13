@@ -302,7 +302,18 @@ void ConfigureVirtualApplianceDialog::_resizeToFitAllEditors()
         _ui->editorsFrame->resize(_ui->editorsFrame->width() + deltaX, _ui->editorsFrame->height());
         this->resize(this->width() + deltaX, this->height());
     }
-    //  TODO vertical resize
+    if (editorsSize.height() + Leeway > _ui->editorsFrame->height())
+    {   //  Expand "editorsFrame" and dialog
+        /*  TODO this doesn't seem to work!!!
+        int deltaY = editorsSize.height() - _ui->editorsFrame->height() + Leeway;
+        QSize sz1 = _ui->configurationFrame->size();
+        _ui->configurationFrame->resize(_ui->configurationFrame->width(), _ui->configurationFrame->height() + deltaY);
+        QSize sz2 = _ui->configurationFrame->size();
+        //_ui->configurationTreeWidget->resize(_ui->configurationTreeWidget->width(), _ui->configurationTreeWidget->height() + deltaY);
+        //_ui->editorsFrame->resize(_ui->editorsFrame->width(), _ui->editorsFrame->height() + deltaY);
+        this->resize(this->width(), this->height() + deltaY);
+        */
+    }
 }
 
 void ConfigureVirtualApplianceDialog::_adjustEditorVisibility()

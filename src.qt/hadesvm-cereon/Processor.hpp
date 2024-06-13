@@ -60,6 +60,9 @@ namespace hadesvm
             bool                isPrimaryProcessor() const { return _isPrimaryProcessor; }
             void                setPrimaryProcessor(bool primaryProcessor);
 
+            //  The union of Feature sets of all cores
+            Features            features() const;
+
             //////////
             //  Implementation
         private:

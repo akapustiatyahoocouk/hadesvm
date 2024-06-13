@@ -46,7 +46,7 @@ void Processor::deserialiseConfiguration(QDomElement componentElement)
 
 hadesvm::core::ComponentEditor * Processor::createEditor(QWidget * parent)
 {
-    return nullptr;    //  TODO implement!
+    return new ProcessorEditor(parent, this);
 }
 
 Processor::Ui * Processor::createUi()
@@ -208,5 +208,15 @@ void Processor::setRestartAddress(carl::UInt64 restartAddress)
     _restartAddress = restartAddress;
 }
 #endif
+
+Features Processor::features() const
+{
+    Features result;
+    for (ProcessorCore * core : _cores)
+    {
+        result += core->features();
+    }
+    return result;
+}
 
 //  End of hadesvm-cereon/Processor.cpp

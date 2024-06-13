@@ -27,5 +27,6 @@
 
 #include "hadesvm-cereon/ResidentRamBlockEditor.hpp"
 #include "hadesvm-cereon/ResidentRomBlockEditor.hpp"
+#include "hadesvm-cereon/ProcessorEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp
