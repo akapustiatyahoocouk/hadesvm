@@ -13,6 +13,8 @@ SOURCES += \
     MemoryBus.cpp \
     Plugins.cpp \
     Processor.cpp \
+    ProcessorCore.Base.cpp \
+    ProcessorCore.FloatingPoint.cpp \
     ProcessorCore.cpp \
     ProcessorEditor.cpp \
     ResidentMemoryUnit.cpp \

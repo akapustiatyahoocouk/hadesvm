@@ -199,7 +199,7 @@ void ProcessorCore::onClockTick()
         try
         {
             unsigned cyclesTaken = _fetchAndExecuteInstruction();
-            require(cyclesTaken > 0 && cyclesTaken <= 1024);
+            Q_ASSERT(cyclesTaken > 0 && cyclesTaken <= 1024);
             //  1 cycle has just executed - stall the rest of the way...
             _cyclesToStall = (cyclesTaken == 0) ? 1 : (cyclesTaken - 1);    //  ...but be defensive in release mode
         }
@@ -220,17 +220,18 @@ void ProcessorCore::onClockTick()
         return;
     }
 }
+#endif
 
 //////////
 //  Implementation helpers (memory access)
-carl::UInt32 ProcessorCore::_fetchInstruction(carl::UInt64 address)
+uint32_t ProcessorCore::_fetchInstruction(uint64_t address) throws(ProgramInterrupt, HardwareInterrupt)
 {
     if ((address & 0x03) != 0)
     {   //  OOPS! (even if unaligned operands feature is present)
-        throw ProgramInterrupt(ProgramInterrupt::IALIGN);
+        throw ProgramInterrupt::IALIGN;
     }
 
-    carl::UInt64 physicalAddress =
+    uint64_t physicalAddress =
         _state.isInVirtualMode() ?
             _mmu->translateFetchAddress(address) :
             address;
@@ -245,14 +246,14 @@ carl::UInt32 ProcessorCore::_fetchInstruction(carl::UInt64 address)
     }
 }
 
-carl::UInt64 ProcessorCore::_fetchLongWord(carl::UInt64 address)
+uint64_t ProcessorCore::_fetchLongWord(uint64_t address) throws(ProgramInterrupt, HardwareInterrupt)
 {
     if ((address & 0x07) != 0)
     {   //  OOPS! Instructions must be naturally aligned (even if unaligned operands feature is present)
-        throw ProgramInterrupt(ProgramInterrupt::IALIGN);
+        throw ProgramInterrupt::IALIGN;
     }
 
-    carl::UInt64 physicalAddress =
+    uint64_t physicalAddress =
         _state.isInVirtualMode() ?
             _mmu->translateFetchAddress(address) :
             address;
@@ -267,9 +268,9 @@ carl::UInt64 ProcessorCore::_fetchLongWord(carl::UInt64 address)
     }
 }
 
-carl::UInt8 ProcessorCore::_loadByte(carl::UInt64 address)
+uint8_t ProcessorCore::_loadByte(uint64_t address)
 {
-    carl::UInt64 physicalAddress =
+    uint64_t physicalAddress =
         _state.isInVirtualMode() ?
             _mmu->translateLoadAddress(address) :
             address;
@@ -284,11 +285,11 @@ carl::UInt8 ProcessorCore::_loadByte(carl::UInt64 address)
     }
 }
 
-carl::UInt16 ProcessorCore::_loadHalfWord(carl::UInt64 address)
+uint16_t ProcessorCore::_loadHalfWord(uint64_t address)
 {
     if ((address & 0x01) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateLoadAddress(address) :
                 address;
@@ -303,34 +304,35 @@ carl::UInt16 ProcessorCore::_loadHalfWord(carl::UInt64 address)
     }
     else if (_features.has(Feature::UnalignedOperand))
     {   //  Not naturally aligned - simulate by series of byte loads
-        carl::UInt16 result = 0;
+        uint16_t result = 0;
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
+            case hadesvm::util::ByteOrder::BigEndian:
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 2;
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
         return result;
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
-carl::UInt32 ProcessorCore::_loadWord(carl::UInt64 address)
+uint32_t ProcessorCore::_loadWord(uint64_t address)
 {
     if ((address & 0x03) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateLoadAddress(address) :
                 address;
@@ -345,38 +347,39 @@ carl::UInt32 ProcessorCore::_loadWord(carl::UInt64 address)
     }
     else if (_features.has(Feature::UnalignedOperand))
     {   //  Not naturally aligned - simulate by series of byte loads
-        carl::UInt32 result = 0;
+        uint32_t result = 0;
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
+            case hadesvm::util::ByteOrder::BigEndian:
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 4;
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
         return result;
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
-carl::UInt64 ProcessorCore::_loadLongWord(carl::UInt64 address)
+uint64_t ProcessorCore::_loadLongWord(uint64_t address)
 {
     if ((address & 0x07) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateLoadAddress(address) :
                 address;
@@ -391,10 +394,10 @@ carl::UInt64 ProcessorCore::_loadLongWord(carl::UInt64 address)
     }
     else if (_features.has(Feature::UnalignedOperand))
     {   //  Not naturally aligned - simulate by series of byte loads
-        carl::UInt64 result = 0;
+        uint64_t result = 0;
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
+            case hadesvm::util::ByteOrder::BigEndian:
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
@@ -404,7 +407,7 @@ carl::UInt64 ProcessorCore::_loadLongWord(carl::UInt64 address)
                 result |= _loadByte(address++);
                 result |= _loadByte(address++);
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 8;
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
@@ -415,20 +418,21 @@ carl::UInt64 ProcessorCore::_loadLongWord(carl::UInt64 address)
                 result |= _loadByte(--address);
                 result |= _loadByte(--address);
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
         return result;
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
-void ProcessorCore::_storeByte(carl::UInt64 address, carl::UInt8 value)
+void ProcessorCore::_storeByte(uint64_t address, uint8_t value)
 {
-    carl::UInt64 physicalAddress =
+    uint64_t physicalAddress =
         _state.isInVirtualMode() ?
             _mmu->translateStoreAddress(address) :
             address;
@@ -443,11 +447,11 @@ void ProcessorCore::_storeByte(carl::UInt64 address, carl::UInt8 value)
     }
 }
 
-void ProcessorCore::_storeHalfWord(carl::UInt64 address, carl::UInt16 value)
+void ProcessorCore::_storeHalfWord(uint64_t address, uint16_t value)
 {
     if ((address & 0x01) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateStoreAddress(address) :
                 address;
@@ -464,30 +468,31 @@ void ProcessorCore::_storeHalfWord(carl::UInt64 address, carl::UInt16 value)
     {   //  Not naturally aligned - simulate by series of byte stores
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 0));
+            case hadesvm::util::ByteOrder::BigEndian:
+                _storeByte(address++, static_cast<uint8_t>(value >> 8));
+                _storeByte(address++, static_cast<uint8_t>(value >> 0));
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 2;
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 0));
+                _storeByte(--address, static_cast<uint8_t>(value >> 8));
+                _storeByte(--address, static_cast<uint8_t>(value >> 0));
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
-void ProcessorCore::_storeWord(carl::UInt64 address, carl::UInt32 value)
+void ProcessorCore::_storeWord(uint64_t address, uint32_t value)
 {
     if ((address & 0x03) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateStoreAddress(address) :
                 address;
@@ -504,34 +509,35 @@ void ProcessorCore::_storeWord(carl::UInt64 address, carl::UInt32 value)
     {   //  Not naturally aligned - simulate by series of byte stores
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 24));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 16));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 0));
+            case hadesvm::util::ByteOrder::BigEndian:
+                _storeByte(address++, static_cast<uint8_t>(value >> 24));
+                _storeByte(address++, static_cast<uint8_t>(value >> 16));
+                _storeByte(address++, static_cast<uint8_t>(value >> 8));
+                _storeByte(address++, static_cast<uint8_t>(value >> 0));
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 4;
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 24));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 16));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 0));
+                _storeByte(--address, static_cast<uint8_t>(value >> 24));
+                _storeByte(--address, static_cast<uint8_t>(value >> 16));
+                _storeByte(--address, static_cast<uint8_t>(value >> 8));
+                _storeByte(--address, static_cast<uint8_t>(value >> 0));
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
-void ProcessorCore::_storeLongWord(carl::UInt64 address , carl::UInt64 value)
+void ProcessorCore::_storeLongWord(uint64_t address , uint64_t value)
 {
     if ((address & 0x07) == 0)
     {   //  Naturally aligned
-        carl::UInt64 physicalAddress =
+        uint64_t physicalAddress =
             _state.isInVirtualMode() ?
                 _mmu->translateStoreAddress(address) :
                 address;
@@ -548,58 +554,59 @@ void ProcessorCore::_storeLongWord(carl::UInt64 address , carl::UInt64 value)
     {   //  Not naturally aligned - simulate by series of byte stores
         switch (_state.getByteOrder())
         {
-            case carl::ByteOrder::BigEndian:
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 56));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 48));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 40));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 32));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 24));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 16));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(address++, static_cast<carl::UInt8>(value >> 0));
+            case hadesvm::util::ByteOrder::BigEndian:
+                _storeByte(address++, static_cast<uint8_t>(value >> 56));
+                _storeByte(address++, static_cast<uint8_t>(value >> 48));
+                _storeByte(address++, static_cast<uint8_t>(value >> 40));
+                _storeByte(address++, static_cast<uint8_t>(value >> 32));
+                _storeByte(address++, static_cast<uint8_t>(value >> 24));
+                _storeByte(address++, static_cast<uint8_t>(value >> 16));
+                _storeByte(address++, static_cast<uint8_t>(value >> 8));
+                _storeByte(address++, static_cast<uint8_t>(value >> 0));
                 break;
-            case carl::ByteOrder::LittleEndian:
+            case hadesvm::util::ByteOrder::LittleEndian:
                 address += 8;
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 56));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 48));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 40));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 32));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 24));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 16));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 8));
-                _storeByte(--address, static_cast<carl::UInt8>(value >> 0));
+                _storeByte(--address, static_cast<uint8_t>(value >> 56));
+                _storeByte(--address, static_cast<uint8_t>(value >> 48));
+                _storeByte(--address, static_cast<uint8_t>(value >> 40));
+                _storeByte(--address, static_cast<uint8_t>(value >> 32));
+                _storeByte(--address, static_cast<uint8_t>(value >> 24));
+                _storeByte(--address, static_cast<uint8_t>(value >> 16));
+                _storeByte(--address, static_cast<uint8_t>(value >> 8));
+                _storeByte(--address, static_cast<uint8_t>(value >> 0));
                 break;
+            case hadesvm::util::ByteOrder::Unknown:
             default:
-                failure();
+                Q_ASSERT(false);
         }
     }
     else
     {   //  OOPS! Alignment constraint violated
-        throw ProgramInterrupt(ProgramInterrupt::DALIGN);
+        throw ProgramInterrupt::DALIGN;
     }
 }
 
 //////////
 //  Implementation helpers (interrupt handling)
-CARL_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccessError)
+Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccessError)
 {
     switch (memoryAccessError)
     {
         case MemoryAccessError::InvalidAddress:
-            throw ProgramInterrupt(ProgramInterrupt::IADDRESS);
+            throw ProgramInterrupt::IADDRESS;
         case MemoryAccessError::InvalidAlignment:
-            throw ProgramInterrupt(ProgramInterrupt::IALIGN);
+            throw ProgramInterrupt::IALIGN;
         case MemoryAccessError::AccessDenied:
-            throw ProgramInterrupt(ProgramInterrupt::IACCESS);
+            throw ProgramInterrupt::IACCESS;
         case MemoryAccessError::HardwareFault:
         default:
-            throw HardwareInterrupt(HardwareInterrupt::MEMORY);
+            throw HardwareInterrupt::MEMORY;
     }
 }
 
 void ProcessorCore::_handleTimerInterrupt()
 {
-    require(_state.isTimerInterruptsEnabled());
+    Q_ASSERT(_state.isTimerInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipTm = _r[_IpRegister];
@@ -608,9 +615,9 @@ void ProcessorCore::_handleTimerInterrupt()
     _r[_IpRegister] = _ihaTm;
 }
 
-void ProcessorCore::_handleIoInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_handleIoInterrupt(uint64_t interruptStatusCode)
 {
-    require(_state.isIoInterruptsEnabled());
+    Q_ASSERT(_state.isIoInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipIo = _r[_IpRegister];
@@ -622,7 +629,7 @@ void ProcessorCore::_handleIoInterrupt(carl::UInt64 interruptStatusCode)
 
 void ProcessorCore::_handleSvcInterrupt()
 {
-    require(_state.isSvcInterruptsEnabled());
+    Q_ASSERT(_state.isSvcInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipSvc = _r[_IpRegister];
@@ -631,21 +638,21 @@ void ProcessorCore::_handleSvcInterrupt()
     _r[_IpRegister] = _ihaSvc;
 }
 
-void ProcessorCore::_handleProgramInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_handleProgramInterrupt(ProgramInterrupt interruptStatusCode)
 {
-    require(_state.isProgramInterruptsEnabled());
+    Q_ASSERT(_state.isProgramInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipPrg = _r[_IpRegister];
     _isavestatePrg = _state;
-    _iscPrg = interruptStatusCode;
+    _iscPrg = static_cast<uint64_t>(interruptStatusCode);
     _state = _ihstatePrg;
     _r[_IpRegister] = _ihaPrg;
 }
 
-void ProcessorCore::_handleExternalInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_handleExternalInterrupt(uint64_t interruptStatusCode)
 {
-    require(_state.isExternalInterruptsEnabled());
+    Q_ASSERT(_state.isExternalInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipExt = _r[_IpRegister];
@@ -655,19 +662,19 @@ void ProcessorCore::_handleExternalInterrupt(carl::UInt64 interruptStatusCode)
     _r[_IpRegister] = _ihaExt;
 }
 
-void ProcessorCore::_handleHardwareInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_handleHardwareInterrupt(HardwareInterrupt interruptStatusCode)
 {
-    require(_state.isHardwareInterruptsEnabled());
+    Q_ASSERT(_state.isHardwareInterruptsEnabled());
 
     //  TODO make sure state change is valid (e.g. byte order change, etc.)
     _isaveipHw = _r[_IpRegister];
     _isavestateHw = _state;
-    _iscHw = interruptStatusCode;
+    _iscHw = static_cast<uint64_t>(interruptStatusCode);
     _state = _ihstateHw;
     _r[_IpRegister] = _ihaHw;
 }
 
-void ProcessorCore::_raiseProgramInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_raiseProgramInterrupt(ProgramInterrupt interruptStatusCode)
 {
     if (_state.isProgramInterruptsEnabled())
     {   //  Can handle
@@ -679,7 +686,7 @@ void ProcessorCore::_raiseProgramInterrupt(carl::UInt64 interruptStatusCode)
     }
 }
 
-void ProcessorCore::_raiseHardwareInterrupt(carl::UInt64 interruptStatusCode)
+void ProcessorCore::_raiseHardwareInterrupt(HardwareInterrupt interruptStatusCode)
 {
     if (_state.isHardwareInterruptsEnabled())
     {   //  Can handle
@@ -693,155 +700,106 @@ void ProcessorCore::_raiseHardwareInterrupt(carl::UInt64 interruptStatusCode)
 
 //////////
 //  Implementation helpers (instruction execution)
-unsigned ProcessorCore::_fetchAndExecuteInstruction()
+unsigned ProcessorCore::_fetchAndExecuteInstruction() throws(ProgramInterrupt, HardwareInterrupt)
 {
     //  Translate instruction address and fetch the instruction
-    carl::UInt64 instructionAddress = _r[_IpRegister];
+    uint64_t instructionAddress = _r[_IpRegister];
     _r[_IpRegister] += 4;
-    carl::UInt32 instruction = _fetchInstruction(instructionAddress);
+    uint32_t instruction = _fetchInstruction(instructionAddress);
 
-    /*
-    if (instructionAddress == 0xFFFFFFFFFFF09EE8ll)
-    {
-        instructionAddress = instructionAddress;
-    }
-
-    static carl::TextFileWriter tfw("p:\\jace-cpp.log");
-    tfw << carl::toString(instructionAddress, "%016X")
-        << ": "
-        << carl::toString(instruction, "%08X")
-        << ",r0=" << carl::toString(_r[0], "%016X")
-        << ",r1=" << carl::toString(_r[1], "%016X")
-        << ",r2=" << carl::toString(_r[2], "%016X")
-        << ",r3=" << carl::toString(_r[3], "%016X")
-        << ",r4=" << carl::toString(_r[4], "%016X")
-        << ",r5=" << carl::toString(_r[5], "%016X")
-        << ",r6=" << carl::toString(_r[6], "%016X")
-        << ",r7=" << carl::toString(_r[7], "%016X")
-        << ",r8=" << carl::toString(_r[8], "%016X")
-        << ",r9=" << carl::toString(_r[9], "%016X")
-        << ",r10=" << carl::toString(_r[10], "%016X")
-        << ",r11=" << carl::toString(_r[11], "%016X")
-        << ",r12=" << carl::toString(_r[12], "%016X")
-        << ",r13=" << carl::toString(_r[13], "%016X")
-        << ",r14=" << carl::toString(_r[14], "%016X")
-        << ",r15=" << carl::toString(_r[15], "%016X")
-        << ",r16=" << carl::toString(_r[16], "%016X")
-        << ",r17=" << carl::toString(_r[17], "%016X")
-        << ",r18=" << carl::toString(_r[18], "%016X")
-        << ",r19=" << carl::toString(_r[19], "%016X")
-        << ",r20=" << carl::toString(_r[20], "%016X")
-        << ",r21=" << carl::toString(_r[21], "%016X")
-        << ",r22=" << carl::toString(_r[22], "%016X")
-        << ",r23=" << carl::toString(_r[23], "%016X")
-        << ",r24=" << carl::toString(_r[24], "%016X")
-        << ",r25=" << carl::toString(_r[25], "%016X")
-        << ",r26=" << carl::toString(_r[26], "%016X")
-        << ",r27=" << carl::toString(_r[27], "%016X")
-        << ",r28=" << carl::toString(_r[28], "%016X")
-        << ",r29=" << carl::toString(_r[29], "%016X")
-        << ",r30=" << carl::toString(_r[30], "%016X")
-        << ",r31=" << carl::toString(_r[31], "%016X")
-        << ",state=" << carl::toString(_c[0], "%016X")
-        << "\n";
-    */
-    //CARL_OUT << carl::toString(instructionAddress, "%016X")
-    //         << ": "
-    //         << carl::toString(instruction, "%08X")
-    //         << "\n";
     //  Dispatch to handler
-static const _InstructionHandler DispatchTable[64] =
-{
-    //  000...
-    &ProcessorCore::_handleLiL,                 //  ...000
-    &ProcessorCore::_handleCop1,                //  ...001
-    &ProcessorCore::_handleAddiL,               //  ...010
-    &ProcessorCore::_handleSubiL,               //  ...011
-    &ProcessorCore::_handleMuliL,               //  ...100
-    &ProcessorCore::_handleDiviL,               //  ...101
-    &ProcessorCore::_handleModiL,               //  ...110
-    &ProcessorCore::_handleJ,                   //  ...111
-    //  001...
-    &ProcessorCore::_handleLiD,                 //  ...000
-    &ProcessorCore::_handleLir,                 //  ...001
-    &ProcessorCore::_handleAddiUL,              //  ...010
-    &ProcessorCore::_handleSubiUL,              //  ...011
-    &ProcessorCore::_handleMuliUL,              //  ...100
-    &ProcessorCore::_handleDiviUL,              //  ...101
-    &ProcessorCore::_handleModiUL,              //  ...110
-    &ProcessorCore::_handleJal,                 //  ...111
-    //  010...
-    &ProcessorCore::_handleSeqiL,               //  ...000
-    &ProcessorCore::_handleSneiL,               //  ...001
-    &ProcessorCore::_handleSltiL,               //  ...010
-    &ProcessorCore::_handleSleiL,               //  ...011
-    &ProcessorCore::_handleSgtiL,               //  ...100
-    &ProcessorCore::_handleSgeiL,               //  ...101
-    &ProcessorCore::_handleSltiUL,              //  ...110
-    &ProcessorCore::_handleSleiUL,              //  ...111
-    //  011...
-    &ProcessorCore::_handleAndiL,               //  ...000
-    &ProcessorCore::_handleOriL,                //  ...001
-    &ProcessorCore::_handleXoriL,               //  ...010
-    &ProcessorCore::_handleImpliL,              //  ...011
-    &ProcessorCore::_handleLdm,                 //  ...100
-    &ProcessorCore::_handleStm,                 //  ...101
-    &ProcessorCore::_handleSgtiUL,              //  ...110
-    &ProcessorCore::_handleSgeiUL,              //  ...111
-    //  100...
-    &ProcessorCore::_handleLB,                  //  ...000
-    &ProcessorCore::_handleLUB,                 //  ...001
-    &ProcessorCore::_handleLH,                  //  ...010
-    &ProcessorCore::_handleLUH,                 //  ...011
-    &ProcessorCore::_handleLW,                  //  ...100
-    &ProcessorCore::_handleLUW,                 //  ...101
-    &ProcessorCore::_handleLL,                  //  ...110
-    &ProcessorCore::_handleXchg,                //  ...111
-    //  101...
-    &ProcessorCore::_handleSB,                  //  ...000
-    &ProcessorCore::_handleSH,                  //  ...001
-    &ProcessorCore::_handleSW,                  //  ...010
-    &ProcessorCore::_handleSL,                  //  ...011
-    &ProcessorCore::_handleLF,                  //  ...100
-    &ProcessorCore::_handleLD,                  //  ...101
-    &ProcessorCore::_handleSF,                  //  ...110
-    &ProcessorCore::_handleSD,                  //  ...111
-    //  110...
-    &ProcessorCore::_handleBeqL,                //  ...000
-    &ProcessorCore::_handleBneL,                //  ...001
-    &ProcessorCore::_handleBltL,                //  ...010
-    &ProcessorCore::_handleBleL,                //  ...011
-    &ProcessorCore::_handleBgtL,                //  ...100
-    &ProcessorCore::_handleBgeL,                //  ...101
-    &ProcessorCore::_handleBltUL,               //  ...110
-    &ProcessorCore::_handleBleUL,               //  ...111
-    //  111...
-    &ProcessorCore::_handleBeqD,                //  ...000
-    &ProcessorCore::_handleBneD,                //  ...001
-    &ProcessorCore::_handleBltD,                //  ...010
-    &ProcessorCore::_handleBleD,                //  ...011
-    &ProcessorCore::_handleBgtD,                //  ...100
-    &ProcessorCore::_handleBgeD,                //  ...101
-    &ProcessorCore::_handleBgtUL,               //  ...110
-    &ProcessorCore::_handleBgeUL                //  ...111
-};
+    static const _InstructionHandler DispatchTable[64] =
+    {
+        //  000...
+        &ProcessorCore::_handleLiL,                 //  ...000
+        &ProcessorCore::_handleCop1,                //  ...001
+        &ProcessorCore::_handleAddiL,               //  ...010
+        &ProcessorCore::_handleSubiL,               //  ...011
+        &ProcessorCore::_handleMuliL,               //  ...100
+        &ProcessorCore::_handleDiviL,               //  ...101
+        &ProcessorCore::_handleModiL,               //  ...110
+        &ProcessorCore::_handleJ,                   //  ...111
+        //  001...
+        &ProcessorCore::_handleLiD,                 //  ...000
+        &ProcessorCore::_handleLir,                 //  ...001
+        &ProcessorCore::_handleAddiUL,              //  ...010
+        &ProcessorCore::_handleSubiUL,              //  ...011
+        &ProcessorCore::_handleMuliUL,              //  ...100
+        &ProcessorCore::_handleDiviUL,              //  ...101
+        &ProcessorCore::_handleModiUL,              //  ...110
+        &ProcessorCore::_handleJal,                 //  ...111
+        //  010...
+        &ProcessorCore::_handleSeqiL,               //  ...000
+        &ProcessorCore::_handleSneiL,               //  ...001
+        &ProcessorCore::_handleSltiL,               //  ...010
+        &ProcessorCore::_handleSleiL,               //  ...011
+        &ProcessorCore::_handleSgtiL,               //  ...100
+        &ProcessorCore::_handleSgeiL,               //  ...101
+        &ProcessorCore::_handleSltiUL,              //  ...110
+        &ProcessorCore::_handleSleiUL,              //  ...111
+        //  011...
+        &ProcessorCore::_handleAndiL,               //  ...000
+        &ProcessorCore::_handleOriL,                //  ...001
+        &ProcessorCore::_handleXoriL,               //  ...010
+        &ProcessorCore::_handleImpliL,              //  ...011
+        &ProcessorCore::_handleLdm,                 //  ...100
+        &ProcessorCore::_handleStm,                 //  ...101
+        &ProcessorCore::_handleSgtiUL,              //  ...110
+        &ProcessorCore::_handleSgeiUL,              //  ...111
+        //  100...
+        &ProcessorCore::_handleLB,                  //  ...000
+        &ProcessorCore::_handleLUB,                 //  ...001
+        &ProcessorCore::_handleLH,                  //  ...010
+        &ProcessorCore::_handleLUH,                 //  ...011
+        &ProcessorCore::_handleLW,                  //  ...100
+        &ProcessorCore::_handleLUW,                 //  ...101
+        &ProcessorCore::_handleLL,                  //  ...110
+        &ProcessorCore::_handleXchg,                //  ...111
+        //  101...
+        &ProcessorCore::_handleSB,                  //  ...000
+        &ProcessorCore::_handleSH,                  //  ...001
+        &ProcessorCore::_handleSW,                  //  ...010
+        &ProcessorCore::_handleSL,                  //  ...011
+        &ProcessorCore::_handleLF,                  //  ...100
+        &ProcessorCore::_handleLD,                  //  ...101
+        &ProcessorCore::_handleSF,                  //  ...110
+        &ProcessorCore::_handleSD,                  //  ...111
+        //  110...
+        &ProcessorCore::_handleBeqL,                //  ...000
+        &ProcessorCore::_handleBneL,                //  ...001
+        &ProcessorCore::_handleBltL,                //  ...010
+        &ProcessorCore::_handleBleL,                //  ...011
+        &ProcessorCore::_handleBgtL,                //  ...100
+        &ProcessorCore::_handleBgeL,                //  ...101
+        &ProcessorCore::_handleBltUL,               //  ...110
+        &ProcessorCore::_handleBleUL,               //  ...111
+        //  111...
+        &ProcessorCore::_handleBeqD,                //  ...000
+        &ProcessorCore::_handleBneD,                //  ...001
+        &ProcessorCore::_handleBltD,                //  ...010
+        &ProcessorCore::_handleBleD,                //  ...011
+        &ProcessorCore::_handleBgtD,                //  ...100
+        &ProcessorCore::_handleBgeD,                //  ...101
+        &ProcessorCore::_handleBgtUL,               //  ...110
+        &ProcessorCore::_handleBgeUL                //  ...111
+    };
 
     _InstructionHandler handler = DispatchTable[instruction >> 26];
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleInvalidInstruction(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleInvalidInstruction(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     //  TODO kill off the printout
-    CARL_OUT << "Unsupported instruction "
-             << carl::toString(instruction, "%08X")
+    qDebug() << "Unsupported instruction "
+             << hadesvm::util::toString(instruction, "%08X")
              << " at "
-             << carl::toString(_r[_IpRegister] - 4, "%016X")
+             << hadesvm::util::toString(_r[_IpRegister] - 4, "%016X")
              << "\n";
-    throw ProgramInterrupt(ProgramInterrupt::OPCODE);
+    throw ProgramInterrupt::OPCODE;
 }
 
-unsigned ProcessorCore::_handleCop1(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleCop1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[32] =
     {
@@ -887,7 +845,7 @@ unsigned ProcessorCore::_handleCop1(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleShift1(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleShift1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[32] =
     {
@@ -933,7 +891,7 @@ unsigned ProcessorCore::_handleShift1(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleShift2(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleShift2(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[32] =
     {
@@ -979,7 +937,7 @@ unsigned ProcessorCore::_handleShift2(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleBase1(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleBase1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[64] =
     {
@@ -1061,7 +1019,7 @@ unsigned ProcessorCore::_handleBase1(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleBase2(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleBase2(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[64] =
     {
@@ -1143,7 +1101,7 @@ unsigned ProcessorCore::_handleBase2(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleBase3(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleBase3(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[64] =
     {
@@ -1225,7 +1183,7 @@ unsigned ProcessorCore::_handleBase3(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleBase4(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleBase4(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[32] =
     {
@@ -1271,7 +1229,7 @@ unsigned ProcessorCore::_handleBase4(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleBase5(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleBase5(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[64] =
     {
@@ -1353,7 +1311,7 @@ unsigned ProcessorCore::_handleBase5(carl::UInt32 instruction)
     return (this->*handler)(instruction);
 }
 
-unsigned ProcessorCore::_handleFp1(carl::UInt32 instruction)
+unsigned ProcessorCore::_handleFp1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
 {
     static const _InstructionHandler DispatchTable[64] =
     {
@@ -1434,6 +1392,5 @@ unsigned ProcessorCore::_handleFp1(carl::UInt32 instruction)
     _InstructionHandler handler = DispatchTable[instruction & 0x3F];
     return (this->*handler)(instruction);
 }
-#endif
 
 //  End of hadesvm-cereon/ProcessorCore.cpp

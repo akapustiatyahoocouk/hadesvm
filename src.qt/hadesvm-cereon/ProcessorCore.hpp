@@ -68,74 +68,49 @@ namespace hadesvm
 
         //////////
         //  Thrown by instruction handling routines when a PROGRAM interrupt (exception) occurs
-        class HADESVM_CEREON_PUBLIC ProgramInterrupt final
+        enum class ProgramInterrupt : uint64_t
         {
-            //////////
-            //  Constants
-        public:
-            static const uint64_t   ZDIV        = UINT64_C(0x0000000000000001);
-            static const uint64_t   IADDRESS    = UINT64_C(0x0000000000000002);
-            static const uint64_t   DADDRESS    = UINT64_C(0x0000000000000003);
-            static const uint64_t   IACCESS     = UINT64_C(0x0000000000000004);
-            static const uint64_t   DACCESS     = UINT64_C(0x0000000000000005);
-            static const uint64_t   IALIGN      = UINT64_C(0x0000000000000006);
-            static const uint64_t   DALIGN      = UINT64_C(0x0000000000000007);
-            static const uint64_t   OPCODE      = UINT64_C(0x0000000000000008);
-            static const uint64_t   OPERAND     = UINT64_C(0x0000000000000009);
-            static const uint64_t   PRIVILEGED  = UINT64_C(0x000000000000000A);
-            static const uint64_t   PAGETABLE   = UINT64_C(0x000000000000000B);
-            static const uint64_t   IPAGEFAULT  = UINT64_C(0x000000000000000C);
-            static const uint64_t   DPAGEFAULT  = UINT64_C(0x000000000000000D);
-            static const uint64_t   TRAP        = UINT64_C(0x000000000000000E);
-            static const uint64_t   MASKED      = UINT64_C(0x000000000000000F);
-            static const uint64_t   IOVERFLOW   = UINT64_C(0x0000000000000010);
-            static const uint64_t   FOPERAND    = UINT64_C(0x0000000000000011);
-            static const uint64_t   FZDIV       = UINT64_C(0x0000000000000012);
-            static const uint64_t   FOVERFLOW   = UINT64_C(0x0000000000000013);
-            static const uint64_t   FUNDERFLOW  = UINT64_C(0x0000000000000014);
-            static const uint64_t   FINEXACT    = UINT64_C(0x0000000000000015);
-            static const uint64_t   DEBUG0      = UINT64_C(0x0000000000000016);
-            static const uint64_t   BREAK0      = UINT64_C(0x0000000000000017);
-            static const uint64_t   UNKNOWN     = UINT64_C(0xFFFFFFFFFFFFFFFF);
-
-            //////////
-            //  Construction/destruction/assignment
-        public:
-            explicit ProgramInterrupt(uint64_t isc) : interruptStatusCode(isc) {}
-
-            //////////
-            //  Properties
-        public:
-            const uint64_t      interruptStatusCode;
+            ZDIV        = UINT64_C(0x0000000000000001),
+            IADDRESS    = UINT64_C(0x0000000000000002),
+            DADDRESS    = UINT64_C(0x0000000000000003),
+            IACCESS     = UINT64_C(0x0000000000000004),
+            DACCESS     = UINT64_C(0x0000000000000005),
+            IALIGN      = UINT64_C(0x0000000000000006),
+            DALIGN      = UINT64_C(0x0000000000000007),
+            OPCODE      = UINT64_C(0x0000000000000008),
+            OPERAND     = UINT64_C(0x0000000000000009),
+            PRIVILEGED  = UINT64_C(0x000000000000000A),
+            PAGETABLE   = UINT64_C(0x000000000000000B),
+            IPAGEFAULT  = UINT64_C(0x000000000000000C),
+            DPAGEFAULT  = UINT64_C(0x000000000000000D),
+            TRAP        = UINT64_C(0x000000000000000E),
+            MASKED      = UINT64_C(0x000000000000000F),
+            IOVERFLOW   = UINT64_C(0x0000000000000010),
+            FOPERAND    = UINT64_C(0x0000000000000011),
+            FZDIV       = UINT64_C(0x0000000000000012),
+            FOVERFLOW   = UINT64_C(0x0000000000000013),
+            FUNDERFLOW  = UINT64_C(0x0000000000000014),
+            FINEXACT    = UINT64_C(0x0000000000000015),
+            DEBUG0      = UINT64_C(0x0000000000000016),
+            BREAK0      = UINT64_C(0x0000000000000017),
+            UNKNOWN     = UINT64_C(0xFFFFFFFFFFFFFFFF)
         };
 
         //////////
         //  Thrown by instruction handling routines when a HARDWARE interrupt (exception) occurs
-        class HADESVM_CEREON_PUBLIC HardwareInterrupt final
+        enum class HardwareInterrupt : uint64_t
         {
-            //////////
-            //  Constants
-        public:
-            static const uint64_t   PROCESSOR   = UINT64_C(0x0000000000000001);
-            static const uint64_t   MEMORY      = UINT64_C(0x0000000000000002);
-            static const uint64_t   BUS         = UINT64_C(0x0000000000000003);
-            static const uint64_t   IO          = UINT64_C(0x0000000000000004);
-            static const uint64_t   TIMER       = UINT64_C(0x0000000000000005);
-            static const uint64_t   UNKNOWN     = UINT64_C(0xFFFFFFFFFFFFFFFF);
-
-            //////////
-            //  Construction/destruction/assignment
-        public:
-            explicit HardwareInterrupt(uint64_t isc) : interruptStatusCode(isc) {}
-
-            //////////
-            //  Properties
-        public:
-            const uint64_t      interruptStatusCode;
+            PROCESSOR   = UINT64_C(0x0000000000000001),
+            MEMORY      = UINT64_C(0x0000000000000002),
+            BUS         = UINT64_C(0x0000000000000003),
+            IO          = UINT64_C(0x0000000000000004),
+            TIMER       = UINT64_C(0x0000000000000005),
+            UNKNOWN     = UINT64_C(0xFFFFFFFFFFFFFFFF)
         };
 
         //////////
         //  Thrown by instruction handling routines when CPU core must be HALTed
+        //  TODO do we need a full class ?
         class HADESVM_CEREON_PUBLIC ForceHalt final
         {
         };
@@ -557,8 +532,8 @@ namespace hadesvm
 
             //  Helpers (memory access)
             //  Can throw ProgramInterrupt, HardwareInterrupt, ForceHalt
-            uint32_t            _fetchInstruction(uint64_t address);
-            uint64_t            _fetchLongWord(uint64_t address);
+            uint32_t            _fetchInstruction(uint64_t address) throws(ProgramInterrupt, HardwareInterrupt);
+            uint64_t            _fetchLongWord(uint64_t address) throws(ProgramInterrupt, HardwareInterrupt);
             uint8_t             _loadByte(uint64_t address);
             uint16_t            _loadHalfWord(uint64_t address);
             uint32_t            _loadWord(uint64_t address);
@@ -573,43 +548,44 @@ namespace hadesvm
             void                _handleTimerInterrupt();
             void                _handleIoInterrupt(uint64_t interruptStatusCode);
             void                _handleSvcInterrupt();
-            void                _handleProgramInterrupt(uint64_t interruptStatusCode);
+            void                _handleProgramInterrupt(ProgramInterrupt interruptStatusCode);
             void                _handleExternalInterrupt(uint64_t interruptStatusCode);
-            void                _handleHardwareInterrupt(uint64_t interruptStatusCode);
+            void                _handleHardwareInterrupt(HardwareInterrupt interruptStatusCode);
 
-            void                _raiseProgramInterrupt(uint64_t interruptStatusCode);   //  throws ForceHalt if masked
-            void                _raiseHardwareInterrupt(uint64_t interruptStatusCode);  //  throws ForceHalt if masked
+            void                _raiseProgramInterrupt(ProgramInterrupt interruptStatusCode);   //  TODO throws(ForceHalt) if masked
+            void                _raiseHardwareInterrupt(HardwareInterrupt interruptStatusCode);  //  TODO throws(ForceHalt) if masked
 
             //  Helpers (instruction execution). Each handler returns the
             //  number of clock cycles taken by instruction execution.
             //  Can throw ProgramInterrupt, HardwareInterrupt, ForceHalt
-            typedef unsigned (ProcessorCore::*_InstructionHandler)(uint32_t instruction);
+            typedef unsigned (ProcessorCore::*_InstructionHandler)(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
-            unsigned            _fetchAndExecuteInstruction();
-            unsigned            _handleInvalidInstruction(uint32_t instruction);
-            unsigned            _handleCop1(uint32_t instruction);
-            unsigned            _handleShift1(uint32_t instruction);
-            unsigned            _handleShift2(uint32_t instruction);
-            unsigned            _handleBase1(uint32_t instruction);
-            unsigned            _handleBase2(uint32_t instruction);
-            unsigned            _handleBase3(uint32_t instruction);
-            unsigned            _handleBase4(uint32_t instruction);
-            unsigned            _handleBase5(uint32_t instruction);
-            unsigned            _handleFp1(uint32_t instruction);
+            unsigned            _fetchAndExecuteInstruction() throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInvalidInstruction(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCop1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShift1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShift2(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBase1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBase2(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBase3(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBase4(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBase5(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleFp1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
+            //  TODO Add throws(ProgramInterrupt, HardwareInterrupt) to all instruction handlers
             //  BASE (data movement)
-            unsigned            _handleMovL(uint32_t instruction);
-            unsigned            _handleMovCR(uint32_t instruction);
-            unsigned            _handleMovRC(uint32_t instruction);
-            unsigned            _handleLiL(uint32_t instruction);
-            unsigned            _handleSwapH(uint32_t instruction);
-            unsigned            _handleSwapUH(uint32_t instruction);
-            unsigned            _handleSwapW(uint32_t instruction);
-            unsigned            _handleSwapUW(uint32_t instruction);
-            unsigned            _handleSwapL(uint32_t instruction);
+            unsigned            _handleMovL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMovCR(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMovRC(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSwapH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSwapUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSwapW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSwapUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSwapL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (arithmetic)
-            void                    _handleIntegerOverflow(bool overflow)
+            void                _handleIntegerOverflow(bool overflow)
             {
                 if (overflow)
                 {
@@ -622,7 +598,7 @@ namespace hadesvm
                 }
             }
 
-            void                    _handleIntegerDivisionByZero(bool divisionByZero)
+            void                _handleIntegerDivisionByZero(bool divisionByZero)
             {
                 if (divisionByZero)
                 {
@@ -636,7 +612,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeAddSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeAddSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -647,7 +623,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeAddUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeAddUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -658,7 +634,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeSubtractSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeSubtractSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -669,7 +645,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeSubtractUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeSubtractUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -680,7 +656,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeMultiplySigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeMultiplySigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -691,7 +667,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeMultiplyUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeMultiplyUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false;
                 result =
@@ -702,7 +678,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeDivideSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeDivideSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false, divisionByZero = false;
                 result =
@@ -714,7 +690,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeDivideUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeDivideUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false, divisionByZero = false;
                 result =
@@ -726,7 +702,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeModuloSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeModuloSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false, divisionByZero = false;
                 result =
@@ -738,7 +714,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeModuloUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeModuloUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 bool overflow = false, divisionByZero = false;
                 result =
@@ -750,7 +726,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeAbsSigned(uint64_t & result, uint64_t op)
+            void                _executeAbsSigned(uint64_t & result, uint64_t op)
             {
                 bool overflow = false;
                 result =
@@ -761,7 +737,7 @@ namespace hadesvm
             }
 
             template <class DataType>
-            void                    _executeCpl2Unsigned(uint64_t & result, uint64_t op)
+            void                _executeCpl2Unsigned(uint64_t & result, uint64_t op)
             {
                 bool overflow = false;
                 result =
@@ -770,424 +746,424 @@ namespace hadesvm
                         overflow);
             }
 
-            unsigned            _handleAddB(uint32_t instruction);
-            unsigned            _handleAddUB(uint32_t instruction);
-            unsigned            _handleAddH(uint32_t instruction);
-            unsigned            _handleAddUH(uint32_t instruction);
-            unsigned            _handleAddW(uint32_t instruction);
-            unsigned            _handleAddUW(uint32_t instruction);
-            unsigned            _handleAddL(uint32_t instruction);
-            unsigned            _handleAddUL(uint32_t instruction);
-            unsigned            _handleSubB(uint32_t instruction);
-            unsigned            _handleSubUB(uint32_t instruction);
-            unsigned            _handleSubH(uint32_t instruction);
-            unsigned            _handleSubUH(uint32_t instruction);
-            unsigned            _handleSubW(uint32_t instruction);
-            unsigned            _handleSubUW(uint32_t instruction);
-            unsigned            _handleSubL(uint32_t instruction);
-            unsigned            _handleSubUL(uint32_t instruction);
-            unsigned            _handleMulB(uint32_t instruction);
-            unsigned            _handleMulUB(uint32_t instruction);
-            unsigned            _handleMulH(uint32_t instruction);
-            unsigned            _handleMulUH(uint32_t instruction);
-            unsigned            _handleMulW(uint32_t instruction);
-            unsigned            _handleMulUW(uint32_t instruction);
-            unsigned            _handleMulL(uint32_t instruction);
-            unsigned            _handleMulUL(uint32_t instruction);
-            unsigned            _handleDivB(uint32_t instruction);
-            unsigned            _handleDivUB(uint32_t instruction);
-            unsigned            _handleDivH(uint32_t instruction);
-            unsigned            _handleDivUH(uint32_t instruction);
-            unsigned            _handleDivW(uint32_t instruction);
-            unsigned            _handleDivUW(uint32_t instruction);
-            unsigned            _handleDivL(uint32_t instruction);
-            unsigned            _handleDivUL(uint32_t instruction);
-            unsigned            _handleModB(uint32_t instruction);
-            unsigned            _handleModUB(uint32_t instruction);
-            unsigned            _handleModH(uint32_t instruction);
-            unsigned            _handleModUH(uint32_t instruction);
-            unsigned            _handleModW(uint32_t instruction);
-            unsigned            _handleModUW(uint32_t instruction);
-            unsigned            _handleModL(uint32_t instruction);
-            unsigned            _handleModUL(uint32_t instruction);
-            unsigned            _handleAbsB(uint32_t instruction);
-            unsigned            _handleAbsH(uint32_t instruction);
-            unsigned            _handleAbsW(uint32_t instruction);
-            unsigned            _handleAbsL(uint32_t instruction);
-            unsigned            _handleNegB(uint32_t instruction);
-            unsigned            _handleCpl2UB(uint32_t instruction);
-            unsigned            _handleNegH(uint32_t instruction);
-            unsigned            _handleCpl2UH(uint32_t instruction);
-            unsigned            _handleNegW(uint32_t instruction);
-            unsigned            _handleCpl2UW(uint32_t instruction);
-            unsigned            _handleNegL(uint32_t instruction);
-            unsigned            _handleCpl2UL(uint32_t instruction);
-            unsigned            _handleAddiB(uint32_t instruction);
-            unsigned            _handleAddiUB(uint32_t instruction);
-            unsigned            _handleAddiH(uint32_t instruction);
-            unsigned            _handleAddiUH(uint32_t instruction);
-            unsigned            _handleAddiW(uint32_t instruction);
-            unsigned            _handleAddiUW(uint32_t instruction);
-            unsigned            _handleAddiL(uint32_t instruction);
-            unsigned            _handleAddiUL(uint32_t instruction);
-            unsigned            _handleSubiB(uint32_t instruction);
-            unsigned            _handleSubiUB(uint32_t instruction);
-            unsigned            _handleSubiH(uint32_t instruction);
-            unsigned            _handleSubiUH(uint32_t instruction);
-            unsigned            _handleSubiW(uint32_t instruction);
-            unsigned            _handleSubiUW(uint32_t instruction);
-            unsigned            _handleSubiL(uint32_t instruction);
-            unsigned            _handleSubiUL(uint32_t instruction);
-            unsigned            _handleMuliB(uint32_t instruction);
-            unsigned            _handleMuliUB(uint32_t instruction);
-            unsigned            _handleMuliH(uint32_t instruction);
-            unsigned            _handleMuliUH(uint32_t instruction);
-            unsigned            _handleMuliW(uint32_t instruction);
-            unsigned            _handleMuliUW(uint32_t instruction);
-            unsigned            _handleMuliL(uint32_t instruction);
-            unsigned            _handleMuliUL(uint32_t instruction);
-            unsigned            _handleDiviB(uint32_t instruction);
-            unsigned            _handleDiviUB(uint32_t instruction);
-            unsigned            _handleDiviH(uint32_t instruction);
-            unsigned            _handleDiviUH(uint32_t instruction);
-            unsigned            _handleDiviW(uint32_t instruction);
-            unsigned            _handleDiviUW(uint32_t instruction);
-            unsigned            _handleDiviL(uint32_t instruction);
-            unsigned            _handleDiviUL(uint32_t instruction);
-            unsigned            _handleModiB(uint32_t instruction);
-            unsigned            _handleModiUB(uint32_t instruction);
-            unsigned            _handleModiH(uint32_t instruction);
-            unsigned            _handleModiUH(uint32_t instruction);
-            unsigned            _handleModiW(uint32_t instruction);
-            unsigned            _handleModiUW(uint32_t instruction);
-            unsigned            _handleModiL(uint32_t instruction);
-            unsigned            _handleModiUL(uint32_t instruction);
+            unsigned            _handleAddB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCpl2UB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCpl2UH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCpl2UW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCpl2UL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMuliUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDiviUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleModiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (boolean)
             template <class DataType>
-            void                    _executeAndSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeAndSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeSigned(op1 & op2);
             }
 
             template <class DataType>
-            void                    _executeAndUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeAndUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeUnsigned(op1 & op2);
             }
 
             template <class DataType>
-            void                    _executeOrSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeOrSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeSigned(op1 | op2);
             }
 
             template <class DataType>
-            void                    _executeOrUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeOrUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeUnsigned(op1 | op2);
             }
 
             template <class DataType>
-            void                    _executeXorSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeXorSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeSigned(op1 ^ op2);
             }
 
             template <class DataType>
-            void                    _executeXorUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeXorUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeUnsigned(op1 ^ op2);
             }
 
             template <class DataType>
-            void                    _executeImplSigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeImplSigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeSigned(~op1 | op2);
             }
 
             template <class DataType>
-            void                    _executeImplUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
+            void                _executeImplUnsigned(uint64_t & result, uint64_t op1, uint64_t op2)
             {
                 result = DataType::normalizeUnsigned(~op1 | op2);
             }
 
-            unsigned            _handleAndB(uint32_t instruction);
-            unsigned            _handleAndUB(uint32_t instruction);
-            unsigned            _handleAndH(uint32_t instruction);
-            unsigned            _handleAndUH(uint32_t instruction);
-            unsigned            _handleAndW(uint32_t instruction);
-            unsigned            _handleAndUW(uint32_t instruction);
-            unsigned            _handleAndL(uint32_t instruction);
-            unsigned            _handleOrB(uint32_t instruction);
-            unsigned            _handleOrUB(uint32_t instruction);
-            unsigned            _handleOrH(uint32_t instruction);
-            unsigned            _handleOrUH(uint32_t instruction);
-            unsigned            _handleOrW(uint32_t instruction);
-            unsigned            _handleOrUW(uint32_t instruction);
-            unsigned            _handleOrL(uint32_t instruction);
-            unsigned            _handleXorB(uint32_t instruction);
-            unsigned            _handleXorUB(uint32_t instruction);
-            unsigned            _handleXorH(uint32_t instruction);
-            unsigned            _handleXorUH(uint32_t instruction);
-            unsigned            _handleXorW(uint32_t instruction);
-            unsigned            _handleXorUW(uint32_t instruction);
-            unsigned            _handleXorL(uint32_t instruction);
-            unsigned            _handleImplB(uint32_t instruction);
-            unsigned            _handleImplUB(uint32_t instruction);
-            unsigned            _handleImplH(uint32_t instruction);
-            unsigned            _handleImplUH(uint32_t instruction);
-            unsigned            _handleImplW(uint32_t instruction);
-            unsigned            _handleImplUW(uint32_t instruction);
-            unsigned            _handleImplL(uint32_t instruction);
-            unsigned            _handleAndiL(uint32_t instruction);
-            unsigned            _handleOriL(uint32_t instruction);
-            unsigned            _handleXoriL(uint32_t instruction);
-            unsigned            _handleImpliL(uint32_t instruction);
-            unsigned            _handleNotB(uint32_t instruction);
-            unsigned            _handleNotUB(uint32_t instruction);
-            unsigned            _handleNotH(uint32_t instruction);
-            unsigned            _handleNotUH(uint32_t instruction);
-            unsigned            _handleNotW(uint32_t instruction);
-            unsigned            _handleNotUW(uint32_t instruction);
-            unsigned            _handleNotL(uint32_t instruction);
+            unsigned            _handleAndB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOrL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXorL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImplL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAndiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOriL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXoriL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImpliL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNotL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (shifts)
-            unsigned            _handleShlB(uint32_t instruction);
-            unsigned            _handleShlUB(uint32_t instruction);
-            unsigned            _handleShlH(uint32_t instruction);
-            unsigned            _handleShlUH(uint32_t instruction);
-            unsigned            _handleShlW(uint32_t instruction);
-            unsigned            _handleShlUW(uint32_t instruction);
-            unsigned            _handleShlL(uint32_t instruction);
-            unsigned            _handleShrB(uint32_t instruction);
-            unsigned            _handleShrUB(uint32_t instruction);
-            unsigned            _handleShrH(uint32_t instruction);
-            unsigned            _handleShrUH(uint32_t instruction);
-            unsigned            _handleShrW(uint32_t instruction);
-            unsigned            _handleShrUW(uint32_t instruction);
-            unsigned            _handleShrL(uint32_t instruction);
-            unsigned            _handleAslB(uint32_t instruction);
-            unsigned            _handleAslUB(uint32_t instruction);
-            unsigned            _handleAslH(uint32_t instruction);
-            unsigned            _handleAslUH(uint32_t instruction);
-            unsigned            _handleAslW(uint32_t instruction);
-            unsigned            _handleAslUW(uint32_t instruction);
-            unsigned            _handleAslL(uint32_t instruction);
-            unsigned            _handleAsrB(uint32_t instruction);
-            unsigned            _handleAsrUB(uint32_t instruction);
-            unsigned            _handleAsrH(uint32_t instruction);
-            unsigned            _handleAsrUH(uint32_t instruction);
-            unsigned            _handleAsrW(uint32_t instruction);
-            unsigned            _handleAsrUW(uint32_t instruction);
-            unsigned            _handleAsrL(uint32_t instruction);
-            unsigned            _handleRolB(uint32_t instruction);
-            unsigned            _handleRolUB(uint32_t instruction);
-            unsigned            _handleRolH(uint32_t instruction);
-            unsigned            _handleRolUH(uint32_t instruction);
-            unsigned            _handleRolW(uint32_t instruction);
-            unsigned            _handleRolUW(uint32_t instruction);
-            unsigned            _handleRolL(uint32_t instruction);
-            unsigned            _handleRorB(uint32_t instruction);
-            unsigned            _handleRorUB(uint32_t instruction);
-            unsigned            _handleRorH(uint32_t instruction);
-            unsigned            _handleRorUH(uint32_t instruction);
-            unsigned            _handleRorW(uint32_t instruction);
-            unsigned            _handleRorUW(uint32_t instruction);
-            unsigned            _handleRorL(uint32_t instruction);
-            unsigned            _handleShliB(uint32_t instruction);
-            unsigned            _handleShliUB(uint32_t instruction);
-            unsigned            _handleShliH(uint32_t instruction);
-            unsigned            _handleShliUH(uint32_t instruction);
-            unsigned            _handleShliW(uint32_t instruction);
-            unsigned            _handleShliUW(uint32_t instruction);
-            unsigned            _handleShliL(uint32_t instruction);
-            unsigned            _handleShriB(uint32_t instruction);
-            unsigned            _handleShriUB(uint32_t instruction);
-            unsigned            _handleShriH(uint32_t instruction);
-            unsigned            _handleShriUH(uint32_t instruction);
-            unsigned            _handleShriW(uint32_t instruction);
-            unsigned            _handleShriUW(uint32_t instruction);
-            unsigned            _handleShriL(uint32_t instruction);
-            unsigned            _handleAsliB(uint32_t instruction);
-            unsigned            _handleAsliUB(uint32_t instruction);
-            unsigned            _handleAsliH(uint32_t instruction);
-            unsigned            _handleAsliUH(uint32_t instruction);
-            unsigned            _handleAsliW(uint32_t instruction);
-            unsigned            _handleAsliUW(uint32_t instruction);
-            unsigned            _handleAsliL(uint32_t instruction);
-            unsigned            _handleAsriB(uint32_t instruction);
-            unsigned            _handleAsriUB(uint32_t instruction);
-            unsigned            _handleAsriH(uint32_t instruction);
-            unsigned            _handleAsriUH(uint32_t instruction);
-            unsigned            _handleAsriW(uint32_t instruction);
-            unsigned            _handleAsriUW(uint32_t instruction);
-            unsigned            _handleAsriL(uint32_t instruction);
-            unsigned            _handleRoliB(uint32_t instruction);
-            unsigned            _handleRoliUB(uint32_t instruction);
-            unsigned            _handleRoliH(uint32_t instruction);
-            unsigned            _handleRoliUH(uint32_t instruction);
-            unsigned            _handleRoliW(uint32_t instruction);
-            unsigned            _handleRoliUW(uint32_t instruction);
-            unsigned            _handleRoliL(uint32_t instruction);
-            unsigned            _handleRoriB(uint32_t instruction);
-            unsigned            _handleRoriUB(uint32_t instruction);
-            unsigned            _handleRoriH(uint32_t instruction);
-            unsigned            _handleRoriUH(uint32_t instruction);
-            unsigned            _handleRoriW(uint32_t instruction);
-            unsigned            _handleRoriUW(uint32_t instruction);
-            unsigned            _handleRoriL(uint32_t instruction);
+            unsigned            _handleShlB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShlL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShrL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAslL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsrL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRolL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRorL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShliL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleShriL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsliL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAsriL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoliL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRoriL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (bit manipulation)
             template <class DataType>
-            void                    _executeBrevSigned(uint64_t & result, uint64_t op)
+            void                _executeBrevSigned(uint64_t & result, uint64_t op)
             {
                 result = DataType::normalizeSigned(DataType::reverseBits(op));
             }
 
             template <class DataType>
-            void                    _executeBrevUnsigned(uint64_t & result, uint64_t op)
+            void                _executeBrevUnsigned(uint64_t & result, uint64_t op)
             {
                 result = DataType::normalizeUnsigned(DataType::reverseBits(op));
             }
 
-            unsigned            _handleClz(uint32_t instruction);
-            unsigned            _handleCtz(uint32_t instruction);
-            unsigned            _handleClo(uint32_t instruction);
-            unsigned            _handleCto(uint32_t instruction);
-            unsigned            _handleBfeL(uint32_t instruction);
-            unsigned            _handleBfeUL(uint32_t instruction);
-            unsigned            _handleBfiL(uint32_t instruction);
-            unsigned            _handleBrevB(uint32_t instruction);
-            unsigned            _handleBrevUB(uint32_t instruction);
-            unsigned            _handleBrevH(uint32_t instruction);
-            unsigned            _handleBrevUH(uint32_t instruction);
-            unsigned            _handleBrevW(uint32_t instruction);
-            unsigned            _handleBrevUW(uint32_t instruction);
-            unsigned            _handleBrevL(uint32_t instruction);
+            unsigned            _handleClz(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCtz(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleClo(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCto(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBfeL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBfeUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBfiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrevL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (conversions)
-            unsigned            _handleCvtBL(uint32_t instruction);
-            unsigned            _handleCvtUBL(uint32_t instruction);
-            unsigned            _handleCvtHL(uint32_t instruction);
-            unsigned            _handleCvtUHL(uint32_t instruction);
-            unsigned            _handleCvtWL(uint32_t instruction);
-            unsigned            _handleCvtUWL(uint32_t instruction);
+            unsigned            _handleCvtBL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUBL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtHL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUHL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtWL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUWL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (comparison)
-            unsigned            _handleSeqL(uint32_t instruction);
-            unsigned            _handleSneL(uint32_t instruction);
-            unsigned            _handleSltL(uint32_t instruction);
-            unsigned            _handleSleL(uint32_t instruction);
-            unsigned            _handleSgtL(uint32_t instruction);
-            unsigned            _handleSgeL(uint32_t instruction);
-            unsigned            _handleSltUL(uint32_t instruction);
-            unsigned            _handleSleUL(uint32_t instruction);
-            unsigned            _handleSgtUL(uint32_t instruction);
-            unsigned            _handleSgeUL(uint32_t instruction);
-            unsigned            _handleSeqiL(uint32_t instruction);
-            unsigned            _handleSneiL(uint32_t instruction);
-            unsigned            _handleSltiL(uint32_t instruction);
-            unsigned            _handleSleiL(uint32_t instruction);
-            unsigned            _handleSgtiL(uint32_t instruction);
-            unsigned            _handleSgeiL(uint32_t instruction);
-            unsigned            _handleSltiUL(uint32_t instruction);
-            unsigned            _handleSleiUL(uint32_t instruction);
-            unsigned            _handleSgtiUL(uint32_t instruction);
-            unsigned            _handleSgeiUL(uint32_t instruction);
+            unsigned            _handleSeqL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSneL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSltL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSleL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgtL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgeL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSltUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSleUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgtUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgeUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSeqiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSneiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSltiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSleiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgtiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgeiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSltiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSleiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgtiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgeiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (load/store)
-            unsigned            _handleLB(uint32_t instruction);
-            unsigned            _handleLUB(uint32_t instruction);
-            unsigned            _handleLH(uint32_t instruction);
-            unsigned            _handleLUH(uint32_t instruction);
-            unsigned            _handleLW(uint32_t instruction);
-            unsigned            _handleLUW(uint32_t instruction);
-            unsigned            _handleLL(uint32_t instruction);
-            unsigned            _handleXchg(uint32_t instruction);
-            unsigned            _handleSB(uint32_t instruction);
-            unsigned            _handleSH(uint32_t instruction);
-            unsigned            _handleSW(uint32_t instruction);
-            unsigned            _handleSL(uint32_t instruction);
-            unsigned            _handleLir(uint32_t instruction);
-            unsigned            _handleLdm(uint32_t instruction);
-            unsigned            _handleStm(uint32_t instruction);
+            unsigned            _handleLB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleXchg(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLir(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLdm(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleStm(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (flow control)
-            unsigned            _handleJ(uint32_t instruction);
-            unsigned            _handleJal(uint32_t instruction);
-            unsigned            _handleJr(uint32_t instruction);
-            unsigned            _handleJalr(uint32_t instruction);
-            unsigned            _handleBeqL(uint32_t instruction);
-            unsigned            _handleBneL(uint32_t instruction);
-            unsigned            _handleBltL(uint32_t instruction);
-            unsigned            _handleBleL(uint32_t instruction);
-            unsigned            _handleBgtL(uint32_t instruction);
-            unsigned            _handleBgeL(uint32_t instruction);
-            unsigned            _handleBltUL(uint32_t instruction);
-            unsigned            _handleBleUL(uint32_t instruction);
-            unsigned            _handleBgtUL(uint32_t instruction);
-            unsigned            _handleBgeUL(uint32_t instruction);
-            unsigned            _handleBeqiL(uint32_t instruction);
-            unsigned            _handleBneiL(uint32_t instruction);
-            unsigned            _handleBltiL(uint32_t instruction);
-            unsigned            _handleBleiL(uint32_t instruction);
-            unsigned            _handleBgtiL(uint32_t instruction);
-            unsigned            _handleBgeiL(uint32_t instruction);
-            unsigned            _handleBltiUL(uint32_t instruction);
-            unsigned            _handleBleiUL(uint32_t instruction);
-            unsigned            _handleBgtiUL(uint32_t instruction);
-            unsigned            _handleBgeiUL(uint32_t instruction);
+            unsigned            _handleJ(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleJal(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleJr(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleJalr(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBeqL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBneL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBltL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBleL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgtL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgeL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBltUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBleUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgtUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgeUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBeqiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBneiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBltiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBleiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgtiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgeiL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBltiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBleiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgtiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgeiUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (TLB control)
-            unsigned            _handleIitlb(uint32_t instruction);
-            unsigned            _handleIdtlb(uint32_t instruction);
-            unsigned            _handleIitlbe(uint32_t instruction);
-            unsigned            _handleIdtlbe(uint32_t instruction);
-            unsigned            _handleIitlbc(uint32_t instruction);
-            unsigned            _handleIdtlbc(uint32_t instruction);
-            unsigned            _handleIitlbec(uint32_t instruction);
-            unsigned            _handleIdtlbec(uint32_t instruction);
+            unsigned            _handleIitlb(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIdtlb(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIitlbe(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIdtlbe(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIitlbc(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIdtlbc(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIitlbec(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIdtlbec(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (cache control)
-            unsigned            _handleImb(uint32_t instruction);
-            unsigned            _handleDmb(uint32_t instruction);
-            unsigned            _handleImbc(uint32_t instruction);
-            unsigned            _handleDmbc(uint32_t instruction);
+            unsigned            _handleImb(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDmb(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleImbc(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDmbc(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (I/O)
-            unsigned            _handleInB(uint32_t instruction);
-            unsigned            _handleInUB(uint32_t instruction);
-            unsigned            _handleInH(uint32_t instruction);
-            unsigned            _handleInUH(uint32_t instruction);
-            unsigned            _handleInW(uint32_t instruction);
-            unsigned            _handleInUW(uint32_t instruction);
-            unsigned            _handleInL(uint32_t instruction);
-            unsigned            _handleOutB(uint32_t instruction);
-            unsigned            _handleOutH(uint32_t instruction);
-            unsigned            _handleOutW(uint32_t instruction);
-            unsigned            _handleOutL(uint32_t instruction);
-            unsigned            _handleTstp(uint32_t instruction);
-            unsigned            _handleSetp(uint32_t instruction);
+            unsigned            _handleInB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleInL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOutB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOutH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOutW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleOutL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleTstp(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSetp(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  BASE (Misc)
-            unsigned            _handleHalt(uint32_t instruction);
-            unsigned            _handleIret(uint32_t instruction);
-            unsigned            _handleGetfl(uint32_t instruction);
-            unsigned            _handleSetfl(uint32_t instruction);
-            unsigned            _handleRstfl(uint32_t instruction);
-            unsigned            _handleSvc(uint32_t instruction);
-            unsigned            _handleBrk(uint32_t instruction);
-            unsigned            _handleCpuid(uint32_t instruction);
-            unsigned            _handleSigp(uint32_t instruction);
-            unsigned            _handleNop(uint32_t instruction);
+            unsigned            _handleHalt(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleIret(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleGetfl(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSetfl(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleRstfl(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSvc(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBrk(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCpuid(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSigp(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNop(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (data movement)
-            unsigned            _handleMovD(uint32_t instruction);
-            unsigned            _handleLiD(uint32_t instruction);
+            unsigned            _handleMovD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLiD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (arithmetics)
-            void                    _handleFloatingPointConditions(const hadesvm::ieee754::Environment & fpEnvironment)
+            void                _handleFloatingPointConditions(const hadesvm::ieee754::Environment & fpEnvironment)
             {
                 //  Set flags...
                 if ((fpEnvironment.exception | hadesvm::ieee754::Exception::Operand) != hadesvm::ieee754::Exception::None)
@@ -1238,77 +1214,77 @@ namespace hadesvm
                 }
             }
 
-            unsigned            _handleAddF(uint32_t instruction);
-            unsigned            _handleAddD(uint32_t instruction);
-            unsigned            _handleSubF(uint32_t instruction);
-            unsigned            _handleSubD(uint32_t instruction);
-            unsigned            _handleMulF(uint32_t instruction);
-            unsigned            _handleMulD(uint32_t instruction);
-            unsigned            _handleDivF(uint32_t instruction);
-            unsigned            _handleDivD(uint32_t instruction);
-            unsigned            _handleAbsF(uint32_t instruction);
-            unsigned            _handleAbsD(uint32_t instruction);
-            unsigned            _handleNegF(uint32_t instruction);
-            unsigned            _handleNegD(uint32_t instruction);
-            unsigned            _handleSqrtF(uint32_t instruction);
-            unsigned            _handleSqrtD(uint32_t instruction);
+            unsigned            _handleAddF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAddD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSubD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleMulD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleDivD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleAbsD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleNegD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSqrtF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSqrtD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (conversions)
-            unsigned            _handleCvtFB(uint32_t instruction);
-            unsigned            _handleCvtFUB(uint32_t instruction);
-            unsigned            _handleCvtFH(uint32_t instruction);
-            unsigned            _handleCvtFUH(uint32_t instruction);
-            unsigned            _handleCvtFW(uint32_t instruction);
-            unsigned            _handleCvtFUW(uint32_t instruction);
-            unsigned            _handleCvtFL(uint32_t instruction);
-            unsigned            _handleCvtFUL(uint32_t instruction);
-            unsigned            _handleCvtDB(uint32_t instruction);
-            unsigned            _handleCvtDUB(uint32_t instruction);
-            unsigned            _handleCvtDH(uint32_t instruction);
-            unsigned            _handleCvtDUH(uint32_t instruction);
-            unsigned            _handleCvtDW(uint32_t instruction);
-            unsigned            _handleCvtDUW(uint32_t instruction);
-            unsigned            _handleCvtDL(uint32_t instruction);
-            unsigned            _handleCvtDUL(uint32_t instruction);
-            unsigned            _handleCvtBF(uint32_t instruction);
-            unsigned            _handleCvtUBF(uint32_t instruction);
-            unsigned            _handleCvtHF(uint32_t instruction);
-            unsigned            _handleCvtUHF(uint32_t instruction);
-            unsigned            _handleCvtWF(uint32_t instruction);
-            unsigned            _handleCvtUWF(uint32_t instruction);
-            unsigned            _handleCvtLF(uint32_t instruction);
-            unsigned            _handleCvtULF(uint32_t instruction);
-            unsigned            _handleCvtBD(uint32_t instruction);
-            unsigned            _handleCvtUBD(uint32_t instruction);
-            unsigned            _handleCvtHD(uint32_t instruction);
-            unsigned            _handleCvtUHD(uint32_t instruction);
-            unsigned            _handleCvtWD(uint32_t instruction);
-            unsigned            _handleCvtUWD(uint32_t instruction);
-            unsigned            _handleCvtLD(uint32_t instruction);
-            unsigned            _handleCvtULD(uint32_t instruction);
-            unsigned            _handleCvtDF(uint32_t instruction);
+            unsigned            _handleCvtFB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtFUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDUL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtBF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUBF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtHF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUHF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtWF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUWF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtLF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtULF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtBD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUBD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtHD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUHD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtWD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtUWD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtLD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtULD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleCvtDF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (comparison)
-            unsigned            _handleSeqD(uint32_t instruction);
-            unsigned            _handleSneD(uint32_t instruction);
-            unsigned            _handleSltD(uint32_t instruction);
-            unsigned            _handleSleD(uint32_t instruction);
-            unsigned            _handleSgtD(uint32_t instruction);
-            unsigned            _handleSgeD(uint32_t instruction);
+            unsigned            _handleSeqD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSneD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSltD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSleD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgtD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSgeD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (load/store)
-            unsigned            _handleLF(uint32_t instruction);
-            unsigned            _handleLD(uint32_t instruction);
-            unsigned            _handleSF(uint32_t instruction);
-            unsigned            _handleSD(uint32_t instruction);
+            unsigned            _handleLF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleLD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSF(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleSD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             //  FLOATING POINT (flow control)
-            unsigned            _handleBeqD(uint32_t instruction);
-            unsigned            _handleBneD(uint32_t instruction);
-            unsigned            _handleBltD(uint32_t instruction);
-            unsigned            _handleBleD(uint32_t instruction);
-            unsigned            _handleBgtD(uint32_t instruction);
-            unsigned            _handleBgeD(uint32_t instruction);
+            unsigned            _handleBeqD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBneD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBltD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBleD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgtD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            unsigned            _handleBgeD(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
         };
     }
 }

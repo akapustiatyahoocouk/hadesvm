@@ -160,6 +160,14 @@ namespace hadesvm
             void                    storeLongWord(uint64_t address, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError);
 
             //////////
+            //  Bus locking
+        public:
+            //  Locks/unlocks this MemoryBus, simulating hardware lock of a bus.
+            //  This p[rotocol is compatible with QMutexLocker (on purpose!)
+            void                    lock() { _lock.lock(); }
+            void                    unlock() { _lock.unlock(); }
+
+            //////////
             //  Implementation
         private:
             State                   _state = State::Constructed;
@@ -179,6 +187,8 @@ namespace hadesvm
 
             _Mapping *              _mappings;      //  array of "_mappingsList.size()" elements
             _Mapping *              _endMappings;   //  _mappings + "_mappingsList.size()"
+
+            QMutex                  _lock;
 
             //  Helpers
             _Mapping *              _findMapping(uint64_t address)

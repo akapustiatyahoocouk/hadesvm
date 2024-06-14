@@ -11,7 +11,8 @@ using namespace hadesvm::cereon;
 //  Construction/destruction
 MemoryBus::MemoryBus()
     :   _mappings(new _Mapping[1]),
-        _endMappings(_mappings)
+        _endMappings(_mappings),
+        _lock()
 {
 }
 
