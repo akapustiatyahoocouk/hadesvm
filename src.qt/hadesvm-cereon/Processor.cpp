@@ -29,6 +29,12 @@ Processor::~Processor() noexcept
 
 //////////
 //  hadesvm::core::Component
+QString Processor::displayName() const
+{
+    return hadesvm::util::toString(_clockFrequency) + " " +
+           type()->displayName() + " #" + hadesvm::util::toString(id(), "%02X");
+}
+
 void Processor::serialiseConfiguration(QDomElement componentElement) const
 {
     componentElement.setAttribute("ClockFrequency", hadesvm::util::toString(_clockFrequency));

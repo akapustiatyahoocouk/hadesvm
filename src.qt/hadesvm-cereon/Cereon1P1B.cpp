@@ -28,13 +28,6 @@ Cereon1P1B::~Cereon1P1B() noexcept
 }
 
 //////////
-//  hadesvm::core::Component
-QString Cereon1P1B::displayName() const
-{
-    return "Cereon-1P1B #" + hadesvm::util::toString(id(), "%02X");
-}
-
-//////////
 //  Cereon1P1B::Type
 HADESVM_IMPLEMENT_SINGLETON(Cereon1P1B::Type)
 Cereon1P1B::Type::Type() {}

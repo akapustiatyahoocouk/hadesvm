@@ -8,9 +8,14 @@
 using namespace hadesvm::cereon;
 
 //////////
+//  Constants
+const hadesvm::core::ClockFrequency  MemoryBus::DefaultClockFrequency = hadesvm::core::ClockFrequency::megahertz(10);
+
+//////////
 //  Construction/destruction
 MemoryBus::MemoryBus()
-    :   _mappings(new _Mapping[1]),
+    :   _clockFrequency(DefaultClockFrequency),
+        _mappings(new _Mapping[1]),
         _endMappings(_mappings),
         _lock()
 {
@@ -25,20 +30,26 @@ MemoryBus::~MemoryBus() noexcept
 //  hadesvm::core::Component
 QString MemoryBus::displayName() const
 {
-    return Type::instance()->displayName();
+    return hadesvm::util::toString(_clockFrequency) + " " + Type::instance()->displayName();
 }
 
-void MemoryBus::serialiseConfiguration(QDomElement /*componentElement*/) const
-{   //  Nothing to do
-}
-
-void MemoryBus::deserialiseConfiguration(QDomElement /*componentElement*/)
-{   //  Nothing to do
-}
-
-hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * /*parent*/)
+void MemoryBus::serialiseConfiguration(QDomElement componentElement) const
 {
-    return nullptr;
+    componentElement.setAttribute("ClockFrequency", hadesvm::util::toString(_clockFrequency));
+}
+
+void MemoryBus::deserialiseConfiguration(QDomElement componentElement)
+{
+    hadesvm::core::ClockFrequency clockFrequency = _clockFrequency;
+    if (hadesvm::util::fromString(componentElement.attribute("ClockFrequency"), clockFrequency))
+    {
+        _clockFrequency = clockFrequency;
+    }
+}
+
+hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * parent)
+{
+    return new MemoryBusEditor(parent, this);
 }
 
 MemoryBus::Ui * MemoryBus::createUi()
@@ -150,6 +161,15 @@ void MemoryBus::disconnect() noexcept
     }
 
     _state = State::Constructed;
+}
+
+//////////
+//  Operations (configuration)
+void MemoryBus::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _clockFrequency = clockFrequency;
 }
 
 //////////

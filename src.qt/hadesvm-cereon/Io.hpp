@@ -197,6 +197,7 @@ namespace hadesvm
         //  The I/O bus.
         //  I/O bus methods are only safe to call from the master clock thread
         class HADESVM_CEREON_PUBLIC IoBus : public hadesvm::core::Component
+                                            //  TODO public virtual hadesvm::core::IClockedComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(IoBus)
 

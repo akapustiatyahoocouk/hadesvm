@@ -21,7 +21,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRomUnitEditor)
 
             //////////
-            //  Conbstruction/destruction
+            //  Construction/destruction
         public:
             explicit ResidentRomUnitEditor(QWidget * parent, ResidentRomUnit * residentRomUnit);
             ~ResidentRomUnitEditor();

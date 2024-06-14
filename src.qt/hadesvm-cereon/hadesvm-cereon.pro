@@ -11,6 +11,7 @@ SOURCES += \
     IoBus.cpp \
     IoPort.cpp \
     MemoryBus.cpp \
+    MemoryBusEditor.cpp \
     Plugins.cpp \
     Processor.cpp \
     ProcessorCore.Base.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     Io.hpp \
     Linkage.hpp \
     Memory.hpp \
+    MemoryBusEditor.hpp \
     Processor.hpp \
     ProcessorCore.hpp \
     ProcessorEditor.hpp \
@@ -40,6 +42,7 @@ HEADERS += \
 LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
 FORMS += \
+    MemoryBusEditor.ui \
     ProcessorEditor.ui \
     ResidentRamUnitEditor.ui \
     ResidentRomUnitEditor.ui

@@ -30,22 +30,20 @@ namespace hadesvm
             virtual Component * getComponent() const = 0;
         };
 
-#if 0
         //////////
-        //  A "clocked" aspect means that an element (component or adapter)
+        //  A "clocked" aspect means that a component (or adapter)
         //  is driven by a periodic "clock" of some fixed frequency.
-        class EDP_CORE_PUBLIC IClockedAspect : public virtual IAspect
+        class HADESVM_CORE_PUBLIC IClockedComponentAspect : public virtual IComponentAspect
         {
             //////////
             //  Operations
         public:
             //  Returns the configured clock frequency of the clock driving the component
-            virtual ClockFrequency  getClockFrequency() const = 0;
+            virtual ClockFrequency  clockFrequency() const = 0;
 
             //  Called on each clock tick when the VM containing this component runs
-            virtual void            onClockTick() = 0;
+            //  TODO ? virtual void            onClockTick() = 0;
         };
-#endif
     }
 }
 

@@ -75,9 +75,15 @@ namespace hadesvm
         //////////
         //  The Cereon memory bus delegates loads/stores to one of the
         //  attached memory blocks
-        class HADESVM_CEREON_PUBLIC MemoryBus : public hadesvm::core::Component
+        class HADESVM_CEREON_PUBLIC MemoryBus : public hadesvm::core::Component,
+                                                public virtual hadesvm::core::IClockedComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(MemoryBus)
+
+            //////////
+            //  Constants
+        public:
+            static const hadesvm::core::ClockFrequency  DefaultClockFrequency;
 
             //////////
             //  Types
@@ -133,6 +139,21 @@ namespace hadesvm
             virtual void            disconnect() noexcept override;
 
             //////////
+            //  hadesvm::core::IComponentAspect
+        public:
+            virtual MemoryBus *     getComponent() const override { return const_cast<MemoryBus*>(this); }
+
+            //////////
+            //  hadesvm::core::IClockedComponentAspect
+        public:
+            hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+
+            //////////
+            //  Operations (configuration)
+        public:
+            void                    setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency);
+
+            //////////
             //  Operations
         public:
             //  Attaches the specified "memoryBlock" to this memory bus, to handle
@@ -172,6 +193,10 @@ namespace hadesvm
         private:
             State                   _state = State::Constructed;
 
+            //  Configuration
+            hadesvm::core::ClockFrequency   _clockFrequency;
+
+            //  Runtime state
             struct _Mapping
             {
                 _Mapping() : _memoryBlock(nullptr), _startAddress(0), _endAddress(0) {}

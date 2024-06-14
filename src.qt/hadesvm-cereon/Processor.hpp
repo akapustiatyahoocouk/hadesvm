@@ -11,7 +11,8 @@ namespace hadesvm
     {
         //////////
         //  The Cereon processor
-        class HADESVM_CEREON_PUBLIC Processor : public hadesvm::core::Component
+        class HADESVM_CEREON_PUBLIC Processor : public hadesvm::core::Component,
+                                                public virtual hadesvm::core::IClockedComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Processor)
 
@@ -28,6 +29,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
+            virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
             virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
@@ -46,9 +48,18 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  Operations (configuration)
+            //  hadesvm::core::IComponentAspect
+        public:
+            virtual Processor * getComponent() const override { return const_cast<Processor*>(this); }
+
+            //////////
+            //  hadesvm::core::IClockedComponentAspect
         public:
             hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+
+            //////////
+            //  Operations (configuration)
+        public:
             void                setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency);
             uint8_t             id() const { return _id; }
             void                setId(uint8_t id);
@@ -130,7 +141,6 @@ namespace hadesvm
             //  hadesvm::core::Component
         public:
             virtual Type *      type() const override { return Type::instance(); }
-            virtual QString     displayName() const override;
 
             //////////
             //  Implementation
