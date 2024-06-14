@@ -17,6 +17,7 @@ SOURCES += \
     RemoteTerminal.cpp \
     RemoteTerminalType.cpp \
     StandardComponentCategories.cpp \
+    TimeInterval.cpp \
     VirtualAppliance.cpp \
     VirtualApplianceTemplate.cpp \
     VirtualApplianceType.cpp \

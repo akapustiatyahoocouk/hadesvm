@@ -126,6 +126,65 @@ namespace hadesvm
             uint64_t            _numberOfUnits;
             Unit                _unit;
         };
+
+        //////////
+        //  Represents a time interval
+        class HADESVM_CORE_PUBLIC TimeInterval final
+        {
+            //////////
+            //  Types
+        public:
+            enum class Unit : uint64_t
+            {
+                Ns = UINT64_C(1),
+                Us = UINT64_C(1000),
+                Ms = UINT64_C(1000) * UINT64_C(1000),
+                S = UINT64_C(1000) * UINT64_C(1000) * UINT64_C(1000)
+            };
+
+            //////////
+            //  Construction/destruction
+        public:
+            TimeInterval(uint64_t numberOfUnits, Unit unit);
+            virtual ~TimeInterval() = default;
+
+            //////////
+            //  Operators
+        public:
+            bool                operator == (const TimeInterval & op2) const { return compare(op2) == 0; }
+            bool                operator != (const TimeInterval & op2) const { return compare(op2) != 0; }
+            bool                operator <  (const TimeInterval & op2) const { return compare(op2) <  0; }
+            bool                operator <= (const TimeInterval & op2) const { return compare(op2) <= 0; }
+            bool                operator >  (const TimeInterval & op2) const { return compare(op2) >  0; }
+            bool                operator >= (const TimeInterval & op2) const { return compare(op2) >= 0; }
+
+            //////////
+            //  Operations
+        public:
+            //  The number of units / unit
+            uint64_t            numberOfUnits() const { return _numberOfUnits; }
+            Unit                unit() const { return _unit; }
+
+            //  Converts the TimeInterval to the specified Unit
+            uint64_t            toNs() const;
+
+            //  Builds the TimeInterval from the specified Unit count
+            static TimeInterval seconds(uint64_t count);
+            static TimeInterval milliseconds(uint64_t count);
+            static TimeInterval microseconds(uint64_t count);
+            static TimeInterval nanoseconds(uint64_t count);
+
+            //  Compares two TimeIntervals; returns a negative, zero or positive
+            //  value if the 1st TimeInterval is less than, equal to or greater
+            //  than the 2nd TimeInterval.
+            int                 compare(const TimeInterval & op2) const;
+
+            //////////
+            //  Implementation
+        private:
+            uint64_t            _numberOfUnits;
+            Unit                _unit;
+        };
     }
 
     //  Formatting and parsing
@@ -133,12 +192,16 @@ namespace hadesvm
     {
         HADESVM_CORE_PUBLIC QString toString(const core::MemorySize & value);
         HADESVM_CORE_PUBLIC QString toString(const core::ClockFrequency & value);
+        HADESVM_CORE_PUBLIC QString toString(const core::TimeInterval & value);
 
         template <>
         HADESVM_UTIL_PUBLIC bool fromString<core::MemorySize>(const QString & s, qsizetype & scan, core::MemorySize & value);
 
         template <>
         HADESVM_UTIL_PUBLIC bool fromString<core::ClockFrequency>(const QString & s, qsizetype & scan, core::ClockFrequency & value);
+
+        template <>
+        HADESVM_UTIL_PUBLIC bool fromString<core::TimeInterval>(const QString & s, qsizetype & scan, core::TimeInterval & value);
     }
 }
 

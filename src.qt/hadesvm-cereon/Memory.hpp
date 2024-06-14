@@ -139,11 +139,6 @@ namespace hadesvm
             virtual void            disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IComponentAspect
-        public:
-            virtual MemoryBus *     getComponent() const override { return const_cast<MemoryBus*>(this); }
-
-            //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
             hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
@@ -262,11 +257,6 @@ namespace hadesvm
             virtual void            stop() noexcept override;
             virtual void            deinitialize() noexcept override;
             virtual void            disconnect() noexcept override;
-
-            //////////
-            //  hadesvm::core::IComponentAspect
-        public:
-            virtual Component *     getComponent() const override { return const_cast<ResidentMemoryUnit*>(this); }
 
             //////////
             //  IMemoryUnitAspect

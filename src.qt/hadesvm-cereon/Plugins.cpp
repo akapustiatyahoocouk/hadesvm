@@ -48,6 +48,7 @@ namespace
         hadesvm::core::ComponentType::register(ResidentRomUnit::Type::instance());
         hadesvm::core::ComponentType::register(IoBus::Type::instance());
         hadesvm::core::ComponentType::register(Cereon1P1B::Type::instance());
+        hadesvm::core::ComponentType::register(Cmos1::Type::instance());
     }
 }
 

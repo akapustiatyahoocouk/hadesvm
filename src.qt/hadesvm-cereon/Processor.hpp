@@ -48,11 +48,6 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IComponentAspect
-        public:
-            virtual Processor * getComponent() const override { return const_cast<Processor*>(this); }
-
-            //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
             hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }

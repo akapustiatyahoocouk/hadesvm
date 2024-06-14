@@ -7,6 +7,7 @@ SOURCES += \
     Alu.cpp \
     Architectures.cpp \
     Cereon1P1B.cpp \
+    Cmos1.cpp \
     Features.cpp \
     IoBus.cpp \
     IoBusEditor.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     Alu.hpp \
     Architectures.hpp \
     Classes.hpp \
+    Cmos1.hpp \
     Io.hpp \
     IoBusEditor.hpp \
     Linkage.hpp \

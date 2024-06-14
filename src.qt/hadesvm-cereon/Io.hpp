@@ -261,11 +261,6 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IComponentAspect
-        public:
-            virtual IoBus *     getComponent() const override { return const_cast<IoBus*>(this); }
-
-            //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
             hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }

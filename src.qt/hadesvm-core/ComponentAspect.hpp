@@ -22,12 +22,6 @@ namespace hadesvm
             //  This is an interface
         public:
             virtual ~IComponentAspect() noexcept = default;
-
-            //////////
-            //  Operations
-        public:
-            //  Returns the component to which this aspect belongs
-            virtual Component * getComponent() const = 0;
         };
 
         //////////

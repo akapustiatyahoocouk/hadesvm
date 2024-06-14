@@ -24,6 +24,7 @@
 #include "hadesvm-cereon/Io.hpp"
 #include "hadesvm-cereon/ProcessorCore.hpp"
 #include "hadesvm-cereon/Processor.hpp"
+#include "hadesvm-cereon/Cmos1.hpp"
 
 #include "hadesvm-cereon/MemoryBusEditor.hpp"
 #include "hadesvm-cereon/ResidentRamUnitEditor.hpp"
