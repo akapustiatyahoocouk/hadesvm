@@ -8,9 +8,14 @@
 using namespace hadesvm::cereon;
 
 //////////
+//  Constants
+const hadesvm::core::ClockFrequency  IoBus::DefaultClockFrequency = hadesvm::core::ClockFrequency::megahertz(10);
+
+//////////
 //  Construction/destruction
 IoBus::IoBus()
-    :   _ioPorts(),
+    :   _clockFrequency(DefaultClockFrequency),
+        _ioPorts(),
         _byteIoPorts(),
         _halfWordIoPorts(),
         _wordIoPorts(),
@@ -36,20 +41,26 @@ IoBus::~IoBus() noexcept
 //  hadesvm::core::Component
 QString IoBus::displayName() const
 {
-    return Type::instance()->displayName();
+    return hadesvm::util::toString(_clockFrequency) + " " + Type::instance()->displayName();
 }
 
-void IoBus::serialiseConfiguration(QDomElement /*componentElement*/) const
+void IoBus::serialiseConfiguration(QDomElement componentElement) const
 {
+    componentElement.setAttribute("ClockFrequency", hadesvm::util::toString(_clockFrequency));
 }
 
-void IoBus::deserialiseConfiguration(QDomElement /*componentElement*/)
+void IoBus::deserialiseConfiguration(QDomElement componentElement)
 {
+    hadesvm::core::ClockFrequency clockFrequency = _clockFrequency;
+    if (hadesvm::util::fromString(componentElement.attribute("ClockFrequency"), clockFrequency))
+    {
+        _clockFrequency = clockFrequency;
+    }
 }
 
-hadesvm::core::ComponentEditor * IoBus::createEditor(QWidget * /*parent*/)
+hadesvm::core::ComponentEditor * IoBus::createEditor(QWidget * parent)
 {
-    return nullptr;
+    return new IoBusEditor(parent, this);
 }
 
 IoBus::Ui * IoBus::createUi()
@@ -160,6 +171,15 @@ void IoBus::disconnect() noexcept
 
     //  Done
     _state = State::Constructed;
+}
+
+//////////
+//  Operations (configuration)
+void IoBus::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _clockFrequency = clockFrequency;
 }
 
 //////////

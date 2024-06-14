@@ -196,12 +196,17 @@ namespace hadesvm
         //////////
         //  The I/O bus.
         //  I/O bus methods are only safe to call from the master clock thread
-        class HADESVM_CEREON_PUBLIC IoBus : public hadesvm::core::Component
-                                            //  TODO public virtual hadesvm::core::IClockedComponentAspect
+        class HADESVM_CEREON_PUBLIC IoBus : public hadesvm::core::Component,
+                                            public virtual hadesvm::core::IClockedComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(IoBus)
 
             friend class IIoPort;
+
+            //////////
+            //  Constants
+        public:
+            static const hadesvm::core::ClockFrequency  DefaultClockFrequency;
 
             //////////
             //  Types
@@ -256,6 +261,21 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
+            //  hadesvm::core::IComponentAspect
+        public:
+            virtual IoBus *     getComponent() const override { return const_cast<IoBus*>(this); }
+
+            //////////
+            //  hadesvm::core::IClockedComponentAspect
+        public:
+            hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+
+            //////////
+            //  Operations (configuration)
+        public:
+            void                setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency);
+
+            //////////
             //  Operations
         public:
             //  Attaches the specified I/O port to this memory bus.
@@ -300,6 +320,9 @@ namespace hadesvm
             //  Implementation
         private:
             State               _state = State::Constructed;
+
+            //  Configuration
+            hadesvm::core::ClockFrequency   _clockFrequency;
 
             //  Primary address -> I/O port map (nullptr elements for absent ports)
             IIoPort *           _ioPorts[65536];

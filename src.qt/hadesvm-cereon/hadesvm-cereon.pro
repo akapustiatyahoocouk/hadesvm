@@ -9,6 +9,7 @@ SOURCES += \
     Cereon1P1B.cpp \
     Features.cpp \
     IoBus.cpp \
+    IoBusEditor.cpp \
     IoPort.cpp \
     MemoryBus.cpp \
     MemoryBusEditor.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     Architectures.hpp \
     Classes.hpp \
     Io.hpp \
+    IoBusEditor.hpp \
     Linkage.hpp \
     Memory.hpp \
     MemoryBusEditor.hpp \
@@ -42,6 +44,7 @@ HEADERS += \
 LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
 FORMS += \
+    IoBusEditor.ui \
     MemoryBusEditor.ui \
     ProcessorEditor.ui \
     ResidentRamUnitEditor.ui \

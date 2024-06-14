@@ -28,6 +28,7 @@
 #include "hadesvm-cereon/MemoryBusEditor.hpp"
 #include "hadesvm-cereon/ResidentRamUnitEditor.hpp"
 #include "hadesvm-cereon/ResidentRomUnitEditor.hpp"
+#include "hadesvm-cereon/IoBusEditor.hpp"
 #include "hadesvm-cereon/ProcessorEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp
