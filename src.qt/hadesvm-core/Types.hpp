@@ -134,20 +134,11 @@ namespace hadesvm
         HADESVM_CORE_PUBLIC QString toString(const core::MemorySize & value);
         HADESVM_CORE_PUBLIC QString toString(const core::ClockFrequency & value);
 
-        HADESVM_CORE_PUBLIC bool fromString(const QString & s, qsizetype & scan, core::MemorySize & value);
-        HADESVM_CORE_PUBLIC bool fromString(const QString & s, qsizetype & scan, core::ClockFrequency & value);
+        template <>
+        HADESVM_UTIL_PUBLIC bool fromString<core::MemorySize>(const QString & s, qsizetype & scan, core::MemorySize & value);
 
-        inline bool fromEntireString(const QString & s, core::MemorySize & value)
-        {
-            qsizetype scan = 0;
-            return hadesvm::util::fromString(s, scan, value) && scan == s.length();
-        }
-
-        inline bool fromEntireString(const QString & s, core::ClockFrequency & value)
-        {
-            qsizetype scan = 0;
-            return hadesvm::util::fromString(s, scan, value) && scan == s.length();
-        }
+        template <>
+        HADESVM_UTIL_PUBLIC bool fromString<core::ClockFrequency>(const QString & s, qsizetype & scan, core::ClockFrequency & value);
     }
 }
 

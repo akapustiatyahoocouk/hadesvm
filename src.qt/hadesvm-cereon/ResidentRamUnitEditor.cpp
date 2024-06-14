@@ -1,21 +1,21 @@
 //
-//  hadesvm-cereon/ResidentRamBlockEditor.cpp
+//  hadesvm-cereon/ResidentRamUnitEditor.cpp
 //
-//  hadesvm::cereon::ResidentRamBlockEditor class implementation
+//  hadesvm::cereon::ResidentRamUnitEditor class implementation
 //
 //////////
 #include "hadesvm-cereon/API.hpp"
 using namespace hadesvm::cereon;
-#include "ui_ResidentRamBlockEditor.h"
+#include "ui_ResidentRamUnitEditor.h"
 
 //////////
 //  Construction/destruction
-ResidentRamBlockEditor::ResidentRamBlockEditor(QWidget * parent, ResidentRamBlock * residentRamBlock)
+ResidentRamUnitEditor::ResidentRamUnitEditor(QWidget * parent, ResidentRamUnit * residentRamUnit)
     :   ComponentEditor(parent),
         //  Implementation
-        _residentRamBlock(residentRamBlock),
+        _residentRamUnit(residentRamUnit),
         //  Controls & resources
-        _ui(new Ui::ResidentRamBlockEditor)
+        _ui(new Ui::ResidentRamUnitEditor)
 {
     _ui->setupUi(this);
 
@@ -27,52 +27,52 @@ ResidentRamBlockEditor::ResidentRamBlockEditor(QWidget * parent, ResidentRamBloc
     _ui->sizeUnitComboBox->setCurrentIndex(2);  //  MB
 }
 
-ResidentRamBlockEditor::~ResidentRamBlockEditor()
+ResidentRamUnitEditor::~ResidentRamUnitEditor()
 {
     delete _ui;
 }
 
 //////////
 //  hadesvm::core::ComponentEditor
-void ResidentRamBlockEditor::loadComponentConfiguration()
+void ResidentRamUnitEditor::loadComponentConfiguration()
 {
-    _ui->startAddressLineEdit->setText(hadesvm::util::toString(_residentRamBlock->startAddress(), "%016X"));
-    _ui->sizeNumberOfUnitsLineEdit->setText(hadesvm::util::toString(_residentRamBlock->size().numberOfUnits()));
-    _setSelectedMemorySizeUnit(_residentRamBlock->size().unit());
+    _ui->startAddressLineEdit->setText(hadesvm::util::toString(_residentRamUnit->startAddress(), "%016X"));
+    _ui->sizeNumberOfUnitsLineEdit->setText(hadesvm::util::toString(_residentRamUnit->size().numberOfUnits()));
+    _setSelectedMemorySizeUnit(_residentRamUnit->size().unit());
 }
 
-bool ResidentRamBlockEditor::canSaveComponentConfiguration() const
+bool ResidentRamUnitEditor::canSaveComponentConfiguration() const
 {
     uint64_t startAddress = 0;
     uint64_t sizeNumberOfUnits = 0;
 
-    return hadesvm::util::fromEntireString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
+    return hadesvm::util::fromString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
            startAddress % 8 == 0 &&
-           hadesvm::util::fromEntireString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
+           hadesvm::util::fromString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
            sizeNumberOfUnits > 0 &&
            _ui->sizeUnitComboBox->currentIndex() != -1 &&
            static_cast<uint64_t>(_selectedMemorySizeUnit()) * sizeNumberOfUnits / sizeNumberOfUnits == static_cast<uint64_t>(_selectedMemorySizeUnit()) &&
            (static_cast<uint64_t>(_selectedMemorySizeUnit()) * sizeNumberOfUnits) % 4096 == 0;
 }
 
-void ResidentRamBlockEditor::saveComponentConfiguration()
+void ResidentRamUnitEditor::saveComponentConfiguration()
 {
     uint64_t startAddress = 0;
     uint64_t sizeNumberOfUnits = 0;
 
-    if (hadesvm::util::fromEntireString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
-        hadesvm::util::fromEntireString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
+    if (hadesvm::util::fromString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
+        hadesvm::util::fromString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
         sizeNumberOfUnits > 0 &&
         _ui->sizeUnitComboBox->currentIndex() != -1)
     {
-        _residentRamBlock->setStartAddress(startAddress);
-        _residentRamBlock->setSize(hadesvm::core::MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
+        _residentRamUnit->setStartAddress(startAddress);
+        _residentRamUnit->setSize(hadesvm::core::MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
     }
 }
 
 //////////
 //  Implementation helpers
-hadesvm::core::MemorySize::Unit ResidentRamBlockEditor::_selectedMemorySizeUnit() const
+hadesvm::core::MemorySize::Unit ResidentRamUnitEditor::_selectedMemorySizeUnit() const
 {
     switch (_ui->sizeUnitComboBox->currentIndex())
     {
@@ -89,7 +89,7 @@ hadesvm::core::MemorySize::Unit ResidentRamBlockEditor::_selectedMemorySizeUnit(
     }
 }
 
-void ResidentRamBlockEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit)
+void ResidentRamUnitEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit)
 {
     switch (unit)
     {
@@ -113,19 +113,19 @@ void ResidentRamBlockEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySiz
 
 //////////
 //  Signal handlers
-void ResidentRamBlockEditor::_onStartAddressLineEditTextChanged(QString)
+void ResidentRamUnitEditor::_onStartAddressLineEditTextChanged(QString)
 {
     emit contentChanged();
 }
 
-void ResidentRamBlockEditor::_onSizeNumberOfUnitsLineEditTextChanged(QString)
+void ResidentRamUnitEditor::_onSizeNumberOfUnitsLineEditTextChanged(QString)
 {
     emit contentChanged();
 }
 
-void ResidentRamBlockEditor::_onSizeUnitComboBoxCurrentIndexChanged(int)
+void ResidentRamUnitEditor::_onSizeUnitComboBoxCurrentIndexChanged(int)
 {
     emit contentChanged();
 }
 
-//  End of hadesvm-cereon/ResidentRamBlockEditor.cpp
+//  End of hadesvm-cereon/ResidentRamUnitEditor.cpp

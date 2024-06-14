@@ -12,7 +12,7 @@ namespace hadesvm
     namespace cereon
     {
         //////////
-        //  The editor for a ResidentRamBlock component
+        //  The editor for a ResidentRamUnit component
         namespace Ui { class ProcessorEditor; }
 
         class HADESVM_CEREON_PUBLIC ProcessorEditor final : public hadesvm::core::ComponentEditor

@@ -61,16 +61,41 @@ bool ProcessorEditor::canSaveComponentConfiguration() const
     uint64_t restartAddress = 0;
     uint64_t clockNumberOfUnits = 0;
 
-    return hadesvm::util::fromEntireString(_ui->idLineEdit->text(), "%X", id) &&
-           hadesvm::util::fromEntireString(_ui->restartAddressLineEdit->text(), "%X", restartAddress) &&
+    return hadesvm::util::fromString(_ui->idLineEdit->text(), "%X", id) &&
+           hadesvm::util::fromString(_ui->restartAddressLineEdit->text(), "%X", restartAddress) &&
            restartAddress % 4 == 0 &&
-           hadesvm::util::fromEntireString(_ui->clockNumberOfUnitsLineEdit->text(), clockNumberOfUnits) &&
+           hadesvm::util::fromString(_ui->clockNumberOfUnitsLineEdit->text(), clockNumberOfUnits) &&
            clockNumberOfUnits > 0 &&
            _ui->clockUnitComboBox->currentIndex() != -1;
 }
 
 void ProcessorEditor::saveComponentConfiguration()
 {
+    uint8_t id = 0;
+    if (hadesvm::util::fromString(_ui->idLineEdit->text(), "%X", id))
+    {
+        _processor->setId(id);
+    }
+
+    _processor->setPrimaryProcessor(_ui->primaryCheckBox->isChecked());
+
+    uint64_t clockNumberOfUnits = 0;
+    if (hadesvm::util::fromString(_ui->clockNumberOfUnitsLineEdit->text(), clockNumberOfUnits) &&
+        clockNumberOfUnits > 0)
+    {
+        _processor->setClockFrequency(hadesvm::core::ClockFrequency(clockNumberOfUnits, _selectedClockFrequencyUnit()));
+    }
+
+    _processor->setByteOrder(_ui->bigEndianRadioButton->isChecked() ?
+                                 hadesvm::util::ByteOrder::BigEndian :
+                                 hadesvm::util::ByteOrder::LittleEndian);
+
+    uint64_t restartAddress = 0;
+    if (hadesvm::util::fromString(_ui->restartAddressLineEdit->text(), "%X", restartAddress) &&
+        restartAddress % 4 == 0)
+    {
+        _processor->setRestartAddress(restartAddress);
+    }
 }
 
 //////////

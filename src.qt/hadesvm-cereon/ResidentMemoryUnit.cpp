@@ -1,7 +1,7 @@
 //
-//  hadesvm-cereon/ResidentMemoryBlock.cpp
+//  hadesvm-cereon/ResidentMemoryUnit.cpp
 //
-//  hadesvm::cereon::ResidentMemoryBlock class implementation
+//  hadesvm::cereon::ResidentMemoryUnit class implementation
 //
 //////////
 #include "hadesvm-cereon/API.hpp"
@@ -9,39 +9,41 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-ResidentMemoryBlock::ResidentMemoryBlock(uint64_t startAddress, const hadesvm::core::MemorySize & size)
-    :   //  Configuration
+ResidentMemoryUnit::ResidentMemoryUnit(uint64_t startAddress, const hadesvm::core::MemorySize & size)
+    :   _memoryBlocks(),
+        //  Configuration
         _startAddress(startAddress),
         _size(size),
         _sizeInBytes(static_cast<size_t>(size.toBytes())),
         _data(nullptr)
 {
+    _memoryBlocks.append(this);
     Q_ASSERT(_sizeInBytes == _size.toBytes());  //  Avoid overflow!
 }
 
-ResidentMemoryBlock::~ResidentMemoryBlock() noexcept
+ResidentMemoryUnit::~ResidentMemoryUnit() noexcept
 {
     delete [] _data;    //  just in case; "delete nullptr" is safe
 }
 
 //////////
 //  hadesvm::core::Component
-void ResidentMemoryBlock::serialiseConfiguration(QDomElement componentElement) const
+void ResidentMemoryUnit::serialiseConfiguration(QDomElement componentElement) const
 {
     componentElement.setAttribute("StartAddress", hadesvm::util::toString(_startAddress, "%016X"));
     componentElement.setAttribute("Size", hadesvm::util::toString(_size));
 }
 
-void ResidentMemoryBlock::deserialiseConfiguration(QDomElement componentElement)
+void ResidentMemoryUnit::deserialiseConfiguration(QDomElement componentElement)
 {
     uint64_t startAddress = _startAddress;
-    if (hadesvm::util::fromEntireString(componentElement.attribute("StartAddress"), "%X", startAddress))
+    if (hadesvm::util::fromString(componentElement.attribute("StartAddress"), "%X", startAddress))
     {   //  TODO validate startAddress - must be a multiple of 8
         _startAddress = startAddress;
     }
 
     hadesvm::core::MemorySize size = _size;
-    if (hadesvm::util::fromEntireString(componentElement.attribute("Size"), size))
+    if (hadesvm::util::fromString(componentElement.attribute("Size"), size))
     {   //  TODO validate size - must be a multiple of 8 and >0
         _size = size;
     }
@@ -49,12 +51,12 @@ void ResidentMemoryBlock::deserialiseConfiguration(QDomElement componentElement)
 
 //////////
 //  hadesvm::core::Component (state management)
-ResidentMemoryBlock::State ResidentMemoryBlock::state() const noexcept
+ResidentMemoryUnit::State ResidentMemoryUnit::state() const noexcept
 {
     return _state;
 }
 
-void ResidentMemoryBlock::connect() throws(hadesvm::core::VirtualApplianceException)
+void ResidentMemoryUnit::connect() throws(hadesvm::core::VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -66,7 +68,7 @@ void ResidentMemoryBlock::connect() throws(hadesvm::core::VirtualApplianceExcept
     _state = State::Connected;
 }
 
-void ResidentMemoryBlock::initialize() throws(hadesvm::core::VirtualApplianceException)
+void ResidentMemoryUnit::initialize() throws(hadesvm::core::VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -81,7 +83,7 @@ void ResidentMemoryBlock::initialize() throws(hadesvm::core::VirtualApplianceExc
     _state = State::Initialized;
 }
 
-void ResidentMemoryBlock::start() throws(hadesvm::core::VirtualApplianceException)
+void ResidentMemoryUnit::start() throws(hadesvm::core::VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -93,7 +95,7 @@ void ResidentMemoryBlock::start() throws(hadesvm::core::VirtualApplianceExceptio
     _state = State::Running;
 }
 
-void ResidentMemoryBlock::stop() noexcept
+void ResidentMemoryUnit::stop() noexcept
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -105,7 +107,7 @@ void ResidentMemoryBlock::stop() noexcept
     _state = State::Initialized;
 }
 
-void ResidentMemoryBlock::deinitialize() noexcept
+void ResidentMemoryUnit::deinitialize() noexcept
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -120,7 +122,7 @@ void ResidentMemoryBlock::deinitialize() noexcept
     _state = State::Connected;
 }
 
-void ResidentMemoryBlock::disconnect() noexcept
+void ResidentMemoryUnit::disconnect() noexcept
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
@@ -133,8 +135,8 @@ void ResidentMemoryBlock::disconnect() noexcept
 }
 
 //////////
-//  MemoryBlock
-uint8_t ResidentMemoryBlock::loadByte(size_t offset) throws(MemoryAccessError)
+//  IMemoryBlock
+uint8_t ResidentMemoryUnit::loadByte(size_t offset) throws(MemoryAccessError)
 {
 #ifndef QT_NO_DEBUG
     //  In release mode the ProcessorCore and MemoryBus take care of alignment/range issues TODO really ?
@@ -146,7 +148,7 @@ uint8_t ResidentMemoryBlock::loadByte(size_t offset) throws(MemoryAccessError)
     return _data[offset];
 }
 
-uint16_t ResidentMemoryBlock::loadHalfWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
+uint16_t ResidentMemoryUnit::loadHalfWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -169,7 +171,7 @@ uint16_t ResidentMemoryBlock::loadHalfWord(size_t offset, ByteOrder byteOrder) t
     return value;
 }
 
-uint32_t ResidentMemoryBlock::loadWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
+uint32_t ResidentMemoryUnit::loadWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -192,7 +194,7 @@ uint32_t ResidentMemoryBlock::loadWord(size_t offset, ByteOrder byteOrder) throw
     return value;
 }
 
-uint64_t ResidentMemoryBlock::loadLongWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
+uint64_t ResidentMemoryUnit::loadLongWord(size_t offset, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -215,7 +217,7 @@ uint64_t ResidentMemoryBlock::loadLongWord(size_t offset, ByteOrder byteOrder) t
     return value;
 }
 
-void ResidentMemoryBlock::storeByte(size_t offset, uint8_t value) throws(MemoryAccessError)
+void ResidentMemoryUnit::storeByte(size_t offset, uint8_t value) throws(MemoryAccessError)
 {
 #ifndef QT_NO_DEBUG
     //  In release mode the ProcessorCore and MemoryBus take care of alignment/range issues TODO really ?
@@ -227,7 +229,7 @@ void ResidentMemoryBlock::storeByte(size_t offset, uint8_t value) throws(MemoryA
     _data[offset] = value;
 }
 
-void ResidentMemoryBlock::storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError)
+void ResidentMemoryUnit::storeHalfWord(size_t offset, uint16_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -249,7 +251,7 @@ void ResidentMemoryBlock::storeHalfWord(size_t offset, uint16_t value, ByteOrder
     *reinterpret_cast<uint16_t*>(_data + offset) = value;
 }
 
-void ResidentMemoryBlock::storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError)
+void ResidentMemoryUnit::storeWord(size_t offset, uint32_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -271,7 +273,7 @@ void ResidentMemoryBlock::storeWord(size_t offset, uint32_t value, ByteOrder byt
     *reinterpret_cast<uint32_t*>(_data + offset) = value;
 }
 
-void ResidentMemoryBlock::storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError)
+void ResidentMemoryUnit::storeLongWord(size_t offset, uint64_t value, ByteOrder byteOrder) throws(MemoryAccessError)
 {
     Q_ASSERT(byteOrder == ByteOrder::BigEndian || byteOrder == ByteOrder::LittleEndian);
 
@@ -295,7 +297,7 @@ void ResidentMemoryBlock::storeLongWord(size_t offset, uint64_t value, ByteOrder
 
 //////////
 //  Operations (configuration)
-void ResidentMemoryBlock::setStartAddress(uint64_t startAddress)
+void ResidentMemoryUnit::setStartAddress(uint64_t startAddress)
 {
     Q_ASSERT(_state == State::Constructed);
 
@@ -303,7 +305,7 @@ void ResidentMemoryBlock::setStartAddress(uint64_t startAddress)
     _startAddress = startAddress;
 }
 
-void ResidentMemoryBlock::setSize(const hadesvm::core::MemorySize & size)
+void ResidentMemoryUnit::setSize(const hadesvm::core::MemorySize & size)
 {
     Q_ASSERT(_state == State::Constructed);
 
@@ -312,4 +314,4 @@ void ResidentMemoryBlock::setSize(const hadesvm::core::MemorySize & size)
     _sizeInBytes = static_cast<size_t>(_size.toBytes());
 }
 
-//  End of hadesvm-cereon/ResidentMemoryBlock.cpp
+//  End of hadesvm-cereon/ResidentMemoryUnit.cpp

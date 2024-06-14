@@ -93,7 +93,8 @@ HADESVM_CORE_PUBLIC QString hadesvm::util::toString(const ClockFrequency & value
     return toString(value.toHz());   //  ...to shut up the compiler
 }
 
-HADESVM_CORE_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, core::ClockFrequency & value)
+template <>
+bool hadesvm::util::fromString<ClockFrequency>(const QString & s, qsizetype & scan, ClockFrequency & value)
 {
     for (size_t i = 0; i < sizeof(clockFrequencyUnitInfos) / sizeof(clockFrequencyUnitInfos[0]); i++)
     {

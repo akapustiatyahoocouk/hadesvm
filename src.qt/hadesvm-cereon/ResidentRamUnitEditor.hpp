@@ -1,7 +1,7 @@
 //
-//  hadesvm-cereon/ResidentRomBlockEditor.hpp
+//  hadesvm-cereon/ResidentRamUnitEditor.hpp
 //
-//  hadesvm-cereon editor for a ResidentRomBlock component
+//  hadesvm-cereon editor for a ResidentRamUnit component
 //
 //////////
 #pragma once
@@ -12,19 +12,19 @@ namespace hadesvm
     namespace cereon
     {
         //////////
-        //  The editor for a ResidentRomBlock component
-        namespace Ui { class ResidentRomBlockEditor; }
+        //  The editor for a ResidentRamUnit component
+        namespace Ui { class ResidentRamUnitEditor; }
 
-        class HADESVM_CEREON_PUBLIC ResidentRomBlockEditor : public hadesvm::core::ComponentEditor
+        class HADESVM_CEREON_PUBLIC ResidentRamUnitEditor final : public hadesvm::core::ComponentEditor
         {
             Q_OBJECT
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRomBlockEditor)
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentRamUnitEditor)
 
             //////////
             //  Conbstruction/destruction
         public:
-            explicit ResidentRomBlockEditor(QWidget * parent, ResidentRomBlock * residentRomBlock);
-            ~ResidentRomBlockEditor();
+            ResidentRamUnitEditor(QWidget * parent, ResidentRamUnit * residentRamUnit);
+            virtual ~ResidentRamUnitEditor();
 
             //////////
             //  hadesvm::core::ComponentEditor
@@ -36,7 +36,7 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
-            ResidentRomBlock *const _residentRomBlock;
+            ResidentRamUnit *const _residentRamUnit;
 
             //  Helpers
             hadesvm::core::MemorySize::Unit _selectedMemorySizeUnit() const;
@@ -45,7 +45,7 @@ namespace hadesvm
             //////////
             //  Controls & resources
         private:
-            Ui::ResidentRomBlockEditor *    _ui;
+            Ui::ResidentRamUnitEditor * _ui;
 
             //////////
             //  Signal handlers
@@ -53,11 +53,8 @@ namespace hadesvm
             void                _onStartAddressLineEditTextChanged(QString);
             void                _onSizeNumberOfUnitsLineEditTextChanged(QString);
             void                _onSizeUnitComboBoxCurrentIndexChanged(int);
-            void                _onContentLineEditTextChanged(QString);
-            void                _onBrowsePushButtonClicked();
         };
     }
 }
 
-//  End of hadesvm-cereon/ResidentRomBlockEditor.hpp
-
+//  End of hadesvm-cereon/ResidentRamUnitEditor.hpp

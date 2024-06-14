@@ -93,7 +93,8 @@ HADESVM_CORE_PUBLIC QString hadesvm::util::toString(const MemorySize & value)
     return toString(value.toBytes());   //  ...to shut up the compiler
 }
 
-HADESVM_CORE_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, core::MemorySize & value)
+template <>
+bool hadesvm::util::fromString<MemorySize>(const QString & s, qsizetype & scan, MemorySize & value)
 {
     for (size_t i = 0; i < sizeof(memorySizeUnitInfos) / sizeof(memorySizeUnitInfos[0]); i++)
     {

@@ -44,8 +44,8 @@ namespace
         hadesvm::core::VirtualArchitecture::register(CereonWorkstationArchitecture::instance());
 
         hadesvm::core::ComponentType::register(MemoryBus::Type::instance());
-        hadesvm::core::ComponentType::register(ResidentRamBlock::Type::instance());
-        hadesvm::core::ComponentType::register(ResidentRomBlock::Type::instance());
+        hadesvm::core::ComponentType::register(ResidentRamUnit::Type::instance());
+        hadesvm::core::ComponentType::register(ResidentRomUnit::Type::instance());
         hadesvm::core::ComponentType::register(IoBus::Type::instance());
         hadesvm::core::ComponentType::register(Cereon1P1B::Type::instance());
     }

@@ -30,7 +30,10 @@ namespace hadesvm
             //////////
             //  Operations
         public:
+            //  The I/O port number where the interrupt has occurred
             uint16_t            getIoPortNumber() const { return _ioPortNumber; }
+
+            //  The ISC of the I/O interrupt
             uint16_t            getInterruptStatusCode() const { return _interruptStatusCode; }
 
             //////////

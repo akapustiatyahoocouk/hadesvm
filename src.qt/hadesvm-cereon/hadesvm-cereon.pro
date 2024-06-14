@@ -15,11 +15,11 @@ SOURCES += \
     Processor.cpp \
     ProcessorCore.cpp \
     ProcessorEditor.cpp \
-    ResidentMemoryBlock.cpp \
-    ResidentRamBlock.cpp \
-    ResidentRamBlockEditor.cpp \
-    ResidentRomBlock.cpp \
-    ResidentRomBlockEditor.cpp
+    ResidentMemoryUnit.cpp \
+    ResidentRamUnit.cpp \
+    ResidentRamUnitEditor.cpp \
+    ResidentRomUnit.cpp \
+    ResidentRomUnitEditor.cpp
 
 HEADERS += \
     API.hpp \
@@ -32,12 +32,12 @@ HEADERS += \
     Processor.hpp \
     ProcessorCore.hpp \
     ProcessorEditor.hpp \
-    ResidentRamBlockEditor.hpp \
-    ResidentRomBlockEditor.hpp
+    ResidentRamUnitEditor.hpp \
+    ResidentRomUnitEditor.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
 FORMS += \
     ProcessorEditor.ui \
-    ResidentRamBlockEditor.ui \
-    ResidentRomBlockEditor.ui
+    ResidentRamUnitEditor.ui \
+    ResidentRomUnitEditor.ui

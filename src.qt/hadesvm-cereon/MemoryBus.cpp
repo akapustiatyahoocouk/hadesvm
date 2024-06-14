@@ -61,10 +61,26 @@ void MemoryBus::connect() throws(hadesvm::core::VirtualApplianceException)
         return;
     }
 
-    //  Locate all "MemoryBlock" components and attach them to this memory bus
-    for (MemoryBlock * memoryBlock : this->virtualAppliance()->componentsImplementing<MemoryBlock>())
+    //  Locate all "IMemoryUnitAspect" components and attach them to this memory bus
+    QList<IMemoryBlock*> attachedMemoryBlocks;
+    try
     {
-        attachMemoryBlock(memoryBlock);
+        for (IMemoryUnitAspect * memoryUnit : this->virtualAppliance()->componentsImplementing<IMemoryUnitAspect>())
+        {
+            for (IMemoryBlock * memoryBlock : memoryUnit->memoryBlocks())
+            {
+                attachMemoryBlock(memoryBlock); //  may throw!
+                attachedMemoryBlocks.append(memoryBlock);
+            }
+        }
+    }
+    catch (...)
+    {   //  OOPS! Cleanup and re-throw
+        for (IMemoryBlock * memoryBlock : attachedMemoryBlocks)
+        {
+            detachMemoryBlock(memoryBlock);
+        }
+        throw;
     }
 
     _state = State::Connected;
@@ -137,7 +153,7 @@ void MemoryBus::disconnect() noexcept
 
 //////////
 //  Operations
-void MemoryBus::attachMemoryBlock(MemoryBlock * memoryBlock) throws(hadesvm::core::VirtualApplianceException)
+void MemoryBus::attachMemoryBlock(IMemoryBlock * memoryBlock) throws(hadesvm::core::VirtualApplianceException)
 {
     Q_ASSERT(memoryBlock != nullptr);
     Q_ASSERT(memoryBlock->startAddress() % 8 == 0);
@@ -195,7 +211,7 @@ void MemoryBus::attachMemoryBlock(MemoryBlock * memoryBlock) throws(hadesvm::cor
     _endMappings = _mappings + numMappings;
 }
 
-void MemoryBus::detachMemoryBlock(MemoryBlock * memoryBlock)
+void MemoryBus::detachMemoryBlock(IMemoryBlock * memoryBlock)
 {
     Q_ASSERT(memoryBlock != nullptr);
 

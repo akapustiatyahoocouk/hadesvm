@@ -41,7 +41,41 @@ void Processor::serialiseConfiguration(QDomElement componentElement) const
 
 void Processor::deserialiseConfiguration(QDomElement componentElement)
 {
-    //  TODO implement
+    hadesvm::core::ClockFrequency clockFrequency = _clockFrequency;
+    if (hadesvm::util::fromString(componentElement.attribute("ClockFrequency"), clockFrequency))
+    {
+        _clockFrequency = clockFrequency;
+    }
+
+    uint8_t id = _id;
+    if (hadesvm::util::fromString(componentElement.attribute("Id"), "%X", id))
+    {
+        _id = id;
+    }
+
+    ByteOrder byteOrder = _byteOrder;
+    if (hadesvm::util::fromString(componentElement.attribute("ByteOrder"), byteOrder))
+    {
+        _byteOrder = byteOrder;
+    }
+
+    bool canChangeByteOrder = _canChangeByteOrder;
+    if (hadesvm::util::fromString(componentElement.attribute("CanChangeByteOrder"), canChangeByteOrder))
+    {
+        _canChangeByteOrder = canChangeByteOrder;
+    }
+
+    uint64_t restartAddress = _restartAddress;
+    if (hadesvm::util::fromString(componentElement.attribute("RestartAddress"), "%X", restartAddress))
+    {   //  TODO validate restartAddress - must be a multiple of 4
+        _restartAddress = restartAddress;
+    }
+
+    bool isPrimaryProcessor = _isPrimaryProcessor;
+    if (hadesvm::util::fromString(componentElement.attribute("IsPrimaryProcessor"), isPrimaryProcessor))
+    {
+        _isPrimaryProcessor = isPrimaryProcessor;
+    }
 }
 
 hadesvm::core::ComponentEditor * Processor::createEditor(QWidget * parent)
@@ -160,54 +194,46 @@ void Processor::disconnect() noexcept
 }
 
 //////////
-//  TODO
-/*
-void Processor::reset() noexcept
-{
-    edp::core::Component::reset();
-
-    for (carl::UIntSize i = 0; i < _numCores; i++)
-    {
-        _cores[i]->reset();
-    }
-}
-*/
-
-#if 0
-//////////
 //  Operations (configuration)
-void Processor::setClockFrequency(const edp::core::ClockFrequency & clockFrequency)
+void Processor::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency)
 {
-    require(getState() == State::Constructed);
+    Q_ASSERT(_state == State::Constructed);
 
     _clockFrequency = clockFrequency;
 }
 
-void Processor::setId(carl::UInt8 id)
+void Processor::setId(uint8_t id)
 {
-    require(getState() == State::Constructed);
+    Q_ASSERT(_state == State::Constructed);
 
     _id = id;
 }
 
-void Processor::setByteOrder(carl::ByteOrder byteOrder)
+void Processor::setByteOrder(ByteOrder byteOrder)
 {
-    require(getState() == State::Constructed);
+    Q_ASSERT(_state == State::Constructed);
 
     _byteOrder = byteOrder;
 }
 
-void Processor::setRestartAddress(carl::UInt64 restartAddress)
+void Processor::setRestartAddress(uint64_t restartAddress)
 {
-    require(getState() == State::Constructed);
+    Q_ASSERT(_state == State::Constructed);
 
     if ((restartAddress & 0x00000003) != 0)
     {   //  OOPS! Not a valid instruction boundary!
-        throw edp::core::ConfigurationException("Invalid restart address " + carl::toString(restartAddress, "%016X"));
+        throw hadesvm::core::VirtualApplianceException("Invalid restart address " +
+                                                       hadesvm::util::toString(restartAddress, "%016X"));
     }
     _restartAddress = restartAddress;
 }
-#endif
+
+void Processor::setPrimaryProcessor(bool primaryProcessor)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _isPrimaryProcessor = primaryProcessor;
+}
 
 Features Processor::features() const
 {

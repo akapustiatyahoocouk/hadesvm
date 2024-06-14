@@ -25,8 +25,8 @@
 #include "hadesvm-cereon/ProcessorCore.hpp"
 #include "hadesvm-cereon/Processor.hpp"
 
-#include "hadesvm-cereon/ResidentRamBlockEditor.hpp"
-#include "hadesvm-cereon/ResidentRomBlockEditor.hpp"
+#include "hadesvm-cereon/ResidentRamUnitEditor.hpp"
+#include "hadesvm-cereon/ResidentRomUnitEditor.hpp"
 #include "hadesvm-cereon/ProcessorEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

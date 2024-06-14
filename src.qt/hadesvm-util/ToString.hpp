@@ -9,6 +9,7 @@ namespace hadesvm
 {
     namespace util
     {
+//  TODO re-design with templates in a fromString() fashion
         //  Converts "value" to a string representation
         HADESVM_UTIL_PUBLIC QString toString(bool value);
         HADESVM_UTIL_PUBLIC QString toString(char value);

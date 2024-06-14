@@ -1,21 +1,21 @@
 //
-//  hadesvm-cereon/ResidentRomBlockEditor.cpp
+//  hadesvm-cereon/ResidentRomUnitEditor.cpp
 //
-//  hadesvm::cereon::ResidentRomBlockEditor class implementation
+//  hadesvm::cereon::ResidentRomUnitEditor class implementation
 //
 //////////
 #include "hadesvm-cereon/API.hpp"
 using namespace hadesvm::cereon;
-#include "ui_ResidentRomBlockEditor.h"
+#include "ui_ResidentRomUnitEditor.h"
 
 //////////
 //  Construction/destruction
-ResidentRomBlockEditor::ResidentRomBlockEditor(QWidget * parent, ResidentRomBlock * residentRomBlock)
+ResidentRomUnitEditor::ResidentRomUnitEditor(QWidget * parent, ResidentRomUnit * residentRomUnit)
     :   ComponentEditor(parent),
         //  Implementation
-        _residentRomBlock(residentRomBlock),
+        _residentRomUnit(residentRomUnit),
         //  Controls & resources
-        _ui(new Ui::ResidentRomBlockEditor)
+        _ui(new Ui::ResidentRomUnitEditor)
 {
     _ui->setupUi(this);
 
@@ -27,29 +27,29 @@ ResidentRomBlockEditor::ResidentRomBlockEditor(QWidget * parent, ResidentRomBloc
     _ui->sizeUnitComboBox->setCurrentIndex(2);  //  MB
 }
 
-ResidentRomBlockEditor::~ResidentRomBlockEditor()
+ResidentRomUnitEditor::~ResidentRomUnitEditor()
 {
     delete _ui;
 }
 
 //////////
 //  hadesvm::core::ComponentEditor
-void ResidentRomBlockEditor::loadComponentConfiguration()
+void ResidentRomUnitEditor::loadComponentConfiguration()
 {
-    _ui->startAddressLineEdit->setText(hadesvm::util::toString(_residentRomBlock->startAddress(), "%016X"));
-    _ui->sizeNumberOfUnitsLineEdit->setText(hadesvm::util::toString(_residentRomBlock->size().numberOfUnits()));
-    _setSelectedMemorySizeUnit(_residentRomBlock->size().unit());
-    _ui->contentLineEdit->setText(_residentRomBlock->contentFilePath());
+    _ui->startAddressLineEdit->setText(hadesvm::util::toString(_residentRomUnit->startAddress(), "%016X"));
+    _ui->sizeNumberOfUnitsLineEdit->setText(hadesvm::util::toString(_residentRomUnit->size().numberOfUnits()));
+    _setSelectedMemorySizeUnit(_residentRomUnit->size().unit());
+    _ui->contentLineEdit->setText(_residentRomUnit->contentFilePath());
 }
 
-bool ResidentRomBlockEditor::canSaveComponentConfiguration() const
+bool ResidentRomUnitEditor::canSaveComponentConfiguration() const
 {
     uint64_t startAddress = 0;
     uint64_t sizeNumberOfUnits = 0;
 
-    return hadesvm::util::fromEntireString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
+    return hadesvm::util::fromString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
            startAddress % 8 == 0 &&
-           hadesvm::util::fromEntireString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
+           hadesvm::util::fromString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
            sizeNumberOfUnits > 0 &&
            _ui->sizeUnitComboBox->currentIndex() != -1 &&
            static_cast<uint64_t>(_selectedMemorySizeUnit()) * sizeNumberOfUnits / sizeNumberOfUnits == static_cast<uint64_t>(_selectedMemorySizeUnit()) &&
@@ -58,25 +58,25 @@ bool ResidentRomBlockEditor::canSaveComponentConfiguration() const
            _ui->contentLineEdit->text().trimmed().length() == _ui->contentLineEdit->text().length();
 }
 
-void ResidentRomBlockEditor::saveComponentConfiguration()
+void ResidentRomUnitEditor::saveComponentConfiguration()
 {
     uint64_t startAddress = 0;
     uint64_t sizeNumberOfUnits = 0;
 
-    if (hadesvm::util::fromEntireString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
-        hadesvm::util::fromEntireString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
+    if (hadesvm::util::fromString(_ui->startAddressLineEdit->text(), "%X", startAddress) &&
+        hadesvm::util::fromString(_ui->sizeNumberOfUnitsLineEdit->text(), sizeNumberOfUnits) &&
         sizeNumberOfUnits > 0 &&
         _ui->sizeUnitComboBox->currentIndex() != -1)
     {
-        _residentRomBlock->setStartAddress(startAddress);
-        _residentRomBlock->setSize(hadesvm::core::MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
-        _residentRomBlock->setContentFilePath(_ui->contentLineEdit->text());
+        _residentRomUnit->setStartAddress(startAddress);
+        _residentRomUnit->setSize(hadesvm::core::MemorySize(sizeNumberOfUnits, _selectedMemorySizeUnit()));
+        _residentRomUnit->setContentFilePath(_ui->contentLineEdit->text());
     }
 }
 
 //////////
 //  Implementation helpers
-hadesvm::core::MemorySize::Unit ResidentRomBlockEditor::_selectedMemorySizeUnit() const
+hadesvm::core::MemorySize::Unit ResidentRomUnitEditor::_selectedMemorySizeUnit() const
 {
     switch (_ui->sizeUnitComboBox->currentIndex())
     {
@@ -93,7 +93,7 @@ hadesvm::core::MemorySize::Unit ResidentRomBlockEditor::_selectedMemorySizeUnit(
     }
 }
 
-void ResidentRomBlockEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit)
+void ResidentRomUnitEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySize::Unit unit)
 {
     switch (unit)
     {
@@ -117,39 +117,39 @@ void ResidentRomBlockEditor::_setSelectedMemorySizeUnit(hadesvm::core::MemorySiz
 
 //////////
 //  Signal handlers
-void ResidentRomBlockEditor::_onStartAddressLineEditTextChanged(QString)
+void ResidentRomUnitEditor::_onStartAddressLineEditTextChanged(QString)
 {
     emit contentChanged();
 }
 
-void ResidentRomBlockEditor::_onSizeNumberOfUnitsLineEditTextChanged(QString)
+void ResidentRomUnitEditor::_onSizeNumberOfUnitsLineEditTextChanged(QString)
 {
     emit contentChanged();
 }
 
-void ResidentRomBlockEditor::_onSizeUnitComboBoxCurrentIndexChanged(int)
+void ResidentRomUnitEditor::_onSizeUnitComboBoxCurrentIndexChanged(int)
 {
     emit contentChanged();
 }
 
-void ResidentRomBlockEditor::_onContentLineEditTextChanged(QString)
+void ResidentRomUnitEditor::_onContentLineEditTextChanged(QString)
 {
     emit contentChanged();
 }
 
-void ResidentRomBlockEditor::_onBrowsePushButtonClicked()
+void ResidentRomUnitEditor::_onBrowsePushButtonClicked()
 {
     QString fileName =
         QFileDialog::getOpenFileName(
             this->topLevelWidget(),
             "Select ROM image",
-            _residentRomBlock->virtualAppliance()->directory(),
+            _residentRomUnit->virtualAppliance()->directory(),
             "ROM image files (*.img *.bhin)");
     if (fileName.length() != 0)
     {
-        _ui->contentLineEdit->setText(_residentRomBlock->virtualAppliance()->toRelativePath(fileName));
+        _ui->contentLineEdit->setText(_residentRomUnit->virtualAppliance()->toRelativePath(fileName));
         emit contentChanged();
     }
 }
 
-//  End of hadesvm-cereon/ResidentRomBlockEditor.cpp
+//  End of hadesvm-cereon/ResidentRomUnitEditor.cpp

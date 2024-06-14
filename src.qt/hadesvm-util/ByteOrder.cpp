@@ -37,7 +37,8 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(ByteOrder value)
     return "Unknown";
 }
 
-HADESVM_UTIL_PUBLIC bool hadesvm::util::fromString(const QString & s, qsizetype & scan, ByteOrder & value)
+template <>
+bool hadesvm::util::fromString<ByteOrder>(const QString & s, qsizetype & scan, ByteOrder & value)
 {
     for (size_t i = 0; i < sizeof(byteOrderInfos) / sizeof(byteOrderInfos[0]); i++)
     {

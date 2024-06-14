@@ -9,7 +9,7 @@ namespace hadesvm
 {
     namespace util
     {
-        enum class ByteOrder
+        enum class ByteOrder : uint8_t
         {
             Unknown = 0,
             BigEndian = 1,
@@ -24,7 +24,9 @@ namespace hadesvm
         //////////
         //  Formatting and parsing
         HADESVM_UTIL_PUBLIC QString toString(ByteOrder value);
-        HADESVM_UTIL_PUBLIC bool fromString(const QString & s, qsizetype & scan, ByteOrder & value);
+
+        template <>
+        HADESVM_UTIL_PUBLIC bool fromString<ByteOrder>(const QString & s, qsizetype & scan, ByteOrder & value);
     }
 }
 
