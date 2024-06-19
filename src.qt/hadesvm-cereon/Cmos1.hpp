@@ -158,13 +158,12 @@ namespace hadesvm
                 //////////
                 //  Construction/destruction
             public:
-                _StatePort(Cmos1 * cmos1, uint16_t address)
-                    :   _cmos1(cmos1), _address(address) {}
+                explicit _StatePort(Cmos1 * cmos1) : _cmos1(cmos1) {}
 
                 //////////
                 //  IIoPort
             public:
-                virtual uint16_t    address() const override { return _address; }
+                virtual uint16_t    address() const override { return _cmos1->_statePortAddress; }
 
                 //////////
                 //  IByteIoPort
@@ -176,7 +175,6 @@ namespace hadesvm
                 //  Implementation
             private:
                 Cmos1 *         _cmos1;
-                uint16_t        _address;
             };
             _StatePort          _statePort;
 
@@ -187,13 +185,12 @@ namespace hadesvm
                 //////////
                 //  Construction/destruction
             public:
-                _AddressPort(Cmos1 * cmos1, uint16_t address)
-                    :   _cmos1(cmos1), _address(address) {}
+                explicit _AddressPort(Cmos1 * cmos1) : _cmos1(cmos1) {}
 
                 //////////
                 //  IIoPort
             public:
-                virtual uint16_t        address() const override { return _address; }
+                virtual uint16_t    address() const override { return _cmos1->_addressPortAddress; }
 
                 //////////
                 //  IByteIoPort
@@ -205,7 +202,6 @@ namespace hadesvm
                 //  Implementation
             private:
                 Cmos1 *         _cmos1;
-                uint16_t        _address;
             };
             _AddressPort        _addressPort;
 
@@ -216,13 +212,12 @@ namespace hadesvm
                 //////////
                 //  Construction/destruction
             public:
-                _DataPort(Cmos1 * cmos1, uint16_t address)
-                    :   _cmos1(cmos1), _address(address) {}
+                explicit _DataPort(Cmos1 * cmos1) : _cmos1(cmos1) {}
 
                 //////////
                 //  IIoPort
             public:
-                virtual uint16_t        address() const override { return _address; }
+                virtual uint16_t    address() const override { return _cmos1->_dataPortAddress; }
 
                 //////////
                 //  IByteIoPort
@@ -234,7 +229,6 @@ namespace hadesvm
                 //  Implementation
             private:
                 Cmos1 *         _cmos1;
-                uint16_t        _address;
             };
             _DataPort           _dataPort;
         };

@@ -6,6 +6,6 @@
   <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomUnit"/>
   <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="40MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
   <Component ClockFrequency="10MHz" Type="CereonIoBus"/>
-  <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
+  <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos1.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
  </Components>
 </VirtualMachine>

@@ -31,5 +31,6 @@
 #include "hadesvm-cereon/ResidentRomUnitEditor.hpp"
 #include "hadesvm-cereon/IoBusEditor.hpp"
 #include "hadesvm-cereon/ProcessorEditor.hpp"
+#include "hadesvm-cereon/Cmos1Editor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

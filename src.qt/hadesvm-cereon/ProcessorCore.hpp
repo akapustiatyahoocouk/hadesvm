@@ -561,7 +561,7 @@ namespace hadesvm
             typedef unsigned (ProcessorCore::*_InstructionHandler)(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
 
             unsigned            _fetchAndExecuteInstruction() throws(ProgramInterrupt, HardwareInterrupt);
-            unsigned            _handleInvalidInstruction(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
+            Q_NORETURN unsigned _handleInvalidInstruction(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
             unsigned            _handleCop1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
             unsigned            _handleShift1(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);
             unsigned            _handleShift2(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt);

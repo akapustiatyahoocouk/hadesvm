@@ -67,7 +67,7 @@ namespace
 }
 
 //////////
-//  toString() specializations for C++/Qt types
+//  fromString() specializations for C++/Qt types
 template <>
 bool hadesvm::util::fromString<bool>(const QString & s, qsizetype & scan, bool & value)
 {   //  We cater to several true/false forms when parsing, because we may
@@ -153,6 +153,20 @@ bool hadesvm::util::fromString<bool>(const QString & s, qsizetype & scan, bool &
 }
 
 template <>
+bool hadesvm::util::fromString<unsigned short>(const QString & s, qsizetype & scan, unsigned short & value)
+{
+    qsizetype prescan = scan;
+    unsigned long long temp = 0;
+    if (parseUnsigned(s, prescan, 10, temp) && temp <= USHRT_MAX)
+    {
+        scan = prescan;
+        value = static_cast<unsigned short>(temp);
+        return true;
+    }
+    return false;
+}
+
+template <>
 bool hadesvm::util::fromString<unsigned long>(const QString & s, qsizetype & scan, unsigned long & value)
 {
     qsizetype prescan = scan;
@@ -184,6 +198,21 @@ bool hadesvm::util::fromString<unsigned char>(const QString & s, qsizetype & sca
     {
         scan = prescan;
         value = static_cast<unsigned char>(temp);
+        return true;
+    }
+    return false;
+}
+
+template <>
+bool hadesvm::util::fromString<unsigned short>(const QString & s, qsizetype & scan, const char * crtFormat, unsigned short & value)
+{
+    qsizetype prescan = scan;
+    unsigned long long temp = 0;
+    if (hadesvm::util::fromString<unsigned long long>(s, prescan, crtFormat, temp) &&
+        temp <= USHRT_MAX)
+    {
+        scan = prescan;
+        value = static_cast<unsigned short>(temp);
         return true;
     }
     return false;

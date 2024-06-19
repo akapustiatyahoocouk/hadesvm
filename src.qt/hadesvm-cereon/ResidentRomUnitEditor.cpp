@@ -144,7 +144,7 @@ void ResidentRomUnitEditor::_onBrowsePushButtonClicked()
             this->topLevelWidget(),
             "Select ROM image",
             _residentRomUnit->virtualAppliance()->directory(),
-            "ROM image files (*.img *.bhin)");
+            "ROM image files (*.img *.bin)");
     if (fileName.length() != 0)
     {
         _ui->contentLineEdit->setText(_residentRomUnit->virtualAppliance()->toRelativePath(fileName));

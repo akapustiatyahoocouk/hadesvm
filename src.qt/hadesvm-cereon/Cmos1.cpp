@@ -36,9 +36,10 @@ Cmos1::Cmos1()
         _content(),
         _contentNeedsSaving(false),
         _clockTicksUntilTimeUpdate(0),
-        _statePort(this, _statePortAddress),
-        _addressPort(this, _addressPortAddress),
-        _dataPort(this, _dataPortAddress)
+        //  I/O ports
+        _statePort(this),
+        _addressPort(this),
+        _dataPort(this)
 {
     _ioPorts.append(&_statePort);
     _ioPorts.append(&_addressPort);
@@ -68,14 +69,56 @@ void Cmos1::serialiseConfiguration(QDomElement componentElement) const
     componentElement.setAttribute("ContentFilePath", _contentFilePath);
 }
 
-void Cmos1::deserialiseConfiguration(QDomElement /*componentElement*/)
+void Cmos1::deserialiseConfiguration(QDomElement componentElement)
 {
-    //  TODO implement
+    hadesvm::core::TimeInterval readDelay;
+    if (hadesvm::util::fromString(componentElement.attribute("ReadDelay"), readDelay))
+    {   //  TODO and is >0
+        _readDelay = readDelay;
+    }
+
+    hadesvm::core::TimeInterval writeDelay;
+    if (hadesvm::util::fromString(componentElement.attribute("WriteDelay"), writeDelay))
+    {   //  TODO and is >0
+        _writeDelay = writeDelay;
+    }
+
+    uint16_t statePortAddress = 0;
+    if (hadesvm::util::fromString(componentElement.attribute("StatePortAddress"), "%X", statePortAddress))
+    {
+        _statePortAddress = statePortAddress;
+    }
+
+    uint16_t addressPortAddress = 0;
+    if (hadesvm::util::fromString(componentElement.attribute("AddressPortAddress"), "%X", addressPortAddress))
+    {
+        _addressPortAddress = addressPortAddress;
+    }
+
+    uint16_t dataPortAddress = 0;
+    if (hadesvm::util::fromString(componentElement.attribute("DataPortAddress"), "%X", dataPortAddress))
+    {
+        _dataPortAddress = dataPortAddress;
+    }
+
+    uint16_t interruptMaskPortAddress = 0;
+    if (hadesvm::util::fromString(componentElement.attribute("InterruptMaskPortAddress"), "%X", interruptMaskPortAddress))
+    {
+        _interruptMaskPortAddress = interruptMaskPortAddress;
+    }
+
+    hadesvm::core::ClockFrequency clockFrequency;
+    if (hadesvm::util::fromString(componentElement.attribute("ClockFrequency"), clockFrequency))
+    {   //  TODO and is >0
+        _clockFrequency = clockFrequency;
+    }
+
+    _contentFilePath = componentElement.attribute("ContentFilePath");    //  TODO and is not empty
 }
 
-hadesvm::core::ComponentEditor * Cmos1::createEditor(QWidget * /*parent*/)
+hadesvm::core::ComponentEditor * Cmos1::createEditor(QWidget * parent)
 {
-    return nullptr; //  TODO editor!
+    return new Cmos1Editor(parent, this);
 }
 
 Cmos1::Ui * Cmos1::createUi()
