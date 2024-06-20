@@ -80,7 +80,6 @@ ProcessorCore::~ProcessorCore() noexcept
     _processor->_cores.removeOne(this);
 }
 
-#if 0
 //////////
 //  Operations
 void ProcessorCore::reset()
@@ -203,24 +202,23 @@ void ProcessorCore::onClockTick()
             //  1 cycle has just executed - stall the rest of the way...
             _cyclesToStall = (cyclesTaken == 0) ? 1 : (cyclesTaken - 1);    //  ...but be defensive in release mode
         }
-        catch (ProgramInterrupt & ex)
+        catch (ProgramInterrupt ex)
         {   //  Raise; halt if masked
-            _raiseProgramInterrupt(ex.interruptStatusCode);
+            _raiseProgramInterrupt(ex);
             return;
         }
-        catch (HardwareInterrupt & ex)
+        catch (HardwareInterrupt ex)
         {   //  Raise; halt if masked
-            _raiseHardwareInterrupt(ex.interruptStatusCode);
+            _raiseHardwareInterrupt(ex);
             return;
         }
     }
-    catch (ForceHalt &)
+    catch (const ForceHalt &)
     {
         _state.setIdleMode();
         return;
     }
 }
-#endif
 
 //////////
 //  Implementation helpers (memory access)

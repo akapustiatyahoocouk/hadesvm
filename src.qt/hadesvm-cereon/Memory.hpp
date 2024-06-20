@@ -141,7 +141,9 @@ namespace hadesvm
             //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
-            hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+            virtual hadesvm::core::ClockFrequency
+                                    clockFrequency() const override { return _clockFrequency; }
+            virtual void            onClockTick() override {}
 
             //////////
             //  Operations (configuration)

@@ -45,6 +45,7 @@
 #include <QDir>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QElapsedTimer>
 #include <QException>
 #include <QFileDialog>
 #include <QHostInfo>

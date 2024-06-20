@@ -12,7 +12,8 @@ namespace hadesvm
         //////////
         //  The Cereon processor
         class HADESVM_CEREON_PUBLIC Processor : public hadesvm::core::Component,
-                                                public virtual hadesvm::core::IClockedComponentAspect
+                                                public virtual hadesvm::core::IClockedComponentAspect,
+                                                public virtual hadesvm::core::IActiveComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Processor)
 
@@ -50,7 +51,13 @@ namespace hadesvm
             //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
-            hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+            virtual hadesvm::core::ClockFrequency
+                                clockFrequency() const override { return _clockFrequency; }
+            virtual void        onClockTick() override;
+
+            //////////
+            //  hadesvm::core::IActiveComponentAspect
+        public:
 
             //////////
             //  Operations (configuration)
@@ -82,11 +89,45 @@ namespace hadesvm
             uint64_t            _restartAddress;
             bool                _isPrimaryProcessor;
 
+            //  Cores - as QList (for configuration stage)...
             QList<ProcessorCore*>   _cores;
+            //  ...and as a plain C list - for runtime stage
+            ProcessorCore *     _coresAsArray[256];
+            size_t              _numCores;
 
             //  Links to other VM components
             MemoryBus *         _memoryBus = nullptr;   //  nullptr == not attached
             IoBus *             _ioBus = nullptr;   //  nullptr == not attached
+
+            //  Threads
+            class _WorkerThread final : public QThread
+            {
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_WorkerThread)
+
+                //////////
+                //  Construction/destruction
+            public:
+                explicit _WorkerThread(Processor * processor)
+                    :   _processor(processor), _stopRequested(false) {}
+                virtual ~_WorkerThread() = default;
+
+                //////////
+                //  QThread
+            protected:
+                virtual void    run() override;
+
+                //////////
+                //  Operations
+            public:
+                void            requestStop() { _stopRequested = true; }
+
+                //////////
+                //  Implementation
+            private:
+                Processor *const    _processor;
+                std::atomic<bool>   _stopRequested;
+            };
+            _WorkerThread *     _workerThread = nullptr;
         };
 
         //////////

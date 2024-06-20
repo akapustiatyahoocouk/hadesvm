@@ -36,7 +36,16 @@ namespace hadesvm
             virtual ClockFrequency  clockFrequency() const = 0;
 
             //  Called on each clock tick when the VM containing this component runs
-            //  TODO ? virtual void            onClockTick() = 0;
+            virtual void            onClockTick() = 0;
+        };
+
+        //////////
+        //  An "clocked" aspect means that a component (or adapter)
+        //  is has its own thread of control (normally created/started
+        //  by Component's "start()" method and stopped/destroyed by
+        //  Component's "stop()" method).
+        class HADESVM_CORE_PUBLIC IActiveComponentAspect : public virtual IComponentAspect
+        {
         };
     }
 }

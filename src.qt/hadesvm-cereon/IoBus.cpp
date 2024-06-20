@@ -21,6 +21,7 @@ IoBus::IoBus()
         _wordIoPorts(),
         _longWordIoPorts(),
         _interruptsReadyToHandle(),
+        //  Bus locking
         _accessGuard()
 {
     for (int i = 0; i < 65536; i++)
@@ -86,12 +87,27 @@ void IoBus::connect() throws(hadesvm::core::VirtualApplianceException)
 
     //  Locate all elements that implement the "IIoControllerAspect"
     //  and connect I/O ports they provide to this I/O bus
-    for (IIoControllerAspect * ioController : virtualAppliance()->componentsImplementing<IIoControllerAspect>())
+    try
     {
-        for (IIoPort * ioPort : ioController->ioPorts())
+        for (IIoControllerAspect * ioController : virtualAppliance()->componentsImplementing<IIoControllerAspect>())
         {
-            attachIoPort(ioPort);
+            for (IIoPort * ioPort : ioController->ioPorts())
+            {
+                attachIoPort(ioPort);
+            }
         }
+    }
+    catch (...)
+    {   //  Cleanup & re-throw
+        for (int i = 0; i < 65536; i++)
+        {
+            _ioPorts[i] = nullptr;
+            _byteIoPorts[i] = nullptr;
+            _halfWordIoPorts[i] = nullptr;
+            _wordIoPorts[i] = nullptr;
+            _longWordIoPorts[i] = nullptr;
+        }
+        throw;
     }
 
     //  Done

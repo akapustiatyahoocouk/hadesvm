@@ -86,7 +86,9 @@ namespace hadesvm
             //////////
             //  hadesvm::core::IClockedComponentAspect
         public:
-            hadesvm::core::ClockFrequency   clockFrequency() const { return _clockFrequency; }
+            virtual hadesvm::core::ClockFrequency
+                                clockFrequency() const override { return _clockFrequency; }
+            virtual void        onClockTick() override;
 
             //////////
             //  IIoControllerAspect
@@ -127,7 +129,7 @@ namespace hadesvm
             hadesvm::core::ClockFrequency   _clockFrequency;
             QString             _contentFilePath;   //  if relative, use VM location's directory as root
 
-            unsigned           _clockTicksBetweenTimeUpdates;
+            unsigned            _clockTicksBetweenTimeUpdates;
 
             //  Runtime state
             IoPortList          _ioPorts;

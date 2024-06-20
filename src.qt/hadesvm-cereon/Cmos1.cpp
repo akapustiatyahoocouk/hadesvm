@@ -165,6 +165,9 @@ void Cmos1::initialize() throws(hadesvm::core::VirtualApplianceException)
         in.readRawData(_content, sizeof(_content));
     }
 
+    _operationalState = _OperationalState::_Ready;
+    _clockTicksBetweenTimeUpdates = static_cast<unsigned>(_clockFrequency.toHz() / 1000);
+    _clockTicksUntilTimeUpdate = 0;
 
     _state = State::Initialized;
 }
@@ -230,29 +233,55 @@ void Cmos1::disconnect() noexcept
 
 //////////
 //  hadesvm::core::IClockedComponentAspect
-#if 0   //  TODO uncomment & implemnent
 void Cmos1::onClockTick()
 {
     if (_clockTicksBetweenTimeUpdates == 0 || _clockTicksUntilTimeUpdate == 0)
     {   //  Update calendar time in bytes 0..15 of the content
         _clockTicksUntilTimeUpdate = _clockTicksBetweenTimeUpdates;
-        carl::DateTime now = _utcTimeZone->timeToLocal(carl::TimeStamp::now());
-        _content[0] = static_cast<uint8_t>('0' + (now.getYear() / 1000) % 10);
-        _content[1] = static_cast<uint8_t>('0' + (now.getYear() / 100) % 10);
-        _content[2] = static_cast<uint8_t>('0' + (now.getYear() / 10) % 10);
-        _content[3] = static_cast<uint8_t>('0' + (now.getYear() / 1) % 10);
-        _content[4] = static_cast<uint8_t>('0' + (now.getMonth() / 10) % 10);
-        _content[5] = static_cast<uint8_t>('0' + (now.getMonth() / 1) % 10);
-        _content[6] = static_cast<uint8_t>('0' + (now.getDay() / 10) % 10);
-        _content[7] = static_cast<uint8_t>('0' + (now.getDay() / 1) % 10);
-        _content[8] = static_cast<uint8_t>('0' + (now.getHour() / 10) % 10);
-        _content[9] = static_cast<uint8_t>('0' + (now.getHour() / 1) % 10);
-        _content[10] = static_cast<uint8_t>('0' + (now.getMinute() / 10) % 10);
-        _content[11] = static_cast<uint8_t>('0' + (now.getMinute() / 1) % 10);
-        _content[12] = static_cast<uint8_t>('0' + (now.getSecond() / 10) % 10);
-        _content[13] = static_cast<uint8_t>('0' + (now.getSecond() / 1) % 10);
-        _content[14] = static_cast<uint8_t>('0' + (now.getNanosecond() / 100000000) % 10);
-        _content[15] = static_cast<uint8_t>('0' + (now.getNanosecond() / 10000000) % 10);
+        QDateTime now = QDateTime::currentDateTimeUtc();
+        QString nowAsString = now.toString(Qt::DateFormat::ISODateWithMs);
+        //  yyyy-MM-ddTHH:mm:ss.zzz
+        Q_ASSERT(nowAsString.length() >= 23);
+        Q_ASSERT(nowAsString[0].isDigit());
+        Q_ASSERT(nowAsString[1].isDigit());
+        Q_ASSERT(nowAsString[2].isDigit());
+        Q_ASSERT(nowAsString[3].isDigit());
+        Q_ASSERT(nowAsString[4] == '-');
+        Q_ASSERT(nowAsString[5].isDigit());
+        Q_ASSERT(nowAsString[6].isDigit());
+        Q_ASSERT(nowAsString[7] == '-');
+        Q_ASSERT(nowAsString[8].isDigit());
+        Q_ASSERT(nowAsString[9].isDigit());
+        Q_ASSERT(nowAsString[10] == 'T');
+        Q_ASSERT(nowAsString[11].isDigit());
+        Q_ASSERT(nowAsString[12].isDigit());
+        Q_ASSERT(nowAsString[13] == ':');
+        Q_ASSERT(nowAsString[14].isDigit());
+        Q_ASSERT(nowAsString[15].isDigit());
+        Q_ASSERT(nowAsString[16] == ':');
+        Q_ASSERT(nowAsString[17].isDigit());
+        Q_ASSERT(nowAsString[18].isDigit());
+        Q_ASSERT(nowAsString[19] == '.');
+        Q_ASSERT(nowAsString[20].isDigit());
+        Q_ASSERT(nowAsString[21].isDigit());
+        Q_ASSERT(nowAsString[22].isDigit());
+        //  Store
+        _content[0] = static_cast<uint8_t>(nowAsString[0].toLatin1());
+        _content[1] = static_cast<uint8_t>(nowAsString[1].toLatin1());
+        _content[2] = static_cast<uint8_t>(nowAsString[2].toLatin1());
+        _content[3] = static_cast<uint8_t>(nowAsString[3].toLatin1());
+        _content[4] = static_cast<uint8_t>(nowAsString[5].toLatin1());
+        _content[5] = static_cast<uint8_t>(nowAsString[6].toLatin1());
+        _content[6] = static_cast<uint8_t>(nowAsString[8].toLatin1());
+        _content[7] = static_cast<uint8_t>(nowAsString[9].toLatin1());
+        _content[8] = static_cast<uint8_t>(nowAsString[11].toLatin1());
+        _content[9] = static_cast<uint8_t>(nowAsString[12].toLatin1());
+        _content[10] = static_cast<uint8_t>(nowAsString[14].toLatin1());
+        _content[11] = static_cast<uint8_t>(nowAsString[15].toLatin1());
+        _content[12] = static_cast<uint8_t>(nowAsString[17].toLatin1());
+        _content[13] = static_cast<uint8_t>(nowAsString[18].toLatin1());
+        _content[14] = static_cast<uint8_t>(nowAsString[20].toLatin1());
+        _content[15] = static_cast<uint8_t>(nowAsString[21].toLatin1());
         _contentNeedsSaving = true;
     }
     if (_clockTicksUntilTimeUpdate > 0)
@@ -263,14 +292,13 @@ void Cmos1::onClockTick()
     //  Busy ?
     if (_clockTicksToDelay > 0)
     {
-        Q_ASSERT(_state != _OperationalState::_Ready);
+        Q_ASSERT(_operationalState != _OperationalState::_Ready);
         if (--_clockTicksToDelay == 0)
         {   //  End of delay
-            _state = _OperationalState::_Ready;
+            _operationalState = _OperationalState::_Ready;
         }
     }
 }
-#endif
 
 //////////
 //  IIoControllerAspect

@@ -19,7 +19,11 @@ Processor::Processor(const hadesvm::core::ClockFrequency & clockFrequency, uint8
         _canChangeByteOrder(canChangeByteOrder),
         _restartAddress(restartAddress),
         _isPrimaryProcessor(isPrimaryProcessor),
-        _cores()
+        //  Cores - as QList (for configuration stage)...
+        _cores(),
+        //  ...and as a plain C list - for runtime stage
+        _coresAsArray(),
+        _numCores(0)
 {
 }
 
@@ -139,6 +143,20 @@ void Processor::initialize() throws(hadesvm::core::VirtualApplianceException)
         return;
     }
 
+    //  Prepare a C-style array of cores - for faster iteration over
+    if (_cores.count() == 0 || _cores.count() > 256)
+    {
+        throw hadesvm::core::VirtualApplianceException(type()->displayName() + " must have between 1 and 256 cores");
+    }
+    //  ...TODO and a single primary core!!!
+
+    for (qsizetype i = 0; i < _cores.count(); i++)
+    {
+        _cores[i]->reset();
+        _coresAsArray[i] = _cores[i];
+    }
+    _numCores = _cores.count();
+
     //  Done
     _state = State::Initialized;
 }
@@ -151,6 +169,9 @@ void Processor::start() throws(hadesvm::core::VirtualApplianceException)
     {   //  OOPS! Can't
         return;
     }
+
+    _workerThread = new _WorkerThread(this);
+    _workerThread->start();
 
     //  Done
     _state = State::Running;
@@ -165,6 +186,16 @@ void Processor::stop() noexcept
         return;
     }
 
+    _workerThread->requestStop();
+    _workerThread->wait(15 * 1000); //  wait 15 seconds...
+    if (_workerThread->isRunning())
+    {   //  ...then force-kill it as a last resort
+        _workerThread->terminate();
+        _workerThread->wait(ULONG_MAX);
+    }
+    delete _workerThread;
+    _workerThread = nullptr;
+
     //  Done
     _state = State::Initialized;
 }
@@ -177,6 +208,8 @@ void Processor::deinitialize() noexcept
     {   //  OOPS! Can't
         return;
     }
+
+    _numCores = 0;
 
     //  Done
     _state = State::Connected;
@@ -197,6 +230,12 @@ void Processor::disconnect() noexcept
 
     //  Done
     _state = State::Constructed;
+}
+
+//////////
+//  hadesvm::core::IClockedComponentAspect
+void Processor::onClockTick()
+{
 }
 
 //////////
@@ -249,6 +288,66 @@ Features Processor::features() const
         result += core->features();
     }
     return result;
+}
+
+//////////
+//  Processor::_WorkerThread
+void Processor::_WorkerThread::run()
+{
+    uint64_t requiredClockFrequencyHz = _processor->clockFrequency().toHz();
+    uint64_t requiredNsPerTick = 1000000000 / requiredClockFrequencyHz;
+    unsigned ticksBetweenDelayAdjustment = static_cast<unsigned>(qMin(qMax(1u, requiredClockFrequencyHz / 10), UINT_MAX));
+    unsigned delayPerTickNs = 0;
+    uint64_t accumulatedDelayNs = 0;
+
+    QElapsedTimer elapsedTimer;
+    while (!_stopRequested)
+    {
+        //  Execute a bunch of instructions...
+        elapsedTimer.restart();
+        for (unsigned n = 0; n < ticksBetweenDelayAdjustment; n++)
+        {
+            for (size_t i = 0; i < _processor->_numCores; i++)
+            {
+                _processor->_coresAsArray[i]->onClockTick();
+            }
+            accumulatedDelayNs += delayPerTickNs;
+        }
+        uint64_t accumulatedDelayMs = accumulatedDelayNs / 1000000;
+        accumulatedDelayNs -= 1000000 * accumulatedDelayMs;
+        if (accumulatedDelayMs > 0)
+        {
+            msleep(static_cast<unsigned long>(accumulatedDelayMs));
+        }
+
+
+        qint64 idealNsElapsed = requiredNsPerTick * ticksBetweenDelayAdjustment;
+        qint64 actualNsElapsed = elapsedTimer.nsecsElapsed();
+
+        static int n = 0;
+        if (n++ >= 100)
+        {
+            n = 0;
+            qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
+
+            qint64 actualNsPerTick = actualNsElapsed / ticksBetweenDelayAdjustment;;
+            qint64 actualClockFrequencyHz = 1000000000 / actualNsPerTick;
+            qDebug() << "Running at " << actualClockFrequencyHz << " Hz";
+        }
+
+        if (actualNsElapsed < idealNsElapsed)
+        {   //  Going too fast!
+            delayPerTickNs++;
+        }
+        else if (actualNsElapsed > idealNsElapsed && delayPerTickNs > 0)
+        {   //  Going too slow!
+            delayPerTickNs--;
+        }
+        //qDebug() << actualNsElapsed;
+        //  ...and see how long it actually took to execute the binch
+
+        //usleep(1);
+    }
 }
 
 //  End of hadesvm-cereon/Processor.cpp
