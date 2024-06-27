@@ -33,10 +33,10 @@ namespace hadesvm
             //  Operations
         public:
             //  Returns the configured clock frequency of the clock driving the component
-            virtual ClockFrequency  clockFrequency() const = 0;
+            virtual ClockFrequency  clockFrequency() const noexcept = 0;
 
             //  Called on each clock tick when the VM containing this component runs
-            virtual void            onClockTick() = 0;
+            virtual void            onClockTick() noexcept = 0;
         };
 
         //////////

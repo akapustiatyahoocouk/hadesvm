@@ -186,6 +186,68 @@ namespace hadesvm
             void                    _stopComponents();
             void                    _deinitializeComponents();
             void                    _disconnectComponents();
+
+            //  Threads
+            class _FrequencyDivider final : public virtual IClockedComponentAspect
+            {   //  Accepts "input" ticks, performing "output" ticks at a lower frequency
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_FrequencyDivider)
+
+                //////////
+                //  Construction/destruction
+            public:
+                _FrequencyDivider(unsigned inputTicks, unsigned outputTicks,
+                                  IClockedComponentAspect * drivenComponent);
+
+                //////////
+                //  IClockedComponentAspect
+            public:
+                virtual ClockFrequency  clockFrequency() const noexcept override;
+                virtual void            onClockTick() noexcept override;
+
+                //////////
+                //  Implementation
+            private:
+                const unsigned      _inputTicks;
+                const unsigned      _outputTicks;
+                IClockedComponentAspect *const  _drivenComponent;
+                //  Worker data for Bresenham's line algorithm
+                const unsigned      _dx, _dy;
+                const unsigned      _2dx, _2dy;
+                int                 _d;
+                unsigned            _x, _y;
+            };
+
+            class _WorkerThread final : public QThread
+            {   //  Drives all "clocked components" that are not themselves "active components"
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_WorkerThread)
+
+                //////////
+                //  Construction/destruction
+            public:
+                explicit _WorkerThread(VirtualAppliance * virtualAppliance);
+                virtual ~_WorkerThread();
+
+                //////////
+                //  QThread
+            protected:
+                virtual void    run() override;
+
+                //////////
+                //  Operations
+            public:
+                void            requestStop() { _stopRequested = true; }
+
+                //////////
+                //  Implementation
+            private:
+                VirtualAppliance *const _virtualAppliance;
+                std::atomic<bool>   _stopRequested;
+
+                ClockFrequency      _maxClockFrequency;
+                QList<_FrequencyDivider*>   _frequencyDividers;
+                QList<IClockedComponentAspect*> _tickTargets;
+            };
+            _WorkerThread *     _workerThread = nullptr;
         };
 
         //////////

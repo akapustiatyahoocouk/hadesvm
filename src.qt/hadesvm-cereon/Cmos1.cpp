@@ -233,13 +233,14 @@ void Cmos1::disconnect() noexcept
 
 //////////
 //  hadesvm::core::IClockedComponentAspect
-void Cmos1::onClockTick()
+void Cmos1::onClockTick() noexcept
 {
     if (_clockTicksBetweenTimeUpdates == 0 || _clockTicksUntilTimeUpdate == 0)
     {   //  Update calendar time in bytes 0..15 of the content
         _clockTicksUntilTimeUpdate = _clockTicksBetweenTimeUpdates;
         QDateTime now = QDateTime::currentDateTimeUtc();
         QString nowAsString = now.toString(Qt::DateFormat::ISODateWithMs);
+        //  qDebug() << nowAsString;
         //  yyyy-MM-ddTHH:mm:ss.zzz
         Q_ASSERT(nowAsString.length() >= 23);
         Q_ASSERT(nowAsString[0].isDigit());

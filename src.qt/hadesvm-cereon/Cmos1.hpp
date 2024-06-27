@@ -87,8 +87,8 @@ namespace hadesvm
             //  hadesvm::core::IClockedComponentAspect
         public:
             virtual hadesvm::core::ClockFrequency
-                                clockFrequency() const override { return _clockFrequency; }
-            virtual void        onClockTick() override;
+                                clockFrequency() const noexcept override { return _clockFrequency; }
+            virtual void        onClockTick() noexcept override;
 
             //////////
             //  IIoControllerAspect

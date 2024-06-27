@@ -76,7 +76,8 @@ namespace hadesvm
         //  The Cereon memory bus delegates loads/stores to one of the
         //  attached memory blocks
         class HADESVM_CEREON_PUBLIC MemoryBus : public hadesvm::core::Component,
-                                                public virtual hadesvm::core::IClockedComponentAspect
+                                                public virtual hadesvm::core::IClockedComponentAspect,
+                                                public virtual hadesvm::core::IActiveComponentAspect
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(MemoryBus)
 
@@ -142,8 +143,18 @@ namespace hadesvm
             //  hadesvm::core::IClockedComponentAspect
         public:
             virtual hadesvm::core::ClockFrequency
-                                    clockFrequency() const override { return _clockFrequency; }
-            virtual void            onClockTick() override {}
+                                    clockFrequency() const noexcept override { return _clockFrequency; }
+            virtual void            onClockTick() noexcept override {}
+
+            //////////
+            //  hadesvm::core::IActiveComponentAspect
+        public:
+            //  Although a memory bus is, technically, a clocked component,
+            //  there isn't anything that must actually happen within a MemoryBus
+            //  instance on every clock tick. Therefore, we make it implement
+            //  IActiveComponentAspect to make sure VA does not attempt to "tick"
+            //  the MemoryBus on its own common worker thread, but do not create
+            //  an actual bus-only worker thread
 
             //////////
             //  Operations (configuration)

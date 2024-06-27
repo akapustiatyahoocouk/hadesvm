@@ -456,6 +456,9 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
         _initializeComponents();    //  may throw
         _startComponents();         //  may throw
 
+        _workerThread = new _WorkerThread(this);
+        _workerThread->start(); //  may choose to stop prematurely!
+
         _state = State::Running;
     }
     catch (...)
@@ -481,6 +484,16 @@ void VirtualAppliance::stop() noexcept
             Q_ASSERT(false);
             break;
         case State::Running:
+            _workerThread->requestStop();
+            _workerThread->wait(15 * 1000); //  wait 15 seconds...
+            if (_workerThread->isRunning())
+            {   //  ...then force-kill it as a last resort
+                _workerThread->terminate();
+                _workerThread->wait(ULONG_MAX);
+            }
+            delete _workerThread;
+            _workerThread = nullptr;
+
             _stopComponents();
             _deinitializeComponents();
             _disconnectComponents();
@@ -800,6 +813,163 @@ void VirtualAppliance::_disconnectComponents()
             component->disconnect();
             Q_ASSERT(component->state() == Component::State::Constructed);
         }
+    }
+}
+
+//////////
+//  VirtualAppliance::_FrequencyDivider
+VirtualAppliance::_FrequencyDivider::_FrequencyDivider(unsigned inputTicks, unsigned outputTicks,
+                                                       IClockedComponentAspect * drivenComponent)
+    :   _inputTicks(inputTicks),
+        _outputTicks(outputTicks),
+        _drivenComponent(drivenComponent),
+        //  Worker data for Bresenham's line algorithm
+        _dx(inputTicks - 1),
+        _dy(outputTicks - 1),
+        _2dx(2 * _dx),
+        _2dy(2 * _dy),
+        _d(2 * _dy - _dx),
+        _x(0),
+        _y(0)
+{
+    Q_ASSERT(_inputTicks >= 1 && _inputTicks <= 1000000000);
+    Q_ASSERT(_outputTicks >= 1 && _outputTicks <= 1000000000);
+    Q_ASSERT(_outputTicks <= _inputTicks);
+    Q_ASSERT(_drivenComponent != nullptr);
+}
+
+ClockFrequency VirtualAppliance::_FrequencyDivider::clockFrequency() const noexcept
+{
+    return _drivenComponent->clockFrequency();  //  doesn't really matter
+}
+
+void VirtualAppliance::_FrequencyDivider::onClockTick() noexcept
+{
+    _x++;
+    if (_d > 0)
+    {
+        _y++;
+        _drivenComponent->onClockTick();
+        _d -= _2dx;
+    }
+    _d += _2dy;
+    if (_x >= _dx)
+    {   //  Start over
+        _x = _y = 0;
+        _d = 2 * _dy - _dx;
+    }
+}
+
+//////////
+//  VirtualAppliance::_WorkerThread
+VirtualAppliance::_WorkerThread::_WorkerThread(VirtualAppliance * virtualAppliance)
+    :   _virtualAppliance(virtualAppliance),
+        _stopRequested(false),
+        _maxClockFrequency(),   //  0hz
+        _frequencyDividers(),
+        _tickTargets()
+{
+    //  Which components/adapters will be "clock ticked" by the VA's
+    //  own _WorkerThread? These are all that implement IClockedComponentAspect
+    //  but do NOT implement IActiveComponentAspect
+    for (auto cc : virtualAppliance->componentsImplementing<IClockedComponentAspect>())
+    {
+        if (dynamic_cast<IActiveComponentAspect*>(cc) == nullptr)
+        {
+            _tickTargets.append(cc);    //  can end up empty!
+        }
+    }
+
+    for (auto tickTarget : _tickTargets)
+    {
+        _maxClockFrequency = qMax(_maxClockFrequency, tickTarget->clockFrequency());
+    }
+
+    //  Those tick targets that must tick at a frequency LOWER than
+    //  maxClockFrequency require _FrequencyDividers
+    for (qsizetype i = 0; i < _tickTargets.count(); i++)
+    {
+        IClockedComponentAspect * tickTarget = _tickTargets[i];
+        if (tickTarget->clockFrequency() < _maxClockFrequency)
+        {
+            _FrequencyDivider * frequencyDivider =
+                new _FrequencyDivider(
+                    static_cast<unsigned>(qMax(qMin(_maxClockFrequency.toHz(), 1000000000u), 1u)),
+                    static_cast<unsigned>(qMax(qMin(tickTarget->clockFrequency().toHz(), 1000000000u), 1u)),
+                    tickTarget);
+            _frequencyDividers.append(frequencyDivider);
+            _tickTargets[i] = frequencyDivider;
+        }
+    }
+}
+
+VirtualAppliance::_WorkerThread::~_WorkerThread()
+{
+    for (auto frequencyDivider : _frequencyDividers)
+    {
+        delete frequencyDivider;
+    }
+}
+
+void VirtualAppliance::_WorkerThread::run()
+{
+    if (_tickTargets.isEmpty())
+    {   //  Nothing to tick!
+        return;
+    }
+
+    uint64_t requiredClockFrequencyHz = _maxClockFrequency.toHz();
+    uint64_t requiredNsPerTick = 1000000000 / requiredClockFrequencyHz;
+    unsigned ticksBetweenDelayAdjustment = static_cast<unsigned>(qMin(qMax(1u, requiredClockFrequencyHz / 10), UINT_MAX));
+    unsigned delayPerTickNs = 0;
+    uint64_t accumulatedDelayNs = 0;
+
+    QElapsedTimer elapsedTimer;
+    while (!_stopRequested)
+    {
+        //  Execute a bunch of instructions...
+        elapsedTimer.restart();
+        for (unsigned n = 0; n < ticksBetweenDelayAdjustment; n++)
+        {
+            for (qsizetype i = 0; i < _tickTargets.count(); i++)
+            {
+                _tickTargets[i]->onClockTick();
+            }
+            accumulatedDelayNs += delayPerTickNs;
+        }
+        uint64_t accumulatedDelayMs = accumulatedDelayNs / 1000000;
+        accumulatedDelayNs -= 1000000 * accumulatedDelayMs;
+        if (accumulatedDelayMs > 0)
+        {
+            msleep(static_cast<unsigned long>(accumulatedDelayMs));
+        }
+
+        qint64 idealNsElapsed = requiredNsPerTick * ticksBetweenDelayAdjustment;
+        qint64 actualNsElapsed = elapsedTimer.nsecsElapsed();
+
+        static int n = 0;
+        if (n++ >= 100)
+        {
+            n = 0;
+            //qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
+
+            qint64 actualNsPerTick = actualNsElapsed / ticksBetweenDelayAdjustment;;
+            qint64 actualClockFrequencyHz = 1000000000 / actualNsPerTick;
+            qDebug() << "VA._WorkerThread Running at " << actualClockFrequencyHz << " Hz, delayPerTickNs = " << delayPerTickNs;
+        }
+
+        if (actualNsElapsed < idealNsElapsed)
+        {   //  Going too fast!
+            delayPerTickNs++;
+        }
+        else if (actualNsElapsed > idealNsElapsed && delayPerTickNs > 0)
+        {   //  Going too slow!
+            delayPerTickNs--;
+        }
+        //qDebug() << actualNsElapsed;
+        //  ...and see how long it actually took to execute the binch
+
+        //usleep(1);
     }
 }
 

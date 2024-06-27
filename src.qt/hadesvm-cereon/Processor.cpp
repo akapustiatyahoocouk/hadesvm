@@ -234,8 +234,12 @@ void Processor::disconnect() noexcept
 
 //////////
 //  hadesvm::core::IClockedComponentAspect
-void Processor::onClockTick()
+void Processor::onClockTick() noexcept
 {
+    for (size_t i = 0; i < _numCores; i++)
+    {
+        _coresAsArray[i]->onClockTick();
+    }
 }
 
 //////////
@@ -307,10 +311,7 @@ void Processor::_WorkerThread::run()
         elapsedTimer.restart();
         for (unsigned n = 0; n < ticksBetweenDelayAdjustment; n++)
         {
-            for (size_t i = 0; i < _processor->_numCores; i++)
-            {
-                _processor->_coresAsArray[i]->onClockTick();
-            }
+            _processor->onClockTick();
             accumulatedDelayNs += delayPerTickNs;
         }
         uint64_t accumulatedDelayMs = accumulatedDelayNs / 1000000;
@@ -320,7 +321,6 @@ void Processor::_WorkerThread::run()
             msleep(static_cast<unsigned long>(accumulatedDelayMs));
         }
 
-
         qint64 idealNsElapsed = requiredNsPerTick * ticksBetweenDelayAdjustment;
         qint64 actualNsElapsed = elapsedTimer.nsecsElapsed();
 
@@ -328,11 +328,11 @@ void Processor::_WorkerThread::run()
         if (n++ >= 100)
         {
             n = 0;
-            qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
+            //qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
 
             qint64 actualNsPerTick = actualNsElapsed / ticksBetweenDelayAdjustment;;
             qint64 actualClockFrequencyHz = 1000000000 / actualNsPerTick;
-            qDebug() << "Running at " << actualClockFrequencyHz << " Hz";
+            qDebug() << "Processor Running at " << actualClockFrequencyHz << " Hz";
         }
 
         if (actualNsElapsed < idealNsElapsed)
