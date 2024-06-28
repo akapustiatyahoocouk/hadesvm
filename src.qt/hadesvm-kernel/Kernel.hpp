@@ -253,7 +253,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *      type() const override;
+            virtual Type *      componentType() const override { return Type::instance(); }
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;

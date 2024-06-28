@@ -197,8 +197,8 @@ namespace hadesvm
         //  The I/O bus.
         //  I/O bus methods are only safe to call from the master clock thread
         class HADESVM_CEREON_PUBLIC IoBus : public hadesvm::core::Component,
-                                            public virtual hadesvm::core::IClockedComponentAspect,
-                                            public virtual hadesvm::core::IActiveComponentAspect
+                                            public virtual hadesvm::core::IClockedComponent,
+                                            public virtual hadesvm::core::IActiveComponent
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(IoBus)
 
@@ -242,7 +242,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *      type() const override { return Type::instance(); }
+            virtual Type *      componentType() const override { return Type::instance(); }
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
@@ -262,19 +262,19 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IClockedComponentAspect
+            //  hadesvm::core::IClockedComponent
         public:
             virtual hadesvm::core::ClockFrequency
                                 clockFrequency() const noexcept override { return _clockFrequency; }
             virtual void        onClockTick() noexcept override {}
 
             //////////
-            //  hadesvm::core::IActiveComponentAspect
+            //  hadesvm::core::IActiveComponent
         public:
             //  Although a memory bus is, technically, a clocked component,
             //  there isn't anything that must actually happen within a MemoryBus
             //  instance on every clock tick. Therefore, we make it implement
-            //  IActiveComponentAspect to make sure VA does not attempt to "tick"
+            //  IActiveComponent to make sure VA does not attempt to "tick"
             //  the MemoryBus on its own common worker thread, but do not create
             //  an actual bus-only worker thread
 
@@ -354,9 +354,9 @@ namespace hadesvm
         };
 
         //////////
-        //  An "I/O controller" is a component aspect that exposes 1 or more
+        //  An "I/O controller" is a component that exposes 1 or more
         //  I/O ports through which it can be attached to an I/O bus.
-        class HADESVM_CEREON_PUBLIC IIoControllerAspect : public virtual hadesvm::core::IComponentAspect
+        class HADESVM_CEREON_PUBLIC IIoController : public virtual hadesvm::core::IComponent
         {
             //////////
             //  Operations

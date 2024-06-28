@@ -77,24 +77,24 @@ void VirtualAppliance::save() throws(VirtualApplianceException)
     {
         QDomElement componentElement = document.createElement("Component");
         componentsElement.appendChild(componentElement);
-        componentElement.setAttribute("Type", component->type()->mnemonic());
+        componentElement.setAttribute("Type", component->componentType()->mnemonic());
         component->serialiseConfiguration(componentElement);
-        Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+        Q_ASSERT(componentElement.attribute("Type") == component->componentType()->mnemonic());
     }
     for (auto componentAdaptor : _componentAdaptors)
     {
         auto component = componentAdaptor->adaptedComponent();
         QDomElement componentElement = document.createElement("Component");
         componentsElement.appendChild(componentElement);
-        componentElement.setAttribute("Type", component->type()->mnemonic());
+        componentElement.setAttribute("Type", component->componentType()->mnemonic());
         component->serialiseConfiguration(componentElement);
-        Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+        Q_ASSERT(componentElement.attribute("Type") == component->componentType()->mnemonic());
 
         QDomElement adaptorElement = document.createElement("Adaptor");
         componentElement.appendChild(adaptorElement);
-        adaptorElement.setAttribute("Type", componentAdaptor->type()->mnemonic());
+        adaptorElement.setAttribute("Type", componentAdaptor->componentAdaptorType()->mnemonic());
         componentAdaptor->serialiseConfiguration(adaptorElement);
-        Q_ASSERT(adaptorElement.attribute("Type") == componentAdaptor->type()->mnemonic());
+        Q_ASSERT(adaptorElement.attribute("Type") == componentAdaptor->componentAdaptorType()->mnemonic());
     }
 
     //  Save!
@@ -202,7 +202,7 @@ VirtualAppliance * VirtualAppliance::load(const QString & location)
             if (adaptor != nullptr)
             {
                 QDomElement adaptorElement = componentElement.firstChildElement("Adaptor");
-                if (!adaptorElement.isNull() && adaptorElement.attribute("Type") == adaptor->type()->mnemonic())
+                if (!adaptorElement.isNull() && adaptorElement.attribute("Type") == adaptor->componentAdaptorType()->mnemonic())
                 {
                     adaptor->deserialiseConfiguration(adaptorElement);
                 }
@@ -340,24 +340,24 @@ void VirtualAppliance::addComponent(Component * component) throws(VirtualApplian
     Q_ASSERT(component->virtualAppliance() == nullptr);
 
     //  Ensure component is suitable for this VA
-    if (!component->type()->isCompatibleWith(_architecture) &&
-        !component->type()->isAdaptableTo(_architecture))
+    if (!component->componentType()->isCompatibleWith(_architecture) &&
+        !component->componentType()->isAdaptableTo(_architecture))
     {
         throw VirtualApplianceException("Component incompatible with virtual appliance architecture");
     }
-    if (!component->type()->isCompatibleWith(type()))
+    if (!component->componentType()->isCompatibleWith(type()))
     {
         throw VirtualApplianceException("Component incompatible with virtual appliance type");
     }
     //  ...and add the component directly to this VA or adapt it
-    if (component->type()->isCompatibleWith(_architecture))
+    if (component->componentType()->isCompatibleWith(_architecture))
     {   //  Add directly
         _compatibleComponents.append(component);
     }
     else
     {   //  Adapt
         _adaptedComponents.append(component);
-        ComponentAdaptorType * adaptorType = ComponentAdaptorType::find(component->type(), _architecture);
+        ComponentAdaptorType * adaptorType = ComponentAdaptorType::find(component->componentType(), _architecture);
         Q_ASSERT(adaptorType != nullptr);
         ComponentAdaptor * adaptor = adaptorType->createComponentAdaptor(component);
         Q_ASSERT(adaptor != nullptr);
@@ -819,7 +819,7 @@ void VirtualAppliance::_disconnectComponents()
 //////////
 //  VirtualAppliance::_FrequencyDivider
 VirtualAppliance::_FrequencyDivider::_FrequencyDivider(unsigned inputTicks, unsigned outputTicks,
-                                                       IClockedComponentAspect * drivenComponent)
+                                                       IClockedComponent * drivenComponent)
     :   _inputTicks(inputTicks),
         _outputTicks(outputTicks),
         _drivenComponent(drivenComponent),
@@ -872,9 +872,9 @@ VirtualAppliance::_WorkerThread::_WorkerThread(VirtualAppliance * virtualApplian
     //  Which components/adapters will be "clock ticked" by the VA's
     //  own _WorkerThread? These are all that implement IClockedComponentAspect
     //  but do NOT implement IActiveComponentAspect
-    for (auto cc : virtualAppliance->componentsImplementing<IClockedComponentAspect>())
+    for (auto cc : virtualAppliance->componentsImplementing<IClockedComponent>())
     {
-        if (dynamic_cast<IActiveComponentAspect*>(cc) == nullptr)
+        if (dynamic_cast<IActiveComponent*>(cc) == nullptr)
         {
             _tickTargets.append(cc);    //  can end up empty!
         }
@@ -889,7 +889,7 @@ VirtualAppliance::_WorkerThread::_WorkerThread(VirtualAppliance * virtualApplian
     //  maxClockFrequency require _FrequencyDividers
     for (qsizetype i = 0; i < _tickTargets.count(); i++)
     {
-        IClockedComponentAspect * tickTarget = _tickTargets[i];
+        IClockedComponent * tickTarget = _tickTargets[i];
         if (tickTarget->clockFrequency() < _maxClockFrequency)
         {
             _FrequencyDivider * frequencyDivider =

@@ -188,18 +188,40 @@ namespace hadesvm
             void                    _disconnectComponents();
 
             //  Threads
-            class _FrequencyDivider final : public virtual IClockedComponentAspect
+            class _FrequencyDivider final : public virtual IClockedComponent
             {   //  Accepts "input" ticks, performing "output" ticks at a lower frequency
                 HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_FrequencyDivider)
 
                 //////////
                 //  Construction/destruction
             public:
-                _FrequencyDivider(unsigned inputTicks, unsigned outputTicks,
-                                  IClockedComponentAspect * drivenComponent);
+                _FrequencyDivider(unsigned inputTicks, unsigned outputTicks, IClockedComponent * drivenComponent);
 
                 //////////
-                //  IClockedComponentAspect
+                //  IComponent (general; all unused)
+            public:
+                virtual ComponentType * componentType() const override { Q_ASSERT(false); return nullptr; }
+                virtual bool            suspendable() const override { Q_ASSERT(false); return false; }
+                virtual VirtualAppliance *  virtualAppliance() const override { Q_ASSERT(false); return nullptr; }
+                virtual QString         displayName() const override { Q_ASSERT(false); return ""; }
+                virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override { Q_ASSERT(false); }
+                virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override { Q_ASSERT(false); }
+                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { Q_ASSERT(false);  return nullptr; }
+                virtual Ui *            createUi() override { Q_ASSERT(false); return nullptr; }
+
+                //////////
+                //  IComponent (state management)
+            public:
+                virtual State           state() const noexcept override { return _drivenComponent->state(); }
+                virtual void            connect() throws(VirtualApplianceException) override {}
+                virtual void            initialize() throws(VirtualApplianceException) override {}
+                virtual void            start() throws(VirtualApplianceException) override {}
+                virtual void            stop() noexcept override {}
+                virtual void            deinitialize() noexcept override {}
+                virtual void            disconnect() noexcept override {}
+
+                //////////
+                //  IClockedComponent
             public:
                 virtual ClockFrequency  clockFrequency() const noexcept override;
                 virtual void            onClockTick() noexcept override;
@@ -209,7 +231,7 @@ namespace hadesvm
             private:
                 const unsigned      _inputTicks;
                 const unsigned      _outputTicks;
-                IClockedComponentAspect *const  _drivenComponent;
+                IClockedComponent *const    _drivenComponent;
                 //  Worker data for Bresenham's line algorithm
                 const unsigned      _dx, _dy;
                 const unsigned      _2dx, _2dy;
@@ -245,7 +267,7 @@ namespace hadesvm
 
                 ClockFrequency      _maxClockFrequency;
                 QList<_FrequencyDivider*>   _frequencyDividers;
-                QList<IClockedComponentAspect*> _tickTargets;
+                QList<IClockedComponent*>   _tickTargets;
             };
             _WorkerThread *     _workerThread = nullptr;
         };

@@ -29,9 +29,6 @@ HEADERS += \
     API.hpp \
     Classes.hpp \
     Component.hpp \
-    ComponentAdaptor.hpp \
-    ComponentAdaptorType.hpp \
-    ComponentAspect.hpp \
     ComponentCategory.hpp \
     ComponentEditor.hpp \
     ComponentType.hpp \

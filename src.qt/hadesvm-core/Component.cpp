@@ -1,7 +1,7 @@
 //
 //  hadesvm-core/Component.cpp
 //
-//  hadesvm::core::Component class implementation
+//  hadesvm::core::Component class implementations
 //
 //////////
 #include "hadesvm-core/API.hpp"

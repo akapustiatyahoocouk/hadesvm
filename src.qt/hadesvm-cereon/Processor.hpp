@@ -12,8 +12,8 @@ namespace hadesvm
         //////////
         //  The Cereon processor
         class HADESVM_CEREON_PUBLIC Processor : public hadesvm::core::Component,
-                                                public virtual hadesvm::core::IClockedComponentAspect,
-                                                public virtual hadesvm::core::IActiveComponentAspect
+                                                public virtual hadesvm::core::IClockedComponent,
+                                                public virtual hadesvm::core::IActiveComponent
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Processor)
 
@@ -49,14 +49,14 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IClockedComponentAspect
+            //  hadesvm::core::IClockedComponent
         public:
             virtual hadesvm::core::ClockFrequency
                                 clockFrequency() const noexcept override { return _clockFrequency; }
             virtual void        onClockTick() noexcept override;
 
             //////////
-            //  hadesvm::core::IActiveComponentAspect
+            //  hadesvm::core::IActiveComponent
         public:
 
             //////////
@@ -176,7 +176,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *      type() const override { return Type::instance(); }
+            virtual Type *      componentType() const override { return Type::instance(); }
 
             //////////
             //  Implementation

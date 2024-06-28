@@ -17,7 +17,6 @@ ComponentAdaptor::ComponentAdaptor(Component * adaptedComponent)
 
 ComponentAdaptor::~ComponentAdaptor()
 {
-    Q_ASSERT(_virtualAppliance == nullptr); //  must be a free component
 }
 
 //  End of hadesvm-core/ComponentAdaptor.cpp

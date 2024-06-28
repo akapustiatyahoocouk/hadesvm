@@ -12,8 +12,8 @@ namespace hadesvm
         //////////
         //  The Cereon CMOS1 nonvolatile memory controller
         class HADESVM_CEREON_PUBLIC Cmos1 : public hadesvm::core::Component,
-                                            public virtual hadesvm::core::IClockedComponentAspect,
-                                            public virtual IIoControllerAspect
+                                            public virtual hadesvm::core::IClockedComponent,
+                                            public virtual IIoController
 
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Cmos1)
@@ -64,7 +64,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *      type() const override { return Type::instance(); }
+            virtual Type *      componentType() const override { return Type::instance(); }
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
@@ -84,14 +84,14 @@ namespace hadesvm
             virtual void        disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IClockedComponentAspect
+            //  hadesvm::core::IClockedComponent
         public:
             virtual hadesvm::core::ClockFrequency
                                 clockFrequency() const noexcept override { return _clockFrequency; }
             virtual void        onClockTick() noexcept override;
 
             //////////
-            //  IIoControllerAspect
+            //  IIoController
         public:
             virtual IoPortList  ioPorts() override;
 

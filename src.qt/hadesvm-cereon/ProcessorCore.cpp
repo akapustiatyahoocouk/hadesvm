@@ -178,6 +178,13 @@ void ProcessorCore::onClockTick()
 
     //  We're Working - increment $cc and handle traps
     _cc++;
+    //if (_cc % 100'000'000 == 0)
+    //{   //  TODO kill off this "if" - it's a debug code
+    //    QDateTime now = QDateTime::currentDateTimeUtc();
+    //    QString nowAsString = now.toString(Qt::DateFormat::ISODateWithMs);
+    //    qDebug() << "cc = " << _cc << " @ " << nowAsString;
+    //}
+
     if (_state.isInTrapMode())
     {   //  TRAP, unless PROGRAM interrupts are disabled
         if (_state.isProgramInterruptsEnabled())

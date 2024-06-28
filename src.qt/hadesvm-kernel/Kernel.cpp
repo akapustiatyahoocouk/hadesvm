@@ -49,11 +49,6 @@ Kernel::~Kernel()
 
 //////////
 //  hadesvm::core::Component
-Kernel::Type * Kernel::type() const
-{
-    return Type::instance();
-}
-
 QString Kernel::displayName() const
 {
     return Type::instance()->displayName();

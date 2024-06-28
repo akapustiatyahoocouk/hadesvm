@@ -10,7 +10,7 @@ namespace hadesvm
     namespace core
     {
         //////////
-        //  Represents a generic VM component.
+        //  An abstract interface to a generic VM component.
         //
         //  A component can be in one of two states:
         //  *   A free component, which is not a part of any VM, or
@@ -18,12 +18,8 @@ namespace hadesvm
         //  All components are created as free components which can then
         //  be assigned to VMs. Bound components can ONLY be destroyed
         //  when the VM they are bound to is destroyed.
-        class HADESVM_CORE_PUBLIC Component
+        class HADESVM_CORE_PUBLIC IComponent
         {
-            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Component)
-
-            friend class VirtualAppliance;
-
             //////////
             //  Types
         public:
@@ -56,7 +52,7 @@ namespace hadesvm
                 //////////
                 //  Construction/destruction
             public:
-                explicit Ui(Component * component)
+                explicit Ui(IComponent * component)
                     :   _component(component) { Q_ASSERT(_component != nullptr); }
                 virtual ~Ui() = default;
 
@@ -64,32 +60,31 @@ namespace hadesvm
                 //  Operations
             private:
                 //  Returns the Component to which this UI belongs
-                Component *         component() const { return _component; }
+                IComponent *        component() const { return _component; }
 
                 //////////
                 //  Implementation
             private:
-                Component *const    _component;
+                IComponent *const   _component;
             };
 
             //////////
-            //  Construction/destruction
+            //  This is an interface
         public:
-            Component();
-            virtual ~Component();
+            virtual ~IComponent() = default;
 
             //////////
             //  Operations (general)
         public:
             //  The type of this component
-            virtual ComponentType * type() const = 0;
+            virtual ComponentType * componentType() const = 0;
 
             //  Checks if this component can be "suspended".
-            bool                    suspendable() const { return type()->suspendable(); }
+            virtual bool            suspendable() const = 0;
 
             //  The VM to which this component is bound; nullptr if this
             //  is a free component
-            VirtualAppliance *      virtualAppliance() const { return _virtualAppliance; }
+            virtual VirtualAppliance *  virtualAppliance() const = 0;
 
             //  The short descriptive name of this component
             virtual QString         displayName() const = 0;
@@ -122,43 +117,131 @@ namespace hadesvm
             //  Operations (state management)
         public:
             //  The current state of this component
-            virtual State           state() const noexcept = 0;
+            virtual State       state() const noexcept = 0;
 
             //  Performs the Constructed -> Connected state transition.
             //  This connects Component to other components of the same VA
             //  with which the Component is expected to collaborate.
             //  Must only be called from the QApplication's main thread
-            virtual void            connect() throws(VirtualApplianceException) = 0;
+            virtual void        connect() throws(VirtualApplianceException) = 0;
 
             //  Performs the Connected -> Initialized state transition.
             //  This allocated the "runtime state" of the Component.
             //  Must only be called from the QApplication's main thread
-            virtual void            initialize() throws(VirtualApplianceException) = 0;
+            virtual void        initialize() throws(VirtualApplianceException) = 0;
 
             //  Performs the Initialized -> Running state transition.
             //  This starts the Component.
             //  Must only be called from the QApplication's main thread
-            virtual void            start() throws(VirtualApplianceException) = 0;
+            virtual void        start() throws(VirtualApplianceException) = 0;
 
             //  Performs the Running -> Initialized state transition.
             //  This stops the Component.
             //  Must only be called from the QApplication's main thread
-            virtual void            stop() noexcept = 0;
+            virtual void        stop() noexcept = 0;
 
             //  Performs the Initialized -> Connected state transition.
             //  This drops the "runtime state" of the Component.
             //  Must only be called from the QApplication's main thread
-            virtual void            deinitialize() noexcept = 0;
+            virtual void        deinitialize() noexcept = 0;
 
             //  Performs the Connected -> Constructed state transition.
             //  This disconnects Component from other components of the same VA.
             //  Must only be called from the QApplication's main thread
-            virtual void            disconnect() noexcept = 0;
+            virtual void        disconnect() noexcept = 0;
+        };
+
+        //////////
+        //  A standalone component (i.e. not wrapped by an adaptor)
+        class HADESVM_CORE_PUBLIC Component : public virtual IComponent
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Component)
+
+            friend class VirtualAppliance;
+
+            //////////
+            //  Construction/destruction
+        public:
+            Component();
+            virtual ~Component();
+
+            //////////
+            //  IComponet (general)
+        public:
+            virtual bool            suspendable() const { return componentType()->suspendable(); }
+            virtual VirtualAppliance *virtualAppliance() const override { return _virtualAppliance; }
 
             //////////
             //  Implementation
         private:
-            VirtualAppliance *      _virtualAppliance = nullptr;  //  nullptr == free, else bound
+            VirtualAppliance *  _virtualAppliance = nullptr;  //  nullptr == free, else bound
+        };
+
+        //////////
+        //  Represents a generic VM component adaptor.
+        //
+        //  All component adaptors are created AUTOMATICALLY as bound component
+        //  adaptors as components requiring adaption are added to VAs. Bound
+        //  component adaptors can ONLY be destroyed when the VM they are bound
+        //  to is destroyed.
+        class HADESVM_CORE_PUBLIC ComponentAdaptor : public virtual IComponent
+        {
+            HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ComponentAdaptor)
+
+            friend class VirtualAppliance;
+
+            //////////
+            //  Construction/destruction
+        public:
+            explicit ComponentAdaptor(Component * adaptedComponent);
+            virtual ~ComponentAdaptor();
+
+            //////////
+            //  IComponet (general)
+        public:
+            virtual VirtualAppliance *virtualAppliance() const override { return _virtualAppliance; }
+
+            //////////
+            //  Operations (general)
+        public:
+            //  The type of this component adaptor
+            virtual ComponentAdaptorType *  componentAdaptorType() const = 0;
+
+            //  The component being adapted.
+            Component *         adaptedComponent() const { return _adaptedComponent; }
+
+            //////////
+            //  Implementation
+        private:
+            Component *const    _adaptedComponent;
+            VirtualAppliance *  _virtualAppliance = nullptr;  //  nullptr == free, else bound
+        };
+
+        //////////
+        //  A "clocked component (or adapter)" is driven by a periodic
+        //  "clock" of some fixed frequency.
+        class HADESVM_CORE_PUBLIC IClockedComponent : public virtual IComponent
+        {
+            //////////
+            //  Operations
+        public:
+            //  Returns the configured clock frequency of the clock driving the component
+            virtual ClockFrequency  clockFrequency() const noexcept = 0;
+
+            //  Called on each clock tick when the VM containing this component runs
+            virtual void            onClockTick() noexcept = 0;
+        };
+
+        //////////
+        //  An "active component (or adapter)" has its own thread of control
+        //  (normally created/started by IComponent's "start()" method and
+        //  stopped/destroyed by IComponent's "stop()" method).
+        //  NOTE that an "active component" is NOT necessarily always a "clocked
+        //  component". If it is, then the internal worker thread of the "active
+        //  component" is expected to call that component's onClockTick() method
+        //  at the intervals required by the component's clockFrequency().
+        class HADESVM_CORE_PUBLIC IActiveComponent : public virtual IComponent
+        {
         };
     }
 }

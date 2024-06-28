@@ -153,7 +153,7 @@ void ConfigureVirtualApplianceDialog::_refreshComponentNodes(
     hadesvm::core::ComponentList components;
     for (auto component : _virtualAppliance->components())
     {
-        if (component->type()->category() == componentCategory)
+        if (component->componentType()->category() == componentCategory)
         {
             components.append(component);
         }
@@ -219,7 +219,7 @@ void ConfigureVirtualApplianceDialog::_saveComponentConfigurations()
     for (auto component : _virtualAppliance->compatibleComponents())
     {
         QDomElement componentElement = _savedConfiguration.createElement("Component");
-        componentElement.setAttribute("Type", component->type()->mnemonic());
+        componentElement.setAttribute("Type", component->componentType()->mnemonic());
         rootElement.appendChild(componentElement);
         component->serialiseConfiguration(componentElement);
         _savedComponentConfigurations[component] = componentElement;
@@ -230,13 +230,13 @@ void ConfigureVirtualApplianceDialog::_saveComponentConfigurations()
         auto component = adaptor->adaptedComponent();
 
         QDomElement componentElement = _savedConfiguration.createElement("Component");
-        componentElement.setAttribute("Type", component->type()->mnemonic());
+        componentElement.setAttribute("Type", component->componentType()->mnemonic());
         rootElement.appendChild(componentElement);
         component->serialiseConfiguration(componentElement);
         _savedComponentConfigurations[component] = componentElement;
 
         QDomElement adaptorElement = _savedConfiguration.createElement("Adaptor");
-        adaptorElement.setAttribute("Type", adaptor->type()->mnemonic());
+        adaptorElement.setAttribute("Type", adaptor->componentAdaptorType()->mnemonic());
         componentElement.appendChild(adaptorElement);
         adaptor->serialiseConfiguration(adaptorElement);
         _savedComponentAdaptorConfigurations[component] = adaptorElement;
@@ -252,7 +252,7 @@ void ConfigureVirtualApplianceDialog::_restoreComponentConfigurations()
         if (_savedComponentConfigurations.contains(component))
         {
             QDomElement componentElement = _savedComponentConfigurations[component];
-            Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+            Q_ASSERT(componentElement.attribute("Type") == component->componentType()->mnemonic());
             component->deserialiseConfiguration(componentElement);
         }
     }
@@ -262,7 +262,7 @@ void ConfigureVirtualApplianceDialog::_restoreComponentConfigurations()
         if (_savedComponentConfigurations.contains(component))
         {
             QDomElement componentElement = _savedComponentConfigurations[component];
-            Q_ASSERT(componentElement.attribute("Type") == component->type()->mnemonic());
+            Q_ASSERT(componentElement.attribute("Type") == component->componentType()->mnemonic());
             component->deserialiseConfiguration(componentElement);
         }
         hadesvm::core::ComponentAdaptor * adaptor = nullptr;
@@ -277,7 +277,7 @@ void ConfigureVirtualApplianceDialog::_restoreComponentConfigurations()
         if (adaptor != nullptr && _savedComponentAdaptorConfigurations.contains(component))
         {
             QDomElement adaptorElement = _savedComponentAdaptorConfigurations[component];
-            if (adaptorElement.attribute("Type") == adaptor->type()->mnemonic())
+            if (adaptorElement.attribute("Type") == adaptor->componentAdaptorType()->mnemonic())
             {
                 adaptor->deserialiseConfiguration(adaptorElement);
             }

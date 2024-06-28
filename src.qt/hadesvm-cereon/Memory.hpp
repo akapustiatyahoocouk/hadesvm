@@ -61,9 +61,9 @@ namespace hadesvm
         };
 
         //////////
-        //  A "memory unit" is a component aspect that exposes 1 or more
+        //  A "memory unit" is a component that exposes 1 or more
         //  MemoryBlocks I/O which can be attached to a MemoryBus.
-        class HADESVM_CEREON_PUBLIC IMemoryUnitAspect : public virtual hadesvm::core::IComponentAspect
+        class HADESVM_CEREON_PUBLIC IMemoryUnit : public virtual hadesvm::core::IComponent
         {
             //////////
             //  Operations
@@ -76,8 +76,8 @@ namespace hadesvm
         //  The Cereon memory bus delegates loads/stores to one of the
         //  attached memory blocks
         class HADESVM_CEREON_PUBLIC MemoryBus : public hadesvm::core::Component,
-                                                public virtual hadesvm::core::IClockedComponentAspect,
-                                                public virtual hadesvm::core::IActiveComponentAspect
+                                                public virtual hadesvm::core::IClockedComponent,
+                                                public virtual hadesvm::core::IActiveComponent
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(MemoryBus)
 
@@ -119,7 +119,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *          type() const override { return Type::instance(); }
+            virtual Type *          componentType() const override { return Type::instance(); }
             virtual QString         displayName() const override;
             virtual void            serialiseConfiguration(QDomElement componentElement) const override;
             virtual void            deserialiseConfiguration(QDomElement componentElement) override;
@@ -140,19 +140,19 @@ namespace hadesvm
             virtual void            disconnect() noexcept override;
 
             //////////
-            //  hadesvm::core::IClockedComponentAspect
+            //  hadesvm::core::IClockedComponent
         public:
             virtual hadesvm::core::ClockFrequency
                                     clockFrequency() const noexcept override { return _clockFrequency; }
             virtual void            onClockTick() noexcept override {}
 
             //////////
-            //  hadesvm::core::IActiveComponentAspect
+            //  hadesvm::core::IActiveComponent
         public:
             //  Although a memory bus is, technically, a clocked component,
             //  there isn't anything that must actually happen within a MemoryBus
             //  instance on every clock tick. Therefore, we make it implement
-            //  IActiveComponentAspect to make sure VA does not attempt to "tick"
+            //  IActiveComponent to make sure VA does not attempt to "tick"
             //  the MemoryBus on its own common worker thread, but do not create
             //  an actual bus-only worker thread
 
@@ -239,10 +239,10 @@ namespace hadesvm
 
         //////////
         //  A memory unit whose content is kept entirely in host RAM.
-        //  Technically a component with an IMemoryUnitAspect aspect, which
+        //  Technically a component which implements IMemoryUnit which
         //  also doubles at one and only IMemoryBlock it provides
         class HADESVM_CEREON_PUBLIC ResidentMemoryUnit : public hadesvm::core::Component,
-                                                         public virtual IMemoryUnitAspect,
+                                                         public virtual IMemoryUnit,
                                                          public virtual IMemoryBlock
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(ResidentMemoryUnit)
@@ -272,7 +272,7 @@ namespace hadesvm
             virtual void            disconnect() noexcept override;
 
             //////////
-            //  IMemoryUnitAspect
+            //  IMemoryUnit
         public:
             virtual MemoryBlockList memoryBlocks() const override { return _memoryBlocks; }
 
@@ -360,7 +360,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *          type() const override { return Type::instance(); }
+            virtual Type *          componentType() const override { return Type::instance(); }
             virtual QString         displayName() const override;
             virtual hadesvm::core::ComponentEditor *
                                     createEditor(QWidget * parent) override;
@@ -415,7 +415,7 @@ namespace hadesvm
             //////////
             //  hadesvm::core::Component
         public:
-            virtual Type *          type() const override { return Type::instance(); }
+            virtual Type *          componentType() const override { return Type::instance(); }
             virtual QString         displayName() const override;
             virtual void            serialiseConfiguration(QDomElement componentElement) const override;
             virtual void            deserialiseConfiguration(QDomElement componentElement) override;

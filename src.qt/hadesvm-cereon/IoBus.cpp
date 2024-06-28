@@ -85,11 +85,11 @@ void IoBus::connect() throws(hadesvm::core::VirtualApplianceException)
         return;
     }
 
-    //  Locate all elements that implement the "IIoControllerAspect"
+    //  Locate all elements that implement the "IIoController"
     //  and connect I/O ports they provide to this I/O bus
     try
     {
-        for (IIoControllerAspect * ioController : virtualAppliance()->componentsImplementing<IIoControllerAspect>())
+        for (IIoController * ioController : virtualAppliance()->componentsImplementing<IIoController>())
         {
             for (IIoPort * ioPort : ioController->ioPorts())
             {
@@ -175,9 +175,9 @@ void IoBus::disconnect() noexcept
         return;
     }
 
-    //  Locate all elements that implement the "IIoControllerAspect"
+    //  Locate all elements that implement the "IIoController"
     //  and disconnect I/O ports they provide from this I/O bus
-    for (IIoControllerAspect * ioController : virtualAppliance()->componentsImplementing<IIoControllerAspect>())
+    for (IIoController * ioController : virtualAppliance()->componentsImplementing<IIoController>())
     {
         for (IIoPort * ioPort : ioController->ioPorts())
         {

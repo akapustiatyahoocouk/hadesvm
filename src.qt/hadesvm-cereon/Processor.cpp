@@ -36,7 +36,7 @@ Processor::~Processor() noexcept
 QString Processor::displayName() const
 {
     return hadesvm::util::toString(_clockFrequency) + " " +
-           type()->displayName() + " #" + hadesvm::util::toString(id(), "%02X");
+           componentType()->displayName() + " #" + hadesvm::util::toString(id(), "%02X");
 }
 
 void Processor::serialiseConfiguration(QDomElement componentElement) const
@@ -146,7 +146,8 @@ void Processor::initialize() throws(hadesvm::core::VirtualApplianceException)
     //  Prepare a C-style array of cores - for faster iteration over
     if (_cores.count() == 0 || _cores.count() > 256)
     {
-        throw hadesvm::core::VirtualApplianceException(type()->displayName() + " must have between 1 and 256 cores");
+        throw hadesvm::core::VirtualApplianceException(
+                    componentType()->displayName() + " must have between 1 and 256 cores");
     }
     //  ...TODO and a single primary core!!!
 

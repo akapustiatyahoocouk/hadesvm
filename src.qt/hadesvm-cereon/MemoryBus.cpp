@@ -73,11 +73,11 @@ void MemoryBus::connect() throws(hadesvm::core::VirtualApplianceException)
         return;
     }
 
-    //  Locate all "IMemoryUnitAspect" components and attach them to this memory bus
+    //  Locate all "IMemoryUnit" components and attach them to this memory bus
     QList<IMemoryBlock*> attachedMemoryBlocks;
     try
     {
-        for (IMemoryUnitAspect * memoryUnit : this->virtualAppliance()->componentsImplementing<IMemoryUnitAspect>())
+        for (IMemoryUnit * memoryUnit : this->virtualAppliance()->componentsImplementing<IMemoryUnit>())
         {
             for (IMemoryBlock * memoryBlock : memoryUnit->memoryBlocks())
             {
