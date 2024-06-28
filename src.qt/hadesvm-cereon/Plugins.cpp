@@ -50,6 +50,7 @@ namespace
         hadesvm::core::ComponentType::register(Cereon1P1B::Type::instance());
         hadesvm::core::ComponentType::register(Cmos1::Type::instance());
         hadesvm::core::ComponentType::register(Vds1Controller::Type::instance());
+        hadesvm::core::ComponentType::register(Vds1Display::Type::instance());
     }
 }
 

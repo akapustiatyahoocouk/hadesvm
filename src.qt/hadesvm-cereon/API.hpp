@@ -34,5 +34,6 @@
 #include "hadesvm-cereon/ProcessorEditor.hpp"
 #include "hadesvm-cereon/Cmos1Editor.hpp"
 #include "hadesvm-cereon/Vds1ControllerEditor.hpp"
+#include "hadesvm-cereon/Vds1DisplayEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

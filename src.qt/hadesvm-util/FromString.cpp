@@ -153,6 +153,20 @@ bool hadesvm::util::fromString<bool>(const QString & s, qsizetype & scan, bool &
 }
 
 template <>
+bool hadesvm::util::fromString<unsigned char>(const QString & s, qsizetype & scan, unsigned char & value)
+{
+    qsizetype prescan = scan;
+    unsigned long long temp = 0;
+    if (parseUnsigned(s, prescan, 10, temp) && temp <= UCHAR_MAX)
+    {
+        scan = prescan;
+        value = static_cast<unsigned char>(temp);
+        return true;
+    }
+    return false;
+}
+
+template <>
 bool hadesvm::util::fromString<unsigned short>(const QString & s, qsizetype & scan, unsigned short & value)
 {
     qsizetype prescan = scan;

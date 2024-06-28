@@ -288,7 +288,7 @@ namespace hadesvm
             };
 
             QList<_Compartment*>    _allCompartments;   //  array of 1..256 items; does not change during runtime
-            _Compartment *      _currentCompartmen; //  points to one of _allCompartments items
+            _Compartment *      _currentCompartment; //  points to one of _allCompartments items
 
             enum class _OperationalState
             {
@@ -478,10 +478,10 @@ namespace hadesvm
             friend class Vds1Controller;
 
             //////////
-            //  Constants TODO move definitions to .cpp file
+            //  Constants
         public:
-            static const uint16_t   DefaultControllerStatePortAddress = 0x0200;
-            static const uint8_t    DefaultControllerCompartmentNumber = 0;
+            static const uint16_t   DefaultControllerStatePortAddress;
+            static const uint8_t    DefaultControllerCompartmentNumber;
 
             //////////
             //  Types
@@ -504,7 +504,7 @@ namespace hadesvm
                 virtual bool    suspendable() const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
-                virtual Vds1Controller *    createComponent() override;
+                virtual Vds1Display *   createComponent() override;
             };
 
             //////////
@@ -546,6 +546,8 @@ namespace hadesvm
             //////////
             //  Implementation
         private:
+            State               _state = State::Constructed;
+
             //  Configuration
             uint16_t            _controllerStatePortAddress;
             uint8_t             _controllerCompartmentNumber;

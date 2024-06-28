@@ -39,15 +39,13 @@ namespace hadesvm
             Vds1Controller *const   _vds1Controller;
 
             //  Helpers
+            hadesvm::core::ClockFrequency::Unit     _selectedClockFrequencyUnit() const;
+            void                _setSelectedClockFrequencyUnit(hadesvm::core::ClockFrequency::Unit unit);
 
             //////////
             //  Controls & resources
         private:
             Ui::Vds1ControllerEditor *  _ui;
-
-            //  Helpers
-            hadesvm::core::ClockFrequency::Unit     _selectedClockFrequencyUnit() const;
-            void                _setSelectedClockFrequencyUnit(hadesvm::core::ClockFrequency::Unit unit);
 
             //////////
             //  Signal handlers

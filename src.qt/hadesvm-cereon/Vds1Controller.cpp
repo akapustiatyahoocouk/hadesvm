@@ -29,7 +29,7 @@ Vds1Controller::Vds1Controller()
         _ioPorts(),
         _interruptMask(0),
         _allCompartments(),             //  initialized by initialize()
-        _currentCompartmen(nullptr),    //  initialized by initialize()
+        _currentCompartment(nullptr),    //  initialized by initialize()
         _commandBytes(),
         _resultBytes(),
         //  I/O ports
@@ -192,6 +192,44 @@ void Vds1Controller::connect() throws(hadesvm::core::VirtualApplianceException)
         return;
     }
 
+    //  Create compartments
+    Q_ASSERT(_allCompartments.isEmpty());
+    for (unsigned i = 0; i < _numberOfCompartments; i++)
+    {
+        _allCompartments.append(new _Compartment(i));
+    }
+    _currentCompartment = _allCompartments[0];
+
+    //  Locate all "Vds1Display" components & connect to this controller
+    try
+    {
+        for (Vds1Display * vds1Display : virtualAppliance()->componentsImplementing<Vds1Display>())
+        {   //  We have found a "Vds1Display"...
+            if (vds1Display->controllerStatePortAddress() == _statePortAddress)
+            {   //  ...which should be attached to this controller
+                if (vds1Display->controllerCompartmentNumber() >= _allCompartments.count())
+                {   //  OOPS!
+                    throw hadesvm::core::VirtualApplianceException("TODO proper error message");
+                }
+                _Compartment * compartment = _allCompartments[vds1Display->controllerCompartmentNumber()];
+                if (compartment->attachedDisplay() != nullptr)
+                {   //  OOPS!
+                    throw hadesvm::core::VirtualApplianceException("TODO proper error message");
+                }
+                compartment->attachDisplay(vds1Display);
+            }
+        }
+    }
+    catch (...)
+    {   //  OOPS! Cleanup & re-throw
+        for (auto compartment : _allCompartments)
+        {
+            delete compartment;
+        }
+        _allCompartments.clear();
+        throw;
+    }
+
     _state = State::Connected;
 }
 
@@ -251,6 +289,14 @@ void Vds1Controller::disconnect() noexcept
     {   //  OOPS! Can't
         return;
     }
+
+    _currentCompartment = nullptr;
+    for (_Compartment * compartment : _allCompartments)
+    {
+        compartment->detachDisplay();
+        delete compartment;
+    }
+    _allCompartments.clear();
 
     _state = State::Constructed;
 }
@@ -482,7 +528,7 @@ void Vds1Controller::_executeResetCommand()
 
 void Vds1Controller::_executeResetCompartmentCommand()
 {
-    _currentCompartmen->reset();
+    _currentCompartment->reset();
     //  Simulate command execution delay
     _executeDelay = 65536;  //  1 clock cycle per 1 byte of video memory
 }
@@ -507,7 +553,7 @@ void Vds1Controller::_executeSenseDisplayCommand()
 {
     uint8_t result = 0;
 
-    Vds1Display * display = _currentCompartmen->attachedDisplay();
+    Vds1Display * display = _currentCompartment->attachedDisplay();
     if (display != nullptr)
     {
         result |= 0x01; //  display is connected
@@ -519,26 +565,26 @@ void Vds1Controller::_executeSenseDisplayCommand()
 
 void Vds1Controller::_executeGetCurrentCompartmentCommand()
 {
-    _finishCommandExecution(_currentCompartmen->number());
+    _finishCommandExecution(_currentCompartment->number());
 }
 
 void Vds1Controller::_executeSetCurrentCompartmentCommand()
 {
     if (_commandBytes[1] < _allCompartments.size())
     {
-        _currentCompartmen = _allCompartments[_commandBytes[1]];
+        _currentCompartment = _allCompartments[_commandBytes[1]];
     }
     _finishCommandExecution();
 }
 
 void Vds1Controller::_executeGetVideoModeCommand()
 {
-    _finishCommandExecution(_currentCompartmen->videoMode());
+    _finishCommandExecution(_currentCompartment->videoMode());
 }
 
 void Vds1Controller::_executeSetVideoModeCommand()
 {
-    _currentCompartmen->setVideoMode(_commandBytes[1]);
+    _currentCompartment->setVideoMode(_commandBytes[1]);
     _finishCommandExecution();
 }
 
@@ -554,25 +600,25 @@ void Vds1Controller::_executeSetVideoPageCommand()
 
 void Vds1Controller::_executeGetSourceAddressCommand()
 {
-    uint16_t source = _currentCompartmen->source();
+    uint16_t source = _currentCompartment->source();
     _finishCommandExecution(static_cast<uint8_t>(source >> 8), static_cast<uint8_t>(source));
 }
 
 void Vds1Controller::_executeSetSourceAddressCommand()
 {
-    _currentCompartmen->setSource(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
+    _currentCompartment->setSource(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
     _finishCommandExecution();
 }
 
 void Vds1Controller::_executeGetDestinationAddressCommand()
 {
-    uint16_t destination = _currentCompartmen->destination();
+    uint16_t destination = _currentCompartment->destination();
     _finishCommandExecution(static_cast<uint8_t>(destination >> 8), static_cast<uint8_t>(destination));
 }
 
 void Vds1Controller::_executeSetDestinationAddressCommand()
 {
-    _currentCompartmen->setDestination(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
+    _currentCompartment->setDestination(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
     _finishCommandExecution();
 }
 
@@ -583,13 +629,13 @@ void Vds1Controller::_executeGetLengthCommand()
 
 void Vds1Controller::_executeSetLengthCommand()
 {
-    _currentCompartmen->setLength(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
+    _currentCompartment->setLength(static_cast<uint16_t>((_commandBytes[1] << 8) | _commandBytes[2]));
     _finishCommandExecution();
 }
 
 void Vds1Controller::_executeReadCommand()
 {
-    _finishCommandExecution(_currentCompartmen->read());
+    _finishCommandExecution(_currentCompartment->read());
 }
 
 void Vds1Controller::_executeReadAndAdvanceCommand()
@@ -599,13 +645,13 @@ void Vds1Controller::_executeReadAndAdvanceCommand()
 
 void Vds1Controller::_executeWriteCommand()
 {
-    _currentCompartmen->write(_commandBytes[1]);
+    _currentCompartment->write(_commandBytes[1]);
     _finishCommandExecution();
 }
 
 void Vds1Controller::_executeWriteAndAdvanceCommand()
 {
-    _currentCompartmen->writeAndAdvance(_commandBytes[1]);
+    _currentCompartment->writeAndAdvance(_commandBytes[1]);
     _finishCommandExecution();
 }
 
@@ -631,9 +677,9 @@ void Vds1Controller::_executeFillWithMaskCommand()
 
 void Vds1Controller::_executeMoveCommand()
 {
-    _currentCompartmen->move();
+    _currentCompartment->move();
     //  Simulate command execution delay
-    _executeDelay = static_cast<unsigned>(_currentCompartmen->length());
+    _executeDelay = static_cast<unsigned>(_currentCompartment->length());
 }
 
 void Vds1Controller::_executeMoveBackwardCommand()

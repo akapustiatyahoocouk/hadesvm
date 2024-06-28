@@ -29,7 +29,9 @@ SOURCES += \
     Vds1Controller.Compartment.cpp \
     Vds1Controller.VideoSignal.cpp \
     Vds1Controller.cpp \
-    Vds1ControllerEditor.cpp
+    Vds1ControllerEditor.cpp \
+    Vds1Display.cpp \
+    Vds1DisplayEditor.cpp
 
 HEADERS += \
     API.hpp \
@@ -49,7 +51,8 @@ HEADERS += \
     ResidentRamUnitEditor.hpp \
     ResidentRomUnitEditor.hpp \
     Vds1.hpp \
-    Vds1ControllerEditor.hpp
+    Vds1ControllerEditor.hpp \
+    Vds1DisplayEditor.hpp
 
 LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
@@ -60,4 +63,5 @@ FORMS += \
     ProcessorEditor.ui \
     ResidentRamUnitEditor.ui \
     ResidentRomUnitEditor.ui \
-    Vds1ControllerEditor.ui
+    Vds1ControllerEditor.ui \
+    Vds1DisplayEditor.ui
