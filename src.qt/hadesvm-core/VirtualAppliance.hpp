@@ -200,14 +200,14 @@ namespace hadesvm
                 //////////
                 //  IComponent (general; all unused)
             public:
-                virtual ComponentType * componentType() const override { Q_ASSERT(false); return nullptr; }
-                virtual bool            suspendable() const override { Q_ASSERT(false); return false; }
-                virtual VirtualAppliance *  virtualAppliance() const override { Q_ASSERT(false); return nullptr; }
-                virtual QString         displayName() const override { Q_ASSERT(false); return ""; }
-                virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override { Q_ASSERT(false); }
-                virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override { Q_ASSERT(false); }
-                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { Q_ASSERT(false);  return nullptr; }
-                virtual Ui *            createUi() override { Q_ASSERT(false); return nullptr; }
+                virtual ComponentType * componentType() const override { failure(); return nullptr; }
+                virtual bool            suspendable() const override { failure(); return false; }
+                virtual VirtualAppliance *  virtualAppliance() const override { failure(); return nullptr; }
+                virtual QString         displayName() const override { failure(); return ""; }
+                virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override { failure(); }
+                virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override { failure(); }
+                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { failure();  return nullptr; }
+                virtual Ui *            createUi() override { failure(); return nullptr; }
 
                 //////////
                 //  IComponent (state management)

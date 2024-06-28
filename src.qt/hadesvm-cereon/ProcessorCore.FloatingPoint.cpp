@@ -396,7 +396,7 @@ unsigned ProcessorCore::_handleSqrtF(uint32_t instruction) throws(ProgramInterru
             result = x;
             break;
         default:
-            Q_ASSERT(false);
+            failure();
     }
     _r[r1] = result.toReal64().bitPattern;
     fpEnvironment.exception &= hadesvm::ieee754::Exception::Inexact;    //  ...we don't care about other ones
@@ -462,7 +462,7 @@ unsigned ProcessorCore::_handleSqrtD(uint32_t instruction) throws(ProgramInterru
             result = x;
             break;
         default:
-            Q_ASSERT(false);
+            failure();
     }
     _r[r1] = result.bitPattern;
     fpEnvironment.exception &= hadesvm::ieee754::Exception::Inexact;    //  ...we don't care about other ones

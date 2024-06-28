@@ -102,7 +102,7 @@ void MainWindow::_refresh()
                     text += " - Suspended";
                     break;
                 default:
-                    Q_ASSERT(false);
+                    failure();
             }
             //  TODO also reflect Running/Suspended state in "text"
             _ui->listWidget->item(i)->setText(text);
@@ -248,7 +248,7 @@ void MainWindow::_onNewVm()
     hadesvm::core::VirtualAppliance * va = nullptr;
     if (vaTemplate != nullptr)
     {   //  TODO implement VA creation from template
-        Q_ASSERT(false);
+        failure();
     }
     else
     {   //  Create a raw VA

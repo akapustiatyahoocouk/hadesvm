@@ -57,8 +57,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            //  Constructs a CMOS1 bundle with the default configuration
-            Cmos1();
+            Cmos1();    //  Constructs a CMOS1 bundle with the default configuration
             virtual ~Cmos1() noexcept;
 
             //////////
@@ -131,11 +130,13 @@ namespace hadesvm
 
             unsigned            _clockTicksBetweenTimeUpdates;
 
-            //  Runtime state
-            IoPortList          _ioPorts;
+            //  Runtime state - accessed from CPU worker threads (via I/O ports)
+            //  and CMOS1 worker thread (directly)
+            hadesvm::util::Spinlock _runtimeStateGuard;
+            IoPortList          _ioPorts;   //  fixed at runtime
             char                _content[256];
-            bool                _contentNeedsSaving;
-            unsigned            _clockTicksUntilTimeUpdate;
+            std::atomic<bool>   _contentNeedsSaving;
+            std::atomic<unsigned>   _clockTicksUntilTimeUpdate;
 
             enum class _OperationalState
             {
@@ -145,10 +146,10 @@ namespace hadesvm
                 _ReadingAddress,
                 _ReadingData
             };
-            _OperationalState  _operationalState = _OperationalState::_Ready;
-            unsigned           _clockTicksToDelay = 0;
+            std::atomic<_OperationalState>  _operationalState = _OperationalState::_Ready;
+            std::atomic<unsigned>   _clockTicksToDelay = 0;
 
-            uint8_t            _currentAddress = 0;
+            std::atomic<uint8_t>    _currentAddress = 0;
 
             //////////
             //  I/O ports

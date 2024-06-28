@@ -7,5 +7,6 @@
   <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="200MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
   <Component ClockFrequency="10MHz" Type="CereonIoBus"/>
   <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos1.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
+  <Component ClockFrequency="2MHz" CommandPortAddress="0201" DataPortAddress="0202" NumberOfCompartments="1" StatePortAddress="0200" Type="CereonVds1Controller"/>
  </Components>
 </VirtualMachine>

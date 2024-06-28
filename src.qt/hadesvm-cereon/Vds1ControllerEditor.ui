@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::cereon::Vds1ControllerEditor</class>
+ <widget class="QWidget" name="hadesvm::cereon::Vds1ControllerEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>313</width>
+    <height>121</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="portsLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ports (hex):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="statePortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>0</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="statePortLabel">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>0</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>STATE:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="dataPortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>30</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="commandPortLabel">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>30</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>COMMAND:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="dataPortLabel">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>30</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DATA:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="commandPortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>30</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="clockUnitComboBox">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>60</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="clockNumberOfUnitsLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>60</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="clockLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Clock:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="compartmentsLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>90</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Compartments:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="compartmentsComboBox">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>90</y>
+     <width>72</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>statePortLineEdit</tabstop>
+  <tabstop>commandPortLineEdit</tabstop>
+  <tabstop>dataPortLineEdit</tabstop>
+  <tabstop>clockNumberOfUnitsLineEdit</tabstop>
+  <tabstop>clockUnitComboBox</tabstop>
+  <tabstop>compartmentsComboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>statePortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Vds1ControllerEditor</receiver>
+   <slot>_onStatePortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>commandPortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Vds1ControllerEditor</receiver>
+   <slot>_onCommandPortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Vds1ControllerEditor</receiver>
+   <slot>_onDataPortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>285</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockNumberOfUnitsLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Vds1ControllerEditor</receiver>
+   <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>175</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockUnitComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::cereon::Vds1ControllerEditor</receiver>
+   <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>285</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onStatePortLineEditTextChanged(QString)</slot>
+  <slot>_onCommandPortLineEditTextChanged(QString)</slot>
+  <slot>_onDataPortLineEditTextChanged(QString)</slot>
+  <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+  <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+ </slots>
+</ui>

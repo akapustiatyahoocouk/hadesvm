@@ -37,4 +37,7 @@
 #define register        _register       //  we need this as method name
 #define throws(T,...)   noexcept(false) //  we need this to document method signatures
 
+#define failure()       qt_assert("Control failure", __FILE__, __LINE__)
+#define failure_with_message(msg)   qt_assert(msg, __FILE__, __LINE__)
+
 //  End of hadesvm-util/Macros.cpp

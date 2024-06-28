@@ -481,7 +481,7 @@ void VirtualAppliance::stop() noexcept
             break;
         case State::Suspended:
             //  TODO implement
-            Q_ASSERT(false);
+            failure();
             break;
         case State::Running:
             _workerThread->requestStop();
@@ -509,7 +509,7 @@ void VirtualAppliance::stop() noexcept
             }
             break;
         default:
-            Q_ASSERT(false);
+            failure();
     }
 }
 

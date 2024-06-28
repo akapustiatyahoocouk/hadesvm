@@ -102,11 +102,11 @@ void NativeThread::_RunnerThread::run()
     }
     catch (Process::ExitCode /*exitCode*/)
     {   //  NativeThread::run() has called systemCalls.exitProcess();
-        Q_ASSERT(false);    //  TODO implement properly
+        failure();    //  TODO implement properly
     }
     catch (...)
     {   //  NativeThread::run() has thrown something
-        Q_ASSERT(false);    //  TODO implement properly
+        failure();    //  TODO implement properly
     }
 }
 

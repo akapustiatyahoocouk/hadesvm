@@ -89,7 +89,7 @@ HADESVM_CORE_PUBLIC QString hadesvm::util::toString(const MemorySize & value)
             return toString(value.numberOfUnits()) + memorySizeUnitInfos[i].name;
         }
     }
-    Q_ASSERT(false);
+    failure();
     return toString(value.toBytes());   //  ...to shut up the compiler
 }
 

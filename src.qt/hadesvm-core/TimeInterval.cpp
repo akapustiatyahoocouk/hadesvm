@@ -89,7 +89,7 @@ HADESVM_CORE_PUBLIC QString hadesvm::util::toString(const TimeInterval & value)
             return toString(value.numberOfUnits()) + timeIntervalUnitInfos[i].name;
         }
     }
-    Q_ASSERT(false);
+    failure();
     return toString(value.toNs());   //  ...to shut up the compiler
 }
 

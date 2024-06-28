@@ -350,7 +350,7 @@ namespace hadesvm
             IoInterruptQueue    _interruptsReadyToHandle;
 
             //  Bus locking
-            QMutex              _accessGuard;
+            hadesvm::util::Spinlock _accessGuard;
         };
 
         //////////

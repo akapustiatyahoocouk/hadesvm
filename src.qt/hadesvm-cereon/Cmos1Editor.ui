@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Bus clock:</string>
+    <string>Clock:</string>
    </property>
   </widget>
   <widget class="QLabel" name="delaysLabel">

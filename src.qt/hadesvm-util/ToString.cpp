@@ -136,7 +136,7 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned char value, const c
     }
     else
     {   //  OOPS! Be defensive in release mode, though
-        Q_ASSERT(false);
+        failure();
         return hadesvm::util::toString(value);
     }
 }
@@ -153,7 +153,7 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned short value, const 
     }
     else
     {   //  OOPS! Be defensive in release mode, though
-        Q_ASSERT(false);
+        failure();
         return hadesvm::util::toString(value);
     }
 }
@@ -171,7 +171,7 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned int value, const ch
     }
     else
     {   //  OOPS! Be defensive in release mode, though
-        Q_ASSERT(false);
+        failure();
         return hadesvm::util::toString(value);
     }
 }
@@ -189,7 +189,7 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned long value, const c
     }
     else
     {   //  OOPS! Be defensive in release mode, though
-        Q_ASSERT(false);
+        failure();
         return hadesvm::util::toString(value);
     }
 }
@@ -207,7 +207,7 @@ HADESVM_UTIL_PUBLIC QString hadesvm::util::toString(unsigned long long value, co
     }
     else
     {   //  OOPS! Be defensive in release mode, though
-        Q_ASSERT(false);
+        failure();
         return hadesvm::util::toString(value);
     }
 }

@@ -51,7 +51,7 @@ KErrno Kernel::SystemCalls::getAtomName(Oid /*atomOid*/, QString & /*name*/)
 {
     QMutexLocker lock(_kernel);
 
-    Q_ASSERT(false);    //  TODO implement properly
+    failure();    //  TODO implement properly
     return KErrno::NotImplemented;
 }
 

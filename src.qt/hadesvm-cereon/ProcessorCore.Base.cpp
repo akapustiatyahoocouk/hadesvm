@@ -4982,7 +4982,7 @@ unsigned ProcessorCore::_handleIret(uint32_t instruction) throws(ProgramInterrup
             _state = _isavestateHw;
             break;
         default:
-            Q_ASSERT(false);
+            failure();
     }
     //  Done
     return 1;

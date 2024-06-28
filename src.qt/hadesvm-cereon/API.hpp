@@ -25,6 +25,7 @@
 #include "hadesvm-cereon/ProcessorCore.hpp"
 #include "hadesvm-cereon/Processor.hpp"
 #include "hadesvm-cereon/Cmos1.hpp"
+#include "hadesvm-cereon/Vds1.hpp"
 
 #include "hadesvm-cereon/MemoryBusEditor.hpp"
 #include "hadesvm-cereon/ResidentRamUnitEditor.hpp"
@@ -32,5 +33,6 @@
 #include "hadesvm-cereon/IoBusEditor.hpp"
 #include "hadesvm-cereon/ProcessorEditor.hpp"
 #include "hadesvm-cereon/Cmos1Editor.hpp"
+#include "hadesvm-cereon/Vds1ControllerEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

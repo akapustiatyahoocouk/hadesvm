@@ -89,7 +89,7 @@ HADESVM_CORE_PUBLIC QString hadesvm::util::toString(const ClockFrequency & value
             return toString(value.numberOfUnits()) + clockFrequencyUnitInfos[i].name;
         }
     }
-    Q_ASSERT(false);
+    failure();
     return toString(value.toHz());   //  ...to shut up the compiler
 }
 

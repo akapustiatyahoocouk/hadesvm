@@ -41,6 +41,7 @@
 #include <QApplication>
 #include <QAction>
 #include <QCloseEvent>
+#include <QColor>
 #include <QDialog>
 #include <QDir>
 #include <QDomDocument>
@@ -87,6 +88,10 @@
 #include "hadesvm-util/Linkage.hpp"
 #include "hadesvm-util/Macros.hpp"
 
+//  Platform
+#include "hadesvm-util/Spinlock.hpp"
+
+//  TODO
 #include "hadesvm-util/Exceptions.hpp"
 
 #include "hadesvm-util/ToString.hpp"

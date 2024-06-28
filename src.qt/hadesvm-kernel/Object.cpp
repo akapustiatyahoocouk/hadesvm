@@ -38,7 +38,7 @@ Object::~Object()
     }
     else
     {   //  OOPS! Should never happen!
-        Q_ASSERT(false);
+        failure();
     }
     decrementReferenceCount();  //  we've just dropped a reference to this Object!
 }

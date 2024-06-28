@@ -32,6 +32,7 @@ Cmos1::Cmos1()
         _contentFilePath(DefaultContentFilePath),
         _clockTicksBetweenTimeUpdates(static_cast<unsigned>(_clockFrequency.toHz() / 1000)),
         //  Runtime state
+        _runtimeStateGuard(),
         _ioPorts(),
         _content(),
         _contentNeedsSaving(false),
@@ -235,6 +236,8 @@ void Cmos1::disconnect() noexcept
 //  hadesvm::core::IClockedComponentAspect
 void Cmos1::onClockTick() noexcept
 {
+    QMutexLocker lock(&_runtimeStateGuard);
+
     if (_clockTicksBetweenTimeUpdates == 0 || _clockTicksUntilTimeUpdate == 0)
     {   //  Update calendar time in bytes 0..15 of the content
         _clockTicksUntilTimeUpdate = _clockTicksBetweenTimeUpdates;
@@ -378,6 +381,8 @@ void Cmos1::setContentFilePath(const QString & contentFilePath)
 //  Cmos1::_StatePort
 bool Cmos1::_StatePort::readByte(uint8_t & value)
 {
+    QMutexLocker lock(&_cmos1->_runtimeStateGuard);
+
     value = 0x01;
     if (_cmos1->_operationalState == _OperationalState::_Ready)
     {
@@ -395,6 +400,8 @@ bool Cmos1::_StatePort::writeByte(uint8_t /*value*/)
 //  Cmos1::_AddressPort
 bool Cmos1::_AddressPort::readByte(uint8_t & value)
 {
+    QMutexLocker lock(&_cmos1->_runtimeStateGuard);
+
     if (_cmos1->_operationalState != _OperationalState::_Ready)
     {   //  OOPS! Busy!
         value = 0;
@@ -413,6 +420,8 @@ bool Cmos1::_AddressPort::readByte(uint8_t & value)
 
 bool Cmos1::_AddressPort::writeByte(uint8_t value)
 {
+    QMutexLocker lock(&_cmos1->_runtimeStateGuard);
+
     if (_cmos1->_operationalState != _OperationalState::_Ready)
     {   //  OOPS! Busy!
         return true;
@@ -433,6 +442,8 @@ bool Cmos1::_AddressPort::writeByte(uint8_t value)
 //  Cmos1::_DataPort
 bool Cmos1::_DataPort::readByte(uint8_t & value)
 {
+    QMutexLocker lock(&_cmos1->_runtimeStateGuard);
+
     if (_cmos1->_operationalState != _OperationalState::_Ready)
     {   //  OOPS! Busy!
         value = 0;
@@ -452,6 +463,8 @@ bool Cmos1::_DataPort::readByte(uint8_t & value)
 
 bool Cmos1::_DataPort::writeByte(uint8_t value)
 {
+    QMutexLocker lock(&_cmos1->_runtimeStateGuard);
+
     if (_cmos1->_operationalState != _OperationalState::_Ready)
     {   //  OOPS! Busy!
         return true;

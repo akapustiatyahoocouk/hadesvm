@@ -424,7 +424,7 @@ namespace hadesvm
                             _value.handle = static_cast<Handle>(value);
                             break;
                         default:
-                            Q_ASSERT(false);
+                            failure();
                     }
                 }
             };
