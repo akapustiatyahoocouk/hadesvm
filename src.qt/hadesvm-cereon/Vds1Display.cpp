@@ -36,7 +36,21 @@ void Vds1Display::serialiseConfiguration(QDomElement componentElement) const
 {
     componentElement.setAttribute("ControllerStatePortAddress", hadesvm::util::toString(_controllerStatePortAddress, "%04X"));
     componentElement.setAttribute("ControllerCompartmentNumber", hadesvm::util::toString(_controllerCompartmentNumber));
-    //  TODO _stretchMode
+
+    switch (_stretchMode)
+    {
+        case StretchMode::NoStretch:
+            componentElement.setAttribute("StretchMode", "NoStretch");
+            break;
+        case StretchMode::IntegralStretch:
+            componentElement.setAttribute("StretchMode", "IntegralStretch");
+            break;
+        case StretchMode::Fill:
+            componentElement.setAttribute("StretchMode", "Fill");
+            break;
+        default:
+            failure();
+    }
 }
 
 void Vds1Display::deserialiseConfiguration(QDomElement componentElement)
@@ -53,7 +67,18 @@ void Vds1Display::deserialiseConfiguration(QDomElement componentElement)
         _controllerCompartmentNumber = controllerCompartmentNumber;
     }
 
-    //  TODO _stretchMode
+    if (componentElement.attribute("StretchMode") == "NoStretch")
+    {
+        _stretchMode = StretchMode::NoStretch;
+    }
+    else if (componentElement.attribute("StretchMode") == "IntegralStretch")
+    {
+        _stretchMode = StretchMode::IntegralStretch;
+    }
+    else if (componentElement.attribute("StretchMode") == "Fill")
+    {
+        _stretchMode = StretchMode::Fill;
+    }
 }
 
 hadesvm::core::ComponentEditor * Vds1Display::createEditor(QWidget * parent)

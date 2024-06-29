@@ -50,10 +50,26 @@ namespace hadesvm
         private:
             Ui::Vds1DisplayWidget * _ui;
 
+            QTimer              _refreshTimer;
+
             mutable QMenu       _controlMenu;
             QAction *const      _showOriginalSize;
             QAction *const      _showIntegralStretch;
             QAction *const      _showFill;
+
+            QImage              _offScreenBuffer;
+            QRgb                _currentOffScreenPixels[Vds1Controller::_VideoSignal::PixelWidth *
+                                                        Vds1Controller::_VideoSignal::PixelHeight];
+            QRgb                _newOffScreenPixels[Vds1Controller::_VideoSignal::PixelWidth *
+                                                    Vds1Controller::_VideoSignal::PixelHeight];
+
+            //////////
+            //  Signal handlers
+        private slots:
+            void                _onRefreshTimerTick();
+            void                _onShowOriginalSize();
+            void                _onShowIntegralStretch();
+            void                _onShowFill();
         };
     }
 }

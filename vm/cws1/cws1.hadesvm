@@ -8,6 +8,6 @@
   <Component ClockFrequency="10MHz" Type="CereonIoBus"/>
   <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos1.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
   <Component ClockFrequency="2MHz" CommandPortAddress="0201" DataPortAddress="0202" NumberOfCompartments="1" StatePortAddress="0200" Type="CereonVds1Controller"/>
-  <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0200" Type="CereonVds1Display"/>
+  <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0200" StretchMode="Fill" Type="CereonVds1Display"/>
  </Components>
 </VirtualMachine>

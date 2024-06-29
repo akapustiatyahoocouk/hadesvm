@@ -19,6 +19,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Vds1Controller)
 
             friend class Vds1Display;
+            friend class Vds1DisplayWidget;
 
             //////////
             //  Constants
@@ -476,6 +477,7 @@ namespace hadesvm
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Vds1Display)
 
             friend class Vds1Controller;
+            friend class Vds1DisplayWidget;
 
             //////////
             //  Constants

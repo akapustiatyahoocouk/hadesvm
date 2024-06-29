@@ -41,14 +41,22 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
         }
     }
 
-    //  Create tabs for all display wodgets
+    //  Create tabs for all display wodgets in the order of their display names
+    QList<hadesvm::core::DisplayWidget*> displayWidgets;
     for (auto ui : _componentUis.values())
     {
         for (auto displayWidget : ui->displayWidgets())
         {
-            int tabIndex = _ui->tabWidget->addTab(displayWidget, displayWidget->displayName());
-            _displayWidgetsByTabIndex.insert(tabIndex, displayWidget);
+            displayWidgets.append(displayWidget);
         }
+    }
+    std::sort(displayWidgets.begin(),
+              displayWidgets.end(),
+              [](auto a, auto b) { return a->displayName() < b->displayName(); });
+    for (auto displayWidget : displayWidgets)
+    {
+        int tabIndex = _ui->tabWidget->addTab(displayWidget, displayWidget->displayName());
+        _displayWidgetsByTabIndex.insert(tabIndex, displayWidget);
     }
 
     //  Set up tab bar event handling

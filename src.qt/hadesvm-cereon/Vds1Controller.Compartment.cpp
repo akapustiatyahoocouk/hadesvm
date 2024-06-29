@@ -59,10 +59,7 @@ void Vds1Controller::_Compartment::detachDisplay()
 {
     if (_display != nullptr)
     {   //  Detach
-        auto vs0 = _display;
-        auto vs1 = _display->_videoSignal;
-        auto vs2 = &_videoSignal;
-        Q_ASSERT(vs1 == vs2);
+        Q_ASSERT(_display->_videoSignal == &_videoSignal);
         _display->_videoSignal = nullptr;
         _display = nullptr;
     }
