@@ -21,6 +21,8 @@
     #pragma GCC diagnostic ignored "-Wconversion"
 #elif defined(Q_CC_MSVC)
     #pragma warning(disable:4191)   //  'reinterpret_cast': unsafe conversion from '<T1>' to '<T2>'
+    #pragma warning(disable:4250)   //  '<CLASS>': inherits '<METHOD>' via dominance
+    #pragma warning(disable:4646)   //  function declared with 'noreturn' has non-void return type
     #pragma warning(disable:4702)   //  unreachable code TODO MOC-related?
     #pragma warning(disable:4866)   //  compiler may not enforce left-to-right evaluation order for call to 'C++17 operator'
     #pragma warning(disable:5045)   //  Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified

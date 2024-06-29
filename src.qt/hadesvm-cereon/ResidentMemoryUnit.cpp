@@ -166,7 +166,11 @@ uint16_t ResidentMemoryUnit::loadHalfWord(size_t offset, ByteOrder byteOrder) th
     uint16_t value = *reinterpret_cast<uint16_t*>(_data + offset);
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_ushort(value);
+#else
         value = std::byteswap<uint16_t>(value);
+#endif
     }
     return value;
 }
@@ -189,7 +193,11 @@ uint32_t ResidentMemoryUnit::loadWord(size_t offset, ByteOrder byteOrder) throws
     uint32_t value = *reinterpret_cast<uint32_t*>(_data + offset);
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_ulong(value);
+#else
         value = std::byteswap<uint32_t>(value);
+#endif
     }
     return value;
 }
@@ -212,7 +220,11 @@ uint64_t ResidentMemoryUnit::loadLongWord(size_t offset, ByteOrder byteOrder) th
     uint64_t value = *reinterpret_cast<uint64_t*>(_data + offset);
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_uint64(value);
+#else
         value = std::byteswap<uint64_t>(value);
+#endif
     }
     return value;
 }
@@ -246,7 +258,11 @@ void ResidentMemoryUnit::storeHalfWord(size_t offset, uint16_t value, ByteOrder 
 #endif
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_ushort(value);
+#else
         value = std::byteswap<uint16_t>(value);
+#endif
     }
     *reinterpret_cast<uint16_t*>(_data + offset) = value;
 }
@@ -268,7 +284,11 @@ void ResidentMemoryUnit::storeWord(size_t offset, uint32_t value, ByteOrder byte
 #endif
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_ulong(value);
+#else
         value = std::byteswap<uint32_t>(value);
+#endif
     }
     *reinterpret_cast<uint32_t*>(_data + offset) = value;
 }
@@ -290,7 +310,11 @@ void ResidentMemoryUnit::storeLongWord(size_t offset, uint64_t value, ByteOrder 
 #endif
     if (byteOrder != ByteOrder::Native)
     {
+#if defined Q_CC_MSVC
+        value = _byteswap_uint64(value);
+#else
         value = std::byteswap<uint64_t>(value);
+#endif
     }
     *reinterpret_cast<uint64_t*>(_data + offset) = value;
 }

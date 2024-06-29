@@ -11,7 +11,7 @@ linux-g++ {
     QMAKE_CXXFLAGS_RELEASE += -O3
 }
 win32-msvc {
-    QMAKE_CXXFLAGS += /GS- /std:c++latest /Za /Zc:rvalueCast /Wall /WX
+    QMAKE_CXXFLAGS += /GS- /std:c++latest /Za /Zc:rvalueCast /Wall /WX /wd4710 /wd4711
 }
 
 INCLUDEPATH += ..

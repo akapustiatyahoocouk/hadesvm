@@ -168,19 +168,30 @@ uint64_t Alu::moduloUnsigned(uint64_t x, uint64_t y, bool & divisionByZero)
 uint64_t Alu::reverseBytes16(uint64_t x)
 {
     return (x & UINT64_C(0xFFFFFFFFFFFF0000)) |
+#if defined Q_CC_MSVC
+           _byteswap_ushort(static_cast<uint16_t>(x));
+#else
            std::byteswap<uint16_t>(static_cast<uint16_t>(x));
+#endif
 }
 
 uint64_t Alu::reverseBytes32(uint64_t x)
 {
     return (x & UINT64_C(0xFFFFFFFF00000000)) |
+#if defined Q_CC_MSVC
+           _byteswap_ulong(static_cast<uint32_t>(x));
+#else
            std::byteswap<uint32_t>(static_cast<uint32_t>(x));
+#endif
 }
 
 uint64_t Alu::reverseBytes64(uint64_t x)
 {
-    return (x & UINT64_C(0xFFFFFFFF00000000)) |
-           std::byteswap<uint64_t>(x);
+#if defined Q_CC_MSVC
+    return _byteswap_uint64(x);
+#else
+    return std::byteswap<uint64_t>(x);
+#endif
 }
 
 uint64_t Alu::reverseBits8(uint64_t x)

@@ -84,7 +84,7 @@ ProcessorCore::~ProcessorCore() noexcept
 //  Operations
 void ProcessorCore::reset()
 {
-    //  1.  The W flag of each DMA channel’s $state register is set to 0.
+    //  1.  The W flag of each DMA channel's $state register is set to 0.
     //      (not applicable for processor cores)
 
     //  2.  All registers of all processors are set to 0, with the exception

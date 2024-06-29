@@ -201,13 +201,13 @@ namespace hadesvm
         HADESVM_CORE_PUBLIC QString toString(const core::TimeInterval & value);
 
         template <>
-        HADESVM_UTIL_PUBLIC bool fromString<core::MemorySize>(const QString & s, qsizetype & scan, core::MemorySize & value);
+        HADESVM_CORE_PUBLIC bool fromString<core::MemorySize>(const QString & s, qsizetype & scan, core::MemorySize & value);
 
         template <>
-        HADESVM_UTIL_PUBLIC bool fromString<core::ClockFrequency>(const QString & s, qsizetype & scan, core::ClockFrequency & value);
+        HADESVM_CORE_PUBLIC bool fromString<core::ClockFrequency>(const QString & s, qsizetype & scan, core::ClockFrequency & value);
 
         template <>
-        HADESVM_UTIL_PUBLIC bool fromString<core::TimeInterval>(const QString & s, qsizetype & scan, core::TimeInterval & value);
+        HADESVM_CORE_PUBLIC bool fromString<core::TimeInterval>(const QString & s, qsizetype & scan, core::TimeInterval & value);
     }
 }
 

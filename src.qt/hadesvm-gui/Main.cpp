@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    /*  TODO kill off - this is debug code
-    const unsigned Iterations = 1'000'000'000;
+    ///*  TODO kill off - this is debug code
+    const unsigned Iterations = 1'000'000;
 
     QMutex m;
     QElapsedTimer et1;
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     }
     qint64 ns2 = et2.nsecsElapsed();
     qDebug() << "Spinlock: " << ns2 / Iterations << " ns per lock/unlock cycle";
-    */
+    //*/
 
     hadesvm::util::PluginManager::loadPlugins();
 
