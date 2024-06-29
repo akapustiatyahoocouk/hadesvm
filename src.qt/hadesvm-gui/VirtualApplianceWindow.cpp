@@ -17,7 +17,8 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
         _componentUis(),
         _displayWidgetsByTabIndex(),
         //  Controls & resources
-        _ui(new Ui::VirtualApplianceWindow)
+        _ui(new Ui::VirtualApplianceWindow),
+        _refreshTimer(this)
 {
     Q_ASSERT(_virtualAppliance != nullptr);
 
@@ -64,10 +65,17 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
 
     connect(_ui->tabWidget->tabBar(), &QTabBar::customContextMenuRequested,
             this, &VirtualApplianceWindow::_onCustomContextMenuRequested);
+
+    //  Start statistics refreshes
+    _refreshTimer.setInterval(1000);  //  1sec
+    connect(&_refreshTimer, &QTimer::timeout, this, &VirtualApplianceWindow::_onRefreshTimerTick);
+    _refreshTimer.start();
 }
 
 VirtualApplianceWindow::~VirtualApplianceWindow()
 {
+    _refreshTimer.stop();
+
     while (_ui->tabWidget->count() != 0)
     {
         _ui->tabWidget->removeTab(0);
@@ -87,6 +95,49 @@ void VirtualApplianceWindow::_refresh()
     _ui->actionStop->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
     _ui->actionSuspend->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
                                    _virtualAppliance->suspendable());
+
+    //  Statistics on the Home tab
+    if (_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running)
+    {   //  std::sort segfaults when VA is not Running!
+        QMap<hadesvm::core::IClockedComponent*,
+             hadesvm::core::ClockFrequency> achievedClockFrequencyByClockedComponent;
+        _virtualAppliance->getRuntimeStatistics(achievedClockFrequencyByClockedComponent);
+        QList<hadesvm::core::IClockedComponent*> clockedComponents = achievedClockFrequencyByClockedComponent.keys();
+        std::sort(clockedComponents.begin(),
+                  clockedComponents.end(),
+                  [](auto a, auto b) { return a->displayName() < b->displayName(); });
+        //  Refresh the list of VAs - make sure it has a proper number...
+        while (clockedComponents.count() < _ui->statisticsListWidget->count())
+        {   //  Too many items in the list
+            delete _ui->statisticsListWidget->takeItem(_ui->statisticsListWidget->count() - 1);
+        }
+        while (clockedComponents.count() > _ui->statisticsListWidget->count())
+        {   //  Too few items in the list
+            new QListWidgetItem("TODO", _ui->statisticsListWidget);
+        }
+        //  ...of proper items
+        for (int i = 0; i < clockedComponents.count(); i++)
+        {
+            QString text = clockedComponents[i]->displayName() +
+                           " is running at " +
+                           achievedClockFrequencyByClockedComponent[clockedComponents[i]].displayForm();
+            _ui->statisticsListWidget->item(i)->setText(text);
+        }
+
+        //  VA's clock frequency is the max clock frequency of its clocked components
+        hadesvm::core::ClockFrequency vaClockFrequency;
+        for (auto cf : achievedClockFrequencyByClockedComponent.values())
+        {
+            vaClockFrequency = qMax(vaClockFrequency, cf);
+        }
+        QString vaSpeedText = _virtualAppliance->name() +
+                              " is running";
+        if (vaClockFrequency.toHz() > 0)
+        {
+            vaSpeedText += " at " + vaClockFrequency.displayForm();
+        }
+        _ui->statusbar->showMessage(vaSpeedText);
+    }
 }
 
 //////////
@@ -117,6 +168,11 @@ void VirtualApplianceWindow::_onSuspendVm()
     {
         QMessageBox::critical(this, "OOPS!", ex.message());
     }
+    _refresh();
+}
+
+void VirtualApplianceWindow::_onRefreshTimerTick()
+{
     _refresh();
 }
 

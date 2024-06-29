@@ -174,6 +174,8 @@ namespace hadesvm
             //  TODO document
             void                    recordAchievedClockFrequency(IClockedComponent * component, const ClockFrequency & clockFrequency);
 
+            void                    getRuntimeStatistics(QMap<IClockedComponent*, ClockFrequency> & achievedClockFrequencyByClockedComponent);
+
             //////////
             //  Implementation
         private:

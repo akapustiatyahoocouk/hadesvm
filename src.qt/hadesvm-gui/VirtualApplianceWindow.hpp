@@ -46,6 +46,7 @@ namespace hadesvm
             //  Controls & resources
         private:
             Ui::VirtualApplianceWindow *    _ui;
+            QTimer              _refreshTimer;
 
             //////////
             //  Signal handlers
@@ -53,6 +54,7 @@ namespace hadesvm
             void                _onStopVm();
             void                _onSuspendVm();
 
+            void                _onRefreshTimerTick();
             void                _onCustomContextMenuRequested(const QPoint &point);
         };
     }

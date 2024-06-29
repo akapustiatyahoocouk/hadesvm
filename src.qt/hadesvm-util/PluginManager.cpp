@@ -41,7 +41,7 @@ void PluginManager::loadPlugins()
                     (*pluginExportProc)(newPlugins);
                     for (auto newPlugin : newPlugins)
                     {
-                        qDebug() << fileInfo << ": " << newPlugin; //  TODO kill off
+                        //  TODO kill off qDebug() << fileInfo << ": " << newPlugin;
                         discoveredPlugins.insert(newPlugin);
                     }
                 }

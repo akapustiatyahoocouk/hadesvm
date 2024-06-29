@@ -578,10 +578,20 @@ void VirtualAppliance::recordAchievedClockFrequency(IClockedComponent * componen
     if (component->virtualAppliance() == this)
     {
         _achievedClockFrequencyByClockedComponent[component] = clockFrequency;
+        /*  TODO kill off - this is debug code
         qDebug() << component->displayName()
                  << " is running at "
                  << clockFrequency.displayForm();
+        */
     }
+}
+
+void VirtualAppliance::getRuntimeStatistics(QMap<IClockedComponent*, ClockFrequency> & achievedClockFrequencyByClockedComponent)
+{
+    QMutexLocker lock(&_statisticsGuard);
+
+    achievedClockFrequencyByClockedComponent.clear();
+    achievedClockFrequencyByClockedComponent.insert(_achievedClockFrequencyByClockedComponent);
 }
 
 //////////
