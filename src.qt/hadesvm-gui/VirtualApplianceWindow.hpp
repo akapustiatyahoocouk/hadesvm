@@ -36,6 +36,9 @@ namespace hadesvm
         private:
             hadesvm::core::VirtualAppliance *   _virtualAppliance;
 
+            QMap<hadesvm::core::IComponent*, hadesvm::core::IComponent::Ui*>    _componentUis;
+            QMap<int, hadesvm::core::DisplayWidget*> _displayWidgetsByTabIndex;
+
             //  Helpers
             void                _refresh();
 
@@ -49,6 +52,8 @@ namespace hadesvm
         private slots:
             void                _onStopVm();
             void                _onSuspendVm();
+
+            void                _onCustomContextMenuRequested(const QPoint &point);
         };
     }
 }

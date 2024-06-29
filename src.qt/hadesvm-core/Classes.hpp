@@ -16,6 +16,8 @@ namespace hadesvm
         class HADESVM_CORE_PUBLIC ComponentAdaptor;
         class HADESVM_CORE_PUBLIC ComponentEditor;
 
+        class HADESVM_CORE_PUBLIC DisplayWidget;
+
         class HADESVM_CORE_PUBLIC VirtualArchitecture;
         class HADESVM_CORE_PUBLIC VirtualApplianceType;
         class HADESVM_CORE_PUBLIC VirtualMachineType;
@@ -48,6 +50,9 @@ namespace hadesvm
         using VirtualApplianceList = QList<VirtualAppliance*>;
         using VirtualMachineList = QList<VirtualMachine*>;
         using RemoteTerminalList = QList<RemoteTerminal*>;
+
+        using DisplayWidgetList = QList<DisplayWidget*>;
+
     }
 }
 

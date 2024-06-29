@@ -52,20 +52,19 @@ namespace hadesvm
                 //////////
                 //  Construction/destruction
             public:
-                explicit Ui(IComponent * component)
-                    :   _component(component) { Q_ASSERT(_component != nullptr); }
+                Ui() = default;
                 virtual ~Ui() = default;
 
                 //////////
                 //  Operations
-            private:
+            public:
                 //  Returns the Component to which this UI belongs
-                IComponent *        component() const { return _component; }
+                virtual IComponent *    component() const = 0;
 
-                //////////
-                //  Implementation
-            private:
-                IComponent *const   _component;
+                //  Returns the unordered list of all DisplayWidgets.
+                //  These initially have no "parent" and cannot be directly "delete"'d
+                //  except if the entire Ui instance is deleted.
+                virtual DisplayWidgetList   displayWidgets() const = 0;
             };
 
             //////////

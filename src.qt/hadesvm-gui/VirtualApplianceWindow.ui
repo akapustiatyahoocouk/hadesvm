@@ -39,6 +39,9 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="homeTab">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 255, 0);</string>
+       </property>
        <attribute name="title">
         <string>Home</string>
        </attribute>

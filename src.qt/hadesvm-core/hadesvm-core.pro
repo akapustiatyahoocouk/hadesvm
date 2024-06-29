@@ -11,6 +11,7 @@ SOURCES += \
     ComponentCategory.cpp \
     ComponentEditor.cpp \
     ComponentType.cpp \
+    DisplayWidget.cpp \
     Exceptions.cpp \
     MemorySize.cpp \
     Plugins.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     ComponentCategory.hpp \
     ComponentEditor.hpp \
     ComponentType.hpp \
+    DisplayWidget.hpp \
     Exceptions.hpp \
     Linkage.hpp \
     Types.hpp \

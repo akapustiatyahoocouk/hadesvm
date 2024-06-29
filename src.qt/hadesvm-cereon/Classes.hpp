@@ -16,6 +16,7 @@ namespace hadesvm
         class HADESVM_CEREON_PUBLIC IoBus;
 
         class HADESVM_CEREON_PUBLIC Vds1Display;
+        class HADESVM_CEREON_PUBLIC Vds1DisplayWidget;
         class HADESVM_CEREON_PUBLIC Kis1Keyboard;
 
         using ProcessorCoreList = QList<ProcessorCore*>;

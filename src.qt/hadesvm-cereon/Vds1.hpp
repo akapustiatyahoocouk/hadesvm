@@ -507,6 +507,40 @@ namespace hadesvm
                 virtual Vds1Display *   createComponent() override;
             };
 
+            //  The UI of a Cereon VDS1 display
+            class HADESVM_CEREON_PUBLIC Ui final : public hadesvm::core::Component::Ui
+            {
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Ui)
+
+                //////////
+                //  Construction/destruction
+            public:
+                explicit Ui(Vds1Display * vds1Display);
+                virtual ~Ui();
+
+                //////////
+                //  hadesvm::core::Component::Ui
+            public:
+                virtual Vds1Display *   component() const override { return _vds1Display; }
+                virtual hadesvm::core::DisplayWidgetList    displayWidgets() const override { return _displayWidgets; }
+
+                //////////
+                //  Implementation
+            private:
+                Vds1Display *const  _vds1Display;
+
+                Vds1DisplayWidget *const            _vds1DisplayWidget;
+                hadesvm::core::DisplayWidgetList    _displayWidgets;
+            };
+
+            //  A visual representation of a Vds1Display in the UI
+            enum class StretchMode
+            {
+                NoStretch,          //  1:1
+                IntegralStretch,    //  stretch by integral factor, keeping aspect ratio
+                Fill                //  fill the entire DisplayWidget
+            };
+
             //////////
             //  Construction/destruction
         public:
@@ -542,6 +576,8 @@ namespace hadesvm
             void                setControllerStatePortAddress(uint16_t controllerStatePortAddress);
             uint8_t             controllerCompartmentNumber() const { return _controllerCompartmentNumber; }
             void                setControllerCompartmentNumber(uint8_t controllerCompartmentNumber);
+            StretchMode         stretchMode() const { return _stretchMode; }
+            void                setStretchMode(StretchMode stretchMode);
 
             //////////
             //  Implementation
@@ -551,6 +587,7 @@ namespace hadesvm
             //  Configuration
             uint16_t            _controllerStatePortAddress;
             uint8_t             _controllerCompartmentNumber;
+            StretchMode         _stretchMode = StretchMode::Fill;
 
             //  Runtime state
             //  TODO what ? Kis1Keyboard *              _kis1Keyboard = nullptr;

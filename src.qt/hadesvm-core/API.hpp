@@ -23,6 +23,8 @@
 #include "hadesvm-core/Component.hpp"
 #include "hadesvm-core/ComponentEditor.hpp"
 
+#include "hadesvm-core/DisplayWidget.hpp"
+
 #include "hadesvm-core/VirtualArchitecture.hpp"
 #include "hadesvm-core/VirtualApplianceType.hpp"
 #include "hadesvm-core/VirtualApplianceTemplate.hpp"

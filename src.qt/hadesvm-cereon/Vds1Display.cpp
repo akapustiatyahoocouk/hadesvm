@@ -36,6 +36,7 @@ void Vds1Display::serialiseConfiguration(QDomElement componentElement) const
 {
     componentElement.setAttribute("ControllerStatePortAddress", hadesvm::util::toString(_controllerStatePortAddress, "%04X"));
     componentElement.setAttribute("ControllerCompartmentNumber", hadesvm::util::toString(_controllerCompartmentNumber));
+    //  TODO _stretchMode
 }
 
 void Vds1Display::deserialiseConfiguration(QDomElement componentElement)
@@ -51,6 +52,8 @@ void Vds1Display::deserialiseConfiguration(QDomElement componentElement)
     {
         _controllerCompartmentNumber = controllerCompartmentNumber;
     }
+
+    //  TODO _stretchMode
 }
 
 hadesvm::core::ComponentEditor * Vds1Display::createEditor(QWidget * parent)
@@ -60,7 +63,7 @@ hadesvm::core::ComponentEditor * Vds1Display::createEditor(QWidget * parent)
 
 Vds1Display::Ui * Vds1Display::createUi()
 {
-    return nullptr; //  TODO implement
+    return new Ui(this);
 }
 
 //////////
@@ -79,6 +82,12 @@ void Vds1Display::setControllerCompartmentNumber(uint8_t controllerCompartmentNu
 
     //  TODO validate "controllerCompartmentNumber"
     _controllerCompartmentNumber = controllerCompartmentNumber;
+}
+
+void Vds1Display::setStretchMode(StretchMode stretchMode)
+{
+    //  Can be changed at runtime!!!
+    _stretchMode = stretchMode;
 }
 
 //////////
@@ -222,6 +231,22 @@ bool Vds1Display::Type::isCompatibleWith(hadesvm::core::VirtualApplianceType * t
 Vds1Display * Vds1Display::Type::createComponent()
 {
     return new Vds1Display();
+}
+
+//////////
+//  Vds1Display::Ui
+Vds1Display::Ui::Ui(Vds1Display * vds1Display)
+    :   _vds1Display(vds1Display),
+        _vds1DisplayWidget(new Vds1DisplayWidget(nullptr, vds1Display)),
+        _displayWidgets{_vds1DisplayWidget}
+{
+    Q_ASSERT(_vds1Display != nullptr);
+}
+
+Vds1Display::Ui::~Ui()
+{
+    _vds1DisplayWidget->_canDestruct = true;
+    delete _vds1DisplayWidget;
 }
 
 //  End of hadesvm-cereon/Vds1Display.cpp
