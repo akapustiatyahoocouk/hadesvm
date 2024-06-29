@@ -62,6 +62,50 @@ int ClockFrequency::compare(const ClockFrequency & op2) const
     return 0;
 }
 
+QString ClockFrequency::displayForm() const
+{
+    uint64_t hz = this->toHz();
+    char s[32];
+
+    if (hz >= 100000000)
+    {   //  DDD MHz
+        sprintf(s, "%d MHz", static_cast<unsigned>(hz / 1000000));
+    }
+    else if (hz >= 10000000)
+    {   //  DD.D MHz
+        sprintf(s, "%d.%d MHz",
+                static_cast<unsigned>(hz / 1000000),
+                static_cast<unsigned>(hz / 100000) % 10);
+    }
+    else if (hz >= 1000000)
+    {   //  D.DD MHz
+        sprintf(s, "%d.%02d MHz",
+                static_cast<unsigned>(hz / 1000000),
+                static_cast<unsigned>(hz / 10000) % 100);
+    }
+    else if (hz >= 100000)
+    {   //  DDD KHz
+        sprintf(s, "%d KHz", static_cast<unsigned>(hz / 1000));
+    }
+    else if (hz >= 10000)
+    {   //  DD.D KHz
+        sprintf(s, "%d.%d KHz",
+                static_cast<unsigned>(hz / 1000),
+                static_cast<unsigned>(hz / 100) % 10);
+    }
+    else if (hz >= 1000)
+    {   //  D.DD KHz
+        sprintf(s, "%d.%02d KHz",
+                static_cast<unsigned>(hz / 1000),
+                static_cast<unsigned>(hz / 10) % 100);
+    }
+    else
+    {   //  D[D[D]] Hz
+        sprintf(s, "%d Hz", static_cast<unsigned>(hz));
+    }
+    return s;
+}
+
 //  Formatting and parsing
 namespace
 {

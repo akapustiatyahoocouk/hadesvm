@@ -65,6 +65,11 @@ Vds1DisplayWidget::~Vds1DisplayWidget()
 //  QWidget
 void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
 {
+    if (_vds1Display == nullptr || _vds1Display->_videoSignal == nullptr)
+    {   //  VA is shutting down?
+        return;
+    }
+
     QRect g = this->geometry();
     qDebug() << g;
 

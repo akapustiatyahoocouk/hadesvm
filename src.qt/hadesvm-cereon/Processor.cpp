@@ -329,11 +329,15 @@ void Processor::_WorkerThread::run()
         if (n++ >= 100)
         {
             n = 0;
-            //qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
+            //TODO kill off qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
 
             qint64 actualNsPerTick = actualNsElapsed / ticksBetweenDelayAdjustment;;
             qint64 actualClockFrequencyHz = 1000000000 / actualNsPerTick;
-            qDebug() << "Processor Running at " << actualClockFrequencyHz << " Hz";
+            //TODO kill off qDebug() << "Processor Running at " << actualClockFrequencyHz << " Hz";
+
+            _processor->virtualAppliance()->recordAchievedClockFrequency(
+                _processor,
+                hadesvm::core::ClockFrequency::hertz(actualClockFrequencyHz));
         }
 
         if (actualNsElapsed < idealNsElapsed)

@@ -122,6 +122,9 @@ namespace hadesvm
             //  than the 2nd ClockFrequency.
             int                 compare(const ClockFrequency & op2) const;
 
+            //  TODO document
+            QString             displayForm() const;
+
             //////////
             //  Implementation
         private:

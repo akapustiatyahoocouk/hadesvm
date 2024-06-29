@@ -29,7 +29,11 @@ Vds1Display::~Vds1Display() noexcept
 //  hadesvm::core::Component
 QString Vds1Display::displayName() const
 {
-    return Type::instance()->displayName(); //  TODO #compartment @ port
+    return Type::instance()->displayName() +
+           " @ " +
+           hadesvm::util::toString(_controllerStatePortAddress, "%04X") +
+           ":" +
+           hadesvm::util::toString(_controllerCompartmentNumber);
 }
 
 void Vds1Display::serialiseConfiguration(QDomElement componentElement) const

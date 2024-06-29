@@ -4,7 +4,7 @@
   <Component ClockFrequency="10MHz" Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamUnit"/>
   <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomUnit"/>
-  <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="200MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
+  <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="40MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
   <Component ClockFrequency="10MHz" Type="CereonIoBus"/>
   <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos1.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
   <Component ClockFrequency="2MHz" CommandPortAddress="0201" DataPortAddress="0202" NumberOfCompartments="1" StatePortAddress="0200" Type="CereonVds1Controller"/>

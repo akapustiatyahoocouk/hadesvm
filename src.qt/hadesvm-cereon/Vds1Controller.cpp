@@ -196,7 +196,7 @@ void Vds1Controller::connect() throws(hadesvm::core::VirtualApplianceException)
     Q_ASSERT(_allCompartments.isEmpty());
     for (unsigned i = 0; i < _numberOfCompartments; i++)
     {
-        _allCompartments.append(new _Compartment(i));
+        _allCompartments.append(new _Compartment(static_cast<uint8_t>(i)));
     }
     _currentCompartment = _allCompartments[0];
 
@@ -224,6 +224,7 @@ void Vds1Controller::connect() throws(hadesvm::core::VirtualApplianceException)
     {   //  OOPS! Cleanup & re-throw
         for (auto compartment : _allCompartments)
         {
+            compartment->detachDisplay();
             delete compartment;
         }
         _allCompartments.clear();

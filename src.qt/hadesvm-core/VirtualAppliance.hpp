@@ -92,9 +92,8 @@ namespace hadesvm
             //  Must only be called from the QApplication's main thread
             void                    removeComponent(Component * component);
 
-            //  Returns an unordered list of all compatible components and
-            //  component adaptors (but NOT adapted components!) that implement
-            //  the specified interface
+            //  Returns an unordered list of all components and component
+            //  adaptors that implement the specified interface
             //  Must only be called from the QApplication's main thread
             template <class I>
             QList<I*>               componentsImplementing()
@@ -103,6 +102,13 @@ namespace hadesvm
 
                 QList<I*> result;
                 for (Component * component : _compatibleComponents)
+                {
+                    if (I * i = dynamic_cast<I*>(component))
+                    {
+                        result.append(i);
+                    }
+                }
+                for (Component * component : _adaptedComponents)
                 {
                     if (I * i = dynamic_cast<I*>(component))
                     {
@@ -163,6 +169,12 @@ namespace hadesvm
             void                    requestStop();
 
             //////////
+            //  Operations (runtime statistics)
+        public:
+            //  TODO document
+            void                    recordAchievedClockFrequency(IClockedComponent * component, const ClockFrequency & clockFrequency);
+
+            //////////
             //  Implementation
         private:
             State                   _state;
@@ -179,6 +191,10 @@ namespace hadesvm
             //  Runtime state
             std::atomic<bool>       _stopRequested;
 
+            //  Runtime statistics
+            hadesvm::util::Spinlock _statisticsGuard;
+            QMap<IClockedComponent*, ClockFrequency>  _achievedClockFrequencyByClockedComponent;
+
             //  Helpers
             void                    _connectComponents() throws(VirtualApplianceException);
             void                    _initializeComponents() throws(VirtualApplianceException);
@@ -186,6 +202,8 @@ namespace hadesvm
             void                    _stopComponents();
             void                    _deinitializeComponents();
             void                    _disconnectComponents();
+
+            void                    _resetStatistics();
 
             //  Threads
             class _FrequencyDivider final : public virtual IClockedComponent
@@ -198,16 +216,16 @@ namespace hadesvm
                 _FrequencyDivider(unsigned inputTicks, unsigned outputTicks, IClockedComponent * drivenComponent);
 
                 //////////
-                //  IComponent (general; all unused)
+                //  IComponent (general; largely unused)
             public:
-                virtual ComponentType * componentType() const override { failure(); return nullptr; }
-                virtual bool            suspendable() const override { failure(); return false; }
-                virtual VirtualAppliance *  virtualAppliance() const override { failure(); return nullptr; }
-                virtual QString         displayName() const override { failure(); return ""; }
-                virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override { failure(); }
-                virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override { failure(); }
-                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { failure();  return nullptr; }
-                virtual Ui *            createUi() override { failure(); return nullptr; }
+                virtual ComponentType * componentType() const override { return _drivenComponent->componentType(); }
+                virtual bool            suspendable() const override { return _drivenComponent->suspendable(); }
+                virtual VirtualAppliance *  virtualAppliance() const override { return _drivenComponent->virtualAppliance(); }
+                virtual QString         displayName() const override { return _drivenComponent->displayName(); }
+                virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override {}
+                virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override {}
+                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { return nullptr; }
+                virtual Ui *            createUi() override { return nullptr; }
 
                 //////////
                 //  IComponent (state management)

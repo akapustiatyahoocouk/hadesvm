@@ -29,9 +29,13 @@ VirtualAppliance::VirtualAppliance(const QString & name, const QString & locatio
         _adaptedComponents(),
         _componentAdaptors(),
         //  Runtime state
-        _stopRequested(false)
+        _stopRequested(false),
+        //  Runtime statistics
+        _statisticsGuard(),
+        _achievedClockFrequencyByClockedComponent()
 {
     Q_ASSERT(_architecture != nullptr);
+    _resetStatistics();
 }
 
 VirtualAppliance::~VirtualAppliance()
@@ -456,6 +460,8 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
         _initializeComponents();    //  may throw
         _startComponents();         //  may throw
 
+        _resetStatistics();
+
         _workerThread = new _WorkerThread(this);
         _workerThread->start(); //  may choose to stop prematurely!
 
@@ -560,6 +566,22 @@ void VirtualAppliance::resume() throws(VirtualApplianceException)
 void VirtualAppliance::requestStop()
 {
     _stopRequested = true;
+}
+
+//////////
+//  Operations (runtime statistics)
+void VirtualAppliance::recordAchievedClockFrequency(IClockedComponent * component, const ClockFrequency & clockFrequency)
+{
+    Q_ASSERT(component != nullptr);
+
+    QMutexLocker lock(&_statisticsGuard);
+    if (component->virtualAppliance() == this)
+    {
+        _achievedClockFrequencyByClockedComponent[component] = clockFrequency;
+        qDebug() << component->displayName()
+                 << " is running at "
+                 << clockFrequency.displayForm();
+    }
 }
 
 //////////
@@ -816,6 +838,13 @@ void VirtualAppliance::_disconnectComponents()
     }
 }
 
+void VirtualAppliance::_resetStatistics()
+{
+    QMutexLocker lock(&_statisticsGuard);
+
+    _achievedClockFrequencyByClockedComponent.clear();
+}
+
 //////////
 //  VirtualAppliance::_FrequencyDivider
 VirtualAppliance::_FrequencyDivider::_FrequencyDivider(unsigned inputTicks, unsigned outputTicks,
@@ -840,7 +869,7 @@ VirtualAppliance::_FrequencyDivider::_FrequencyDivider(unsigned inputTicks, unsi
 
 ClockFrequency VirtualAppliance::_FrequencyDivider::clockFrequency() const noexcept
 {
-    return _drivenComponent->clockFrequency();  //  doesn't really matter
+    return _drivenComponent->clockFrequency();
 }
 
 void VirtualAppliance::_FrequencyDivider::onClockTick() noexcept
@@ -951,11 +980,18 @@ void VirtualAppliance::_WorkerThread::run()
         if (n++ >= 100)
         {
             n = 0;
-            //qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
+            //TODO kill off qDebug() << idealNsElapsed << " / " << actualNsElapsed << " / " << delayPerTickNs;
 
             qint64 actualNsPerTick = actualNsElapsed / ticksBetweenDelayAdjustment;;
             qint64 actualClockFrequencyHz = 1000000000 / actualNsPerTick;
-            qDebug() << "VA._WorkerThread Running at " << actualClockFrequencyHz << " Hz, delayPerTickNs = " << delayPerTickNs;
+            //TODO kill off qDebug() << "VA._WorkerThread Running at " << actualClockFrequencyHz << " Hz, delayPerTickNs = " << delayPerTickNs;
+            //  Record!
+            for (qsizetype i = 0; i < _tickTargets.count(); i++)
+            {
+                _virtualAppliance->recordAchievedClockFrequency(
+                    _tickTargets[i],
+                    ClockFrequency::hertz(_tickTargets[i]->clockFrequency().toHz() * actualClockFrequencyHz / requiredClockFrequencyHz));
+            }
         }
 
         if (actualNsElapsed < idealNsElapsed)
