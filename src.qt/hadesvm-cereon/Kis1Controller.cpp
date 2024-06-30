@@ -508,11 +508,11 @@ IoInterrupt * Kis1Controller::_StatePort::releasePendingIoInterrupt()
     return ioInterrupt;
 }
 
-bool Kis1Controller::_StatePort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_StatePort::readByte() throws (IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
-    value = 0x01;
+    uint8_t result = 0x01;
     switch (_kis1Controller->_operationalState)
     {
         case _OperationalState::_Ready:
@@ -520,29 +520,27 @@ bool Kis1Controller::_StatePort::readByte(uint8_t & value)
             break;
         case _OperationalState::_InputReady:
             //  Not BUSY, INPUT_READY
-            value |= 0x04;
+            result |= 0x04;
             break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  BUSY, not INPUT_READY
-            value |= 0x02;
+            result |= 0x02;
             break;
         default:
             failure();
     }
-    //  TODO
-    return true;
+    return result;
 }
 
-bool Kis1Controller::_StatePort::writeByte(uint8_t /*value*/)
+void Kis1Controller::_StatePort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  Writes to STATE port are ignored
-    return true;
 }
 
 //////////
 //  Kis1::_CurrentDevicePort
-bool Kis1Controller::_CurrentDevicePort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_CurrentDevicePort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -550,8 +548,7 @@ bool Kis1Controller::_CurrentDevicePort::readByte(uint8_t & value)
     {
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
-            value = _kis1Controller->_currentDevice;
-            break;
+            return _kis1Controller->_currentDevice;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
@@ -560,10 +557,10 @@ bool Kis1Controller::_CurrentDevicePort::readByte(uint8_t & value)
         default:
             failure();
     }
-    return true;
+    return 0;
 }
 
-bool Kis1Controller::_CurrentDevicePort::writeByte(uint8_t value)
+void Kis1Controller::_CurrentDevicePort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -578,21 +575,20 @@ bool Kis1Controller::_CurrentDevicePort::writeByte(uint8_t value)
                 _kis1Controller->_operationalState = _OperationalState::_ChangingCurrentDevice;
                 _kis1Controller->_timeout = _RegisterWriteDelay;
             }   //  else device does not exist - suppress the write
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  In any other state writes to CURRENT_DEVICE are suppressed
-            return true;
+            break;
         default:
             failure();
-            return false;
     }
 }
 
 //////////
 //  Kis1::_InterruptMaskPort
-bool Kis1Controller::_InterruptMaskPort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_InterruptMaskPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -600,8 +596,7 @@ bool Kis1Controller::_InterruptMaskPort::readByte(uint8_t & value)
     {
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
-            value = _kis1Controller->_interruptMask;
-            break;
+            return _kis1Controller->_interruptMask;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
@@ -610,10 +605,10 @@ bool Kis1Controller::_InterruptMaskPort::readByte(uint8_t & value)
         default:
             failure();
     }
-    return true;
+    return 0;
 }
 
-bool Kis1Controller::_InterruptMaskPort::writeByte(uint8_t value)
+void Kis1Controller::_InterruptMaskPort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -636,12 +631,11 @@ bool Kis1Controller::_InterruptMaskPort::writeByte(uint8_t value)
         default:
             failure();
     }
-    return true;
 }
 
 //////////
 //  Kis1::_InputSourcePort
-bool Kis1Controller::_InputSourcePort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_InputSourcePort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -649,8 +643,7 @@ bool Kis1Controller::_InputSourcePort::readByte(uint8_t & value)
     {
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
-            value = _kis1Controller->_inputSource;
-            break;
+            return _kis1Controller->_inputSource;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
@@ -659,17 +652,39 @@ bool Kis1Controller::_InputSourcePort::readByte(uint8_t & value)
         default:
             failure();
     }
-    return true;
+    return 0;
 }
 
-bool Kis1Controller::_InputSourcePort::writeByte(uint8_t /*value*/)
+void Kis1Controller::_InputSourcePort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  INPUT_SOURCE is a read-only port
-    return true;
 }
 
 //////////
 //  Kis1::_DeviceStatePort
-bool Kis1Controller::_DeviceStatePort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_DeviceStatePort::readByte() throws(IoError)
+{
+    QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
+
+    Kis1Keyboard * currentKeyboard = _kis1Controller->_keyboardsMap[_kis1Controller->_currentDevice];
+    switch (_kis1Controller->_operationalState)
+    {
+        case _OperationalState::_Ready:
+        case _OperationalState::_InputReady:
+            return (currentKeyboard != nullptr) ?
+                        currentKeyboard->readDeviceState() :
+                        0;
+        case _OperationalState::_ChangingCurrentDevice:
+        case _OperationalState::_ChangingInterruptMask:
+        case _OperationalState::_ChangingDeviceState:
+            //  Unpredictable value
+            break;
+        default:
+            failure();
+    }
+    return 0;
+}
+
+void Kis1Controller::_DeviceStatePort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -679,35 +694,6 @@ bool Kis1Controller::_DeviceStatePort::readByte(uint8_t & value)
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
             if (currentKeyboard != nullptr)
-            {   //  Delegate access to keyboard register
-                value = currentKeyboard->readDeviceState();
-            }
-            else
-            {   //  No such keyboard
-                value = 0;
-            }
-            break;
-        case _OperationalState::_ChangingCurrentDevice:
-        case _OperationalState::_ChangingInterruptMask:
-        case _OperationalState::_ChangingDeviceState:
-            //  Unpredictable value
-            break;
-        default:
-            failure();
-    }
-    return true;
-}
-
-bool Kis1Controller::_DeviceStatePort::writeByte(uint8_t value)
-{
-    QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
-
-    Kis1Keyboard * currentKeyboard = _kis1Controller->_keyboardsMap[_kis1Controller->_currentDevice];
-    switch (_kis1Controller->_operationalState)
-    {
-        case _OperationalState::_Ready:
-        case _OperationalState::_InputReady:
-            if (currentKeyboard)
             {   //  Delegate access there
                 currentKeyboard->writeDeviceState(value);
                 //  ...and perform state change with simulated register write delay
@@ -723,12 +709,11 @@ bool Kis1Controller::_DeviceStatePort::writeByte(uint8_t value)
         default:
             failure();
     }
-    return true;
 }
 
 //////////
 //  Kis1::_DataInPort
-bool Kis1Controller::_DataInPort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_DataInPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -737,12 +722,10 @@ bool Kis1Controller::_DataInPort::readByte(uint8_t & value)
     {
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
-            value =
-                static_cast<uint8_t>(
+            return static_cast<uint8_t>(
                     (currentKeyboard != nullptr) ?
                         currentKeyboard->readDataIn() :
                         0);
-            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
@@ -751,17 +734,16 @@ bool Kis1Controller::_DataInPort::readByte(uint8_t & value)
         default:
             failure();
     }
-    return true;
+    return 0;
 }
 
-bool Kis1Controller::_DataInPort::writeByte(uint8_t /*value*/)
+void Kis1Controller::_DataInPort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  DATA_IN is a read-only port
-    return true;
 }
 
 //////////
 //  Kis1::_LayoutPort
-bool Kis1Controller::_LayoutPort::readByte(uint8_t & value)
+uint8_t Kis1Controller::_LayoutPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_kis1Controller->_runtimeStateGuard);
 
@@ -770,12 +752,10 @@ bool Kis1Controller::_LayoutPort::readByte(uint8_t & value)
     {
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
-            value =
-                static_cast<uint8_t>(
+            return static_cast<uint8_t>(
                     (currentKeyboard != nullptr) ?
                         currentKeyboard->layout()->code() :
                         Kis1KeyboardLayout::Code::Unknown);
-            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
@@ -784,12 +764,11 @@ bool Kis1Controller::_LayoutPort::readByte(uint8_t & value)
         default:
             failure();
     }
-    return true;
+    return 0;
 }
 
-bool Kis1Controller::_LayoutPort::writeByte(uint8_t /*value*/)
+void Kis1Controller::_LayoutPort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  Writes to LAYOUT register are suppressed
-    return true;
 }
 
 //  End of hadesvm-cereon/Kis1Controller.cpp

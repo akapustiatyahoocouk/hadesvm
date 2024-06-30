@@ -13,7 +13,8 @@ namespace hadesvm
         //  Thrown if an I/O fails
         enum class IoError
         {
-            HardwareFault       //  other error
+            NotReady,       //  I/O controller or device not ready; processor must retry the I/O operation
+            HardwareFault   //  other error
         };
 
         //////////
@@ -119,13 +120,8 @@ namespace hadesvm
             //  Operations
         public:
             //  Reads/writes a byte from/to this I/O port.
-            //  Returns "true" on success, "false" if the reading/writing cannot
-            //  be finished immediately. In the latter case the CPU must repeat
-            //  the read/write call again and again until it finally succeeds -
-            //  and the I/O port implementation MUST ensure that it eventually
-            //  succeeds.
-            virtual bool        readByte(uint8_t & value) throws(IoError) = 0;
-            virtual bool        writeByte(uint8_t value) throws(IoError) = 0;
+            virtual uint8_t     readByte() throws(IoError) = 0;
+            virtual void        writeByte(uint8_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -143,13 +139,8 @@ namespace hadesvm
             //  Operations
         public:
             //  Reads/writes a half-word from/to this I/O port
-            //  Returns "true" on success, "false" if the reading/writing cannot
-            //  be finished immediately. In the latter case the CPU must repeat
-            //  the read/write call again and again until it finally succeeds -
-            //  and the I/O port implementation MUST ensure that it eventually
-            //  succeeds.
-            virtual bool        readHalfWord(uint16_t & value) throws(IoError) = 0;
-            virtual bool        writeHalfWord(uint16_t value) throws(IoError) = 0;
+            virtual uint16_t    readHalfWord() throws(IoError) = 0;
+            virtual void        writeHalfWord(uint16_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -167,13 +158,8 @@ namespace hadesvm
             //  Operations
         public:
             //  Reads/writes a word from/to this I/O port
-            //  Returns "true" on success, "false" if the reading/writing cannot
-            //  be finished immediately. In the latter case the CPU must repeat
-            //  the read/write call again and again until it finally succeeds -
-            //  and the I/O port implementation MUST ensure that it eventually
-            //  succeeds.
-            virtual bool        readWord(uint32_t & value) throws(IoError) = 0;
-            virtual bool        writeWord(uint32_t value) throws(IoError) = 0;
+            virtual uint32_t    readWord() throws(IoError) = 0;
+            virtual void        writeWord(uint32_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -191,13 +177,8 @@ namespace hadesvm
             //  Operations
         public:
             //  Reads/writes a long word from/to this I/O port
-            //  Returns "true" on success, "false" if the reading/writing cannot
-            //  be finished immediately. In the latter case the CPU must repeat
-            //  the read/write call again and again until it finally succeeds -
-            //  and the I/O port implementation MUST ensure that it eventually
-            //  succeeds.
-            virtual bool        readLongWord(uint64_t & value) throws(IoError) = 0;
-            virtual bool        writeLongWord(uint64_t value) throws(IoError) = 0;
+            virtual uint64_t    readLongWord() throws(IoError) = 0;
+            virtual void        writeLongWord(uint64_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -301,23 +282,18 @@ namespace hadesvm
 
             //  Reads/writes a value of the specified size from/to the I/O
             //  port at the specified address.
-            //  Returns "true" on success, "false" if the reading/writing cannot
-            //  be finished immediately. In the latter case the CPU must repeat
-            //  the read/write call again and again until it finally succeeds -
-            //  and the I/O port implementation MUST ensure that it eventually
-            //  succeeds.
             //  If there is no I/O port at the specified address, "read" returns
             //  0 and "write" is ignored, and both are deemed a "success".
             //  Thread-safe; IoBus serialises accesses.
-            bool                readByte(uint16_t address, uint8_t & value) throws(IoError);
-            bool                readHalfWord(uint16_t address, uint16_t & value) throws(IoError);
-            bool                readWord(uint16_t address, uint32_t & value) throws(IoError);
-            bool                readLongWord(uint16_t address, uint64_t & value) throws(IoError);
+            uint8_t             readByte(uint16_t address) throws(IoError);
+            uint16_t            readHalfWord(uint16_t address) throws(IoError);
+            uint32_t            readWord(uint16_t address) throws(IoError);
+            uint64_t            readLongWord(uint16_t address) throws(IoError);
 
-            bool                writeByte(uint16_t address, uint8_t value) throws(IoError);
-            bool                writeHalfWord(uint16_t address, uint16_t value) throws(IoError);
-            bool                writeWord(uint16_t address, uint32_t value) throws(IoError);
-            bool                writeLongWord(uint16_t address, uint64_t value) throws(IoError);
+            void                writeByte(uint16_t address, uint8_t value) throws(IoError);
+            void                writeHalfWord(uint16_t address, uint16_t value) throws(IoError);
+            void                writeWord(uint16_t address, uint32_t value) throws(IoError);
+            void                writeLongWord(uint16_t address, uint64_t value) throws(IoError);
 
             //  Implementation of TSTP/SETP instruction behaviour
             //  Thread-safe; IoBus serialises accesses.

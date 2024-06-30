@@ -379,33 +379,31 @@ void Cmos1::setContentFilePath(const QString & contentFilePath)
 
 //////////
 //  Cmos1::_StatePort
-bool Cmos1::_StatePort::readByte(uint8_t & value)
+uint8_t Cmos1::_StatePort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_cmos1->_runtimeStateGuard);
 
-    value = 0x01;
+    uint8_t result = 0x01;
     if (_cmos1->_operationalState == _OperationalState::_Ready)
     {
-        value |= 0x06; //  ADDRESS_READY + DATA_READY
+        result |= 0x06; //  ADDRESS_READY + DATA_READY
     }
-    return true;
+    return result;
 }
 
-bool Cmos1::_StatePort::writeByte(uint8_t /*value*/)
+void Cmos1::_StatePort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  Writes to STATE port are ignored
-    return true;
 }
 
 //////////
 //  Cmos1::_AddressPort
-bool Cmos1::_AddressPort::readByte(uint8_t & value)
+uint8_t Cmos1::_AddressPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_cmos1->_runtimeStateGuard);
 
     if (_cmos1->_operationalState != _OperationalState::_Ready)
-    {   //  OOPS! Busy!
-        value = 0;
-        return true;
+    {   //  OOPS! Busy - read as 0
+        return 0;
     }
 
     //  Simulate read delay
@@ -414,17 +412,16 @@ bool Cmos1::_AddressPort::readByte(uint8_t & value)
 
     //  Perform read
     _cmos1->_operationalState = _OperationalState::_ReadingAddress;
-    value = _cmos1->_currentAddress;
-    return true;
+    return _cmos1->_currentAddress;
 }
 
-bool Cmos1::_AddressPort::writeByte(uint8_t value)
+void Cmos1::_AddressPort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_cmos1->_runtimeStateGuard);
 
     if (_cmos1->_operationalState != _OperationalState::_Ready)
-    {   //  OOPS! Busy!
-        return true;
+    {   //  OOPS! Busy - write ignored
+        return;
     }
 
     //  Simulate write delay.
@@ -434,20 +431,17 @@ bool Cmos1::_AddressPort::writeByte(uint8_t value)
     //  Perform write
     _cmos1->_operationalState = _OperationalState::_WritingAddress;
     _cmos1->_currentAddress = value;
-
-    return true;
 }
 
 //////////
 //  Cmos1::_DataPort
-bool Cmos1::_DataPort::readByte(uint8_t & value)
+uint8_t Cmos1::_DataPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_cmos1->_runtimeStateGuard);
 
     if (_cmos1->_operationalState != _OperationalState::_Ready)
-    {   //  OOPS! Busy!
-        value = 0;
-        return true;
+    {   //  OOPS! Busy - read as 0
+        return 0;
     }
 
     //  Simulate read delay
@@ -457,17 +451,16 @@ bool Cmos1::_DataPort::readByte(uint8_t & value)
 
     //  Perform read
     _cmos1->_operationalState = (_cmos1->_clockTicksToDelay > 0) ? _OperationalState::_ReadingData : _OperationalState::_Ready;
-    value = _cmos1->_content[_cmos1->_currentAddress];
-    return true;
+    return _cmos1->_content[_cmos1->_currentAddress];
 }
 
-bool Cmos1::_DataPort::writeByte(uint8_t value)
+void Cmos1::_DataPort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_cmos1->_runtimeStateGuard);
 
     if (_cmos1->_operationalState != _OperationalState::_Ready)
-    {   //  OOPS! Busy!
-        return true;
+    {   //  OOPS! Busy - write ignored
+        return;
     }
 
     //  Simulate write delay.
@@ -478,8 +471,6 @@ bool Cmos1::_DataPort::writeByte(uint8_t value)
     //  Perform write
     _cmos1->_operationalState = (_cmos1->_clockTicksToDelay > 0) ? _OperationalState::_WritingData : _OperationalState::_Ready;
     _cmos1->_content[_cmos1->_currentAddress] = value;
-
-    return true;
 }
 
 //////////

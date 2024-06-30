@@ -2,7 +2,7 @@
 //  hadesvm-core/Types.hpp
 //
 //  hadesvm-core Basic VA-related types
-//
+//  TODO insert constexpr wherever possible
 //////////
 
 namespace hadesvm
@@ -87,8 +87,10 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            ClockFrequency() : _numberOfUnits(0), _unit(Unit::Hz) {}
-            ClockFrequency(uint64_t numberOfUnits, Unit unit);
+            constexpr ClockFrequency() : _numberOfUnits(0), _unit(Unit::Hz) {}
+            constexpr ClockFrequency(uint64_t numberOfUnits, Unit unit)
+                :   _numberOfUnits(qMin(numberOfUnits, UINT64_MAX / static_cast<uint64_t>(unit))),
+                    _unit(unit) {}
             ~ClockFrequency() = default;
 
             //////////
@@ -109,7 +111,7 @@ namespace hadesvm
             Unit                unit() const { return _unit; }
 
             //  Converts the ClockFrequency to the specified Unit
-            uint64_t            toHz() const;
+            uint64_t            toHz() const { return _numberOfUnits * static_cast<uint64_t>(_unit); }
 
             //  Builds the ClockFrequency from the specified Unit count
             static ClockFrequency   hertz(uint64_t count);

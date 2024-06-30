@@ -243,7 +243,7 @@ namespace hadesvm
             std::atomic<_OperationalState>  _operationalState = _OperationalState::_Ready;
 
             QList<uint8_t>          _commandBytes;  //  command is assembled in this buffer
-            QList<uint8_t>          _resultBytes;   //  ...to be read by CPU when _state == _ProvidingResult
+            QList<uint8_t>          _resultBytes;   //  ...to be read by CPU when _state == _ProvidingResult TODO make it a QQueue
             std::atomic<unsigned>   _executeDelay = 0;  //  clock ticks to spend in _ExecutingCommand state
 
             static const uint8_t    _ResetCommand = 0x00;
@@ -345,15 +345,15 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool        readByte(uint8_t & value) override;
-                virtual bool        writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
             private:
-                Vds1Controller *            _vds1Controller;
+                Vds1Controller *const   _vds1Controller;
             };
-            _StatePort                      _statePort;
+            _StatePort          _statePort;
 
             class HADESVM_CEREON_PUBLIC _CommandPort : public virtual IByteIoPort
             {
@@ -373,15 +373,15 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool        readByte(uint8_t & value) override;
-                virtual bool        writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
             private:
-                Vds1Controller *            _vds1Controller;
+                Vds1Controller *const   _vds1Controller;
             };
-            _CommandPort                    _commandPort;
+            _CommandPort       _commandPort;
 
             class HADESVM_CEREON_PUBLIC _DataPort : public virtual IByteIoPort
             {
@@ -401,15 +401,15 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool        readByte(uint8_t & value) override;
-                virtual bool        writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
             private:
-                Vds1Controller *            _vds1Controller;
+                Vds1Controller *const   _vds1Controller;
             };
-            _DataPort                       _dataPort;
+            _DataPort          _dataPort;
         };
 
         //////////

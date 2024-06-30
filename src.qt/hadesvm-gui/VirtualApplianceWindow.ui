@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>TODO</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="Resources.qrc">
+    <normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QFormLayout" name="formLayout">
     <property name="horizontalSpacing">
@@ -65,7 +69,7 @@
      <x>0</x>
      <y>0</y>
      <width>433</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuVm">
@@ -90,7 +94,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionStop</sender>

@@ -9,23 +9,16 @@ using namespace hadesvm::core;
 
 //////////
 //  Construction/destruction
+/*  TODO kill off
 ClockFrequency::ClockFrequency(uint64_t numberOfUnits, Unit unit)
-    :   _numberOfUnits(numberOfUnits),
+    :   _numberOfUnits(qMin(numberOfUnits, UINT64_MAX / static_cast<uint64_t>(unit)),
         _unit(unit)
 {
-    if (_numberOfUnits > UINT64_MAX / static_cast<uint64_t>(_unit))
-    {
-        _numberOfUnits = UINT64_MAX / static_cast<uint64_t>(_unit);
-    }
 }
+*/
 
 //////////
 //  Operations
-uint64_t ClockFrequency::toHz() const
-{
-    return _numberOfUnits * static_cast<uint64_t>(_unit);
-}
-
 ClockFrequency ClockFrequency::hertz(uint64_t count)
 {
     return ClockFrequency(count, Unit::Hz);

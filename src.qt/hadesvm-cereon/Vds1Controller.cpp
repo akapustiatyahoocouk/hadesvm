@@ -725,44 +725,42 @@ void Vds1Controller::_finishCommandExecution(uint8_t resultByte1, uint8_t result
 
 //////////
 //  Vds1Controller::_StatePort
-bool Vds1Controller::_StatePort::readByte(uint8_t & value)
+uint8_t Vds1Controller::_StatePort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_vds1Controller->_runtimeStateGuard);
 
-    value = 0x01;
+    uint8_t result = 0x01;
     if (_vds1Controller->_operationalState == _OperationalState::_Ready)
     {
-        value |= 0x02; //  ready for COMMAND port write
+        result |= 0x02; //  ready for COMMAND port write
     }
     if (_vds1Controller->_operationalState == _OperationalState::_AcceptingCommand)
     {   //  Waiting for command parameters OR command pre-emption
-        value |= 0x0A;
+        result |= 0x0A;
     }
     if (_vds1Controller->_operationalState == _OperationalState::_ProvidingResult)
     {   //  Result byte(s) ready to be read OR next command issued
-        value |= 0x06;
+        result |= 0x06;
     }
     if (_vds1Controller->_operationalState == _OperationalState::_ExecutingCommand)
     {
-        value |= 0x10; //  command in progress
+        result |= 0x10; //  command in progress
     }
-    return true;
+    return result;
 }
 
-bool Vds1Controller::_StatePort::writeByte(uint8_t /*value*/)
+void Vds1Controller::_StatePort::writeByte(uint8_t /*value*/) throws(IoError)
 {   //  Writes to STATE port are ignored
-    return true;
 }
 
 //////////
 //  Vds1Controller::_CommandPort
-bool Vds1Controller::_CommandPort::readByte(uint8_t & value)
+uint8_t Vds1Controller::_CommandPort::readByte() throws(IoError)
 {
-    value = 0;   //  COMMAND is a write-only port
-    return true;
+    return 0;   //  COMMAND is a write-only port
 }
 
-bool Vds1Controller::_CommandPort::writeByte(uint8_t value)
+void Vds1Controller::_CommandPort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_vds1Controller->_runtimeStateGuard);
     unsigned commandLength;
@@ -775,7 +773,7 @@ bool Vds1Controller::_CommandPort::writeByte(uint8_t value)
             commandLength = _getCommandLength(value);
             if (commandLength == 0)
             {   //  Invalid COMMAND byte - no effect
-                return true;
+                return;
             }
             //  Store the 1st byte of the command
             _vds1Controller->_commandBytes.clear();
@@ -784,41 +782,40 @@ bool Vds1Controller::_CommandPort::writeByte(uint8_t value)
             if (commandLength > 1)
             {   //  Yes - await command parameters
                 _vds1Controller->_operationalState = _OperationalState::_AcceptingCommand;
-                return true;
             }
-            //  No parameters needed - execute the command
-            _vds1Controller->_executeCommand();  //  ...this switches _state
+            else
+            {   //  No parameters needed - execute the command
+                _vds1Controller->_executeCommand();  //  ...this switches _state
+            }
             break;
         case _OperationalState::_ExecutingCommand:  //  Suppress write
             break;
         default:
             failure();
     }
-    return true;
 }
 
 //////////
 //  Vds1Controller::_DataPort
-bool Vds1Controller::_DataPort::readByte(uint8_t & value)
+uint8_t Vds1Controller::_DataPort::readByte() throws(IoError)
 {
     QMutexLocker lock(&_vds1Controller->_runtimeStateGuard);
 
     if (_vds1Controller->_operationalState == _OperationalState::_ProvidingResult)
     {   //  CPU reads command results
-        value = _vds1Controller->_resultBytes[0];
+        uint8_t result = _vds1Controller->_resultBytes[0];
         _vds1Controller->_resultBytes.removeAt(0);
         if (_vds1Controller->_resultBytes.isEmpty())
         {   //  No more results
             _vds1Controller->_operationalState = _OperationalState::_Ready;
         }
-        return true;
+        return result;
     }
     //  else no result bytes to send to CPU
-    value = 0;
-    return true;
+    return 0;
 }
 
-bool Vds1Controller::_DataPort::writeByte(uint8_t value)
+void Vds1Controller::_DataPort::writeByte(uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_vds1Controller->_runtimeStateGuard);
 
@@ -829,9 +826,7 @@ bool Vds1Controller::_DataPort::writeByte(uint8_t value)
         {   //  Got the entire command - execute it
             _vds1Controller->_executeCommand();  //  ...this switches _state
         }
-    }
-    //  else not accepting parameters - ignore the write
-    return true;
+    }   //  else not accepting parameters - ignore the write
 }
 
 //  End of hadesvm-cereon/Vds1Controller.cpp

@@ -301,8 +301,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -329,8 +329,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -357,8 +357,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -385,8 +385,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -413,8 +413,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -441,8 +441,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
@@ -469,8 +469,8 @@ namespace hadesvm
                 //////////
                 //  IByteIoPort
             public:
-                virtual bool    readByte(uint8_t & value) override;
-                virtual bool    writeByte(uint8_t value) override;
+                virtual uint8_t readByte() throws(IoError) override;
+                virtual void    writeByte(uint8_t value) throws(IoError) override;
 
                 //////////
                 //  Implementation
