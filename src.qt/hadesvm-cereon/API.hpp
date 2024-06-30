@@ -18,6 +18,7 @@
 #include "hadesvm-cereon/Classes.hpp"
 
 #include "hadesvm-cereon/Architectures.hpp"
+#include "hadesvm-cereon/Templates.hpp"
 
 #include "hadesvm-cereon/Alu.hpp"
 #include "hadesvm-cereon/Memory.hpp"

@@ -494,11 +494,6 @@ hadesvm::core::ComponentCategory * Cmos1::Type::category() const
     return hadesvm::core::StandardComponentCategories::InternalDevices;
 }
 
-bool Cmos1::Type::suspendable() const
-{
-    return true;
-}
-
 bool Cmos1::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

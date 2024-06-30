@@ -398,11 +398,6 @@ hadesvm::core::ComponentCategory * Kis1Controller::Type::category() const
     return hadesvm::core::StandardComponentCategories::IoControllers;
 }
 
-bool Kis1Controller::Type::suspendable() const
-{
-    return true;
-}
-
 bool Kis1Controller::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

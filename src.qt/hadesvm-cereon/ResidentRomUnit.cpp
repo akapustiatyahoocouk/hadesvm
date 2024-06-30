@@ -148,11 +148,6 @@ hadesvm::core::ComponentCategory * ResidentRomUnit::Type::category() const
     return hadesvm::core::StandardComponentCategories::Memory;
 }
 
-bool ResidentRomUnit::Type::suspendable() const
-{
-    return true;
-}
-
 bool ResidentRomUnit::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

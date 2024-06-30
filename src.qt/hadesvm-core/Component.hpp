@@ -78,9 +78,6 @@ namespace hadesvm
             //  The type of this component
             virtual ComponentType * componentType() const = 0;
 
-            //  Checks if this component can be "suspended".
-            virtual bool            suspendable() const = 0;
-
             //  The VM to which this component is bound; nullptr if this
             //  is a free component
             virtual VirtualAppliance *  virtualAppliance() const = 0;
@@ -167,7 +164,6 @@ namespace hadesvm
             //////////
             //  IComponet (general)
         public:
-            virtual bool            suspendable() const { return componentType()->suspendable(); }
             virtual VirtualAppliance *virtualAppliance() const override { return _virtualAppliance; }
 
             //////////

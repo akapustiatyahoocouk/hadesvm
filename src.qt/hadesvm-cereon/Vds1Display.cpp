@@ -254,11 +254,6 @@ hadesvm::core::ComponentCategory * Vds1Display::Type::category() const
     return hadesvm::core::StandardComponentCategories::UiDevices;
 }
 
-bool Vds1Display::Type::suspendable() const
-{
-    return true;
-}
-
 bool Vds1Display::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

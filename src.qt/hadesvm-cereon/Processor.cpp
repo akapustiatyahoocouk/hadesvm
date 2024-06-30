@@ -101,11 +101,6 @@ Processor::Ui * Processor::createUi()
 //////////
 //  hadesvm::core::Component (state management)
 //  Must only be called from the QApplication's main thread (except state())
-Processor::State Processor::state() const noexcept
-{
-    return _state;
-}
-
 void Processor::connect() throws(hadesvm::core::VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());

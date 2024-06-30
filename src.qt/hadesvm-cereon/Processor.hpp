@@ -40,7 +40,7 @@ namespace hadesvm
             //  hadesvm::core::Component (state management)
             //  Must only be called from the QApplication's main thread (except state())
         public:
-            virtual State       state() const noexcept override;
+            virtual State       state() const noexcept override { return _state; }
             virtual void        connect() throws(hadesvm::core::VirtualApplianceException) override;
             virtual void        initialize() throws(hadesvm::core::VirtualApplianceException) override;
             virtual void        start() throws(hadesvm::core::VirtualApplianceException) override;
@@ -161,7 +161,6 @@ namespace hadesvm
                 //  hadesvm::core::ComponentType
             public:
                 virtual hadesvm::core::ComponentCategory *  category() const override;
-                virtual bool                suspendable() const override;
                 virtual bool                isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool                isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual Cereon1P1B *        createComponent() override;

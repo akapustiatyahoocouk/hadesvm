@@ -398,6 +398,10 @@ namespace hadesvm
             };
             _FlagsRegister      _flags;
 
+            //  Timing characteristics
+            unsigned            _memoryBusToProcessorClockRatio;    //  >= 1
+            unsigned            _ioBusToProcessorClockRatio;    //  >= 1
+
             //  Special names for special registers
             static const unsigned   _RaRegister = 30;
             static const unsigned   _IpRegister = 31;

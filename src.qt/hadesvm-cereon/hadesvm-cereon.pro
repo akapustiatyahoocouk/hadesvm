@@ -33,6 +33,7 @@ SOURCES += \
     ResidentRamUnitEditor.cpp \
     ResidentRomUnit.cpp \
     ResidentRomUnitEditor.cpp \
+    Templates.cpp \
     Vds1Controller.Compartment.cpp \
     Vds1Controller.VideoSignal.cpp \
     Vds1Controller.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     ProcessorEditor.hpp \
     ResidentRamUnitEditor.hpp \
     ResidentRomUnitEditor.hpp \
+    Templates.hpp \
     Vds1.hpp \
     Vds1ControllerEditor.hpp \
     Vds1DisplayEditor.hpp \

@@ -30,6 +30,7 @@ VirtualAppliance::VirtualAppliance(const QString & name, const QString & locatio
         _componentAdaptors(),
         //  Runtime state
         _stopRequested(false),
+        _resetRequested(false),
         //  Runtime statistics
         _statisticsGuard(),
         _achievedClockFrequencyByClockedComponent()
@@ -455,6 +456,7 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
     try
     {
         _stopRequested = false;
+        _resetRequested = false;
 
         _connectComponents();       //  may throw
         _initializeComponents();    //  may throw
@@ -479,6 +481,9 @@ void VirtualAppliance::start() throws(VirtualApplianceException)
 void VirtualAppliance::stop() noexcept
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    _stopRequested = false;
+    _resetRequested = false;
 
     switch (_state)
     {
@@ -519,34 +524,6 @@ void VirtualAppliance::stop() noexcept
     }
 }
 
-bool VirtualAppliance::suspendable() const noexcept
-{
-    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
-
-    for (Component * component : _compatibleComponents)
-    {
-        if (!component->suspendable())
-        {
-            return false;
-        }
-    }
-    for (Component * component : _adaptedComponents)
-    {
-        if (!component->suspendable())
-        {
-            return false;
-        }
-    }
-    for (ComponentAdaptor * componentAdaptor : _componentAdaptors)
-    {
-        if (!componentAdaptor->suspendable())
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 void VirtualAppliance::suspend() throws(VirtualApplianceException)
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
@@ -561,11 +538,23 @@ void VirtualAppliance::resume() throws(VirtualApplianceException)
     throw VirtualApplianceException("Not yet implemented");
 }
 
+void VirtualAppliance::reset()
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    QMessageBox::critical(nullptr, "OOPS!", "Not yet implemented");    //  reset() must NOT throw!
+}
+
 //////////
 //  Operations (runtime state)
 void VirtualAppliance::requestStop()
 {
     _stopRequested = true;
+}
+
+void VirtualAppliance::requestReset()
+{
+    _resetRequested = true;
 }
 
 //////////

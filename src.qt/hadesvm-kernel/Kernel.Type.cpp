@@ -32,11 +32,6 @@ hadesvm::core::ComponentCategory * Kernel::Type::category() const
     return hadesvm::core::StandardComponentCategories::Software;
 }
 
-bool Kernel::Type::suspendable() const
-{
-    return false;
-}
-
 bool Kernel::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == Architecture::instance();

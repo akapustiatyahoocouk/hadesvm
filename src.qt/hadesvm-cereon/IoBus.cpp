@@ -479,11 +479,6 @@ hadesvm::core::ComponentCategory * IoBus::Type::category() const
     return hadesvm::core::StandardComponentCategories::InternalDevices;
 }
 
-bool IoBus::Type::suspendable() const
-{
-    return true;
-}
-
 bool IoBus::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

@@ -19,5 +19,6 @@
 #include "hadesvm-gui/VirtualApplianceWindow.hpp"
 #include "hadesvm-gui/MainWindow.hpp"
 #include "hadesvm-gui/AboutDialog.hpp"
+#include "hadesvm-gui/FullScreenWindow.hpp"
 
 //  End of hadesvm-gui/API.hpp

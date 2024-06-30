@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" Version="1">
  <Components>
-  <Component ClockFrequency="10MHz" Type="CereonMemoryBus"/>
+  <Component ClockFrequency="20MHz" Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamUnit"/>
   <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomUnit"/>
   <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="40MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>

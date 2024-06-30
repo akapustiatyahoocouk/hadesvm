@@ -295,11 +295,6 @@ hadesvm::core::ComponentCategory * Kis1Keyboard::Type::category() const
     return hadesvm::core::StandardComponentCategories::UiDevices;
 }
 
-bool Kis1Keyboard::Type::suspendable() const
-{
-    return true;
-}
-
 bool Kis1Keyboard::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

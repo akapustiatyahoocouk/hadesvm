@@ -48,11 +48,6 @@ hadesvm::core::ComponentCategory * Cereon1P1B::Type::category() const
     return hadesvm::core::StandardComponentCategories::Processors;
 }
 
-bool Cereon1P1B::Type::suspendable() const
-{
-    return true;
-}
-
 bool Cereon1P1B::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

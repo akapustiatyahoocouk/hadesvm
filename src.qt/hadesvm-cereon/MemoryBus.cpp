@@ -355,11 +355,6 @@ hadesvm::core::ComponentCategory * MemoryBus::Type::category() const
     return hadesvm::core::StandardComponentCategories::InternalDevices;
 }
 
-bool MemoryBus::Type::suspendable() const
-{
-    return true;
-}
-
 bool MemoryBus::Type::isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const
 {
     return architecture == CereonWorkstationArchitecture::instance();

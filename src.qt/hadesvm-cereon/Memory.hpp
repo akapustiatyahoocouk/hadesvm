@@ -104,7 +104,6 @@ namespace hadesvm
                 //  hadesvm::core::ComponentType
             public:
                 virtual hadesvm::core::ComponentCategory *  category() const override;
-                virtual bool        suspendable() const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual MemoryBus * createComponent() override;
@@ -344,7 +343,6 @@ namespace hadesvm
             public:
                 virtual hadesvm::core::ComponentCategory *
                                     category() const override;
-                virtual bool        suspendable() const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual ResidentRamUnit *
@@ -399,7 +397,6 @@ namespace hadesvm
             public:
                 virtual hadesvm::core::ComponentCategory *
                                     category() const override;
-                virtual bool        suspendable() const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool        isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual ResidentRomUnit *

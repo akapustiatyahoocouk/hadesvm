@@ -23,6 +23,21 @@ MainWindow::MainWindow()
 {
     _ui->setupUi(this);
 
+    _ui->toolBar->addAction(_ui->actionNewVm);
+    _ui->toolBar->addAction(_ui->actionOpenVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionStartVm);
+    _ui->toolBar->addAction(_ui->actionStopVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionSuspendVm);
+    _ui->toolBar->addAction(_ui->actionResumeVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionResetVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionConfigureVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionAbout);
+
     //  Restore size & position TODO
 
     //  Restore VM list and update UI accordingly
@@ -133,11 +148,13 @@ void MainWindow::_refresh()
             _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Stopped);
         _ui->actionSuspendVm->setEnabled(
             _currentVirtualAppliance != nullptr &&
-            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
-            _currentVirtualAppliance->suspendable());
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
         _ui->actionResumeVm->setEnabled(
             _currentVirtualAppliance != nullptr &&
             _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Suspended);
+        _ui->actionResetVm->setEnabled(
+            _currentVirtualAppliance != nullptr &&
+            _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
         _ui->actionConfigureVm->setEnabled(
             _currentVirtualAppliance != nullptr &&
             _currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped);
@@ -247,11 +264,12 @@ void MainWindow::_onNewVm()
     //  Create a new VA
     hadesvm::core::VirtualAppliance * va = nullptr;
     if (vaTemplate != nullptr)
-    {   //  TODO implement VA creation from template
-        failure();
+    {
+        QMessageBox::critical(this, "OOPS!", "Not yet implemented");
+        return;
     }
     else
-    {   //  Create a raw VA
+    {
         va = type->createVirtualAppliance(name, location, architecture);
     }
     try
@@ -342,19 +360,13 @@ void MainWindow::_onCloseVm()
     //  Suspend/stop
     if (_currentVirtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running)
     {
-        if (_currentVirtualAppliance->suspendable())
-        {   //  Try to suspend first...
-            try
-            {
-                _currentVirtualAppliance->suspend();
-            }
-            catch (...)
-            {   //  TODO report exception to the user?
-                _currentVirtualAppliance->stop();
-            }
+        //  Try to suspend first...
+        try
+        {
+            _currentVirtualAppliance->suspend();
         }
-        else
-        {   //  Stop outright
+        catch (...)
+        {   //  TODO report exception to the user?
             _currentVirtualAppliance->stop();
         }
     }
@@ -381,19 +393,13 @@ void MainWindow::_onExit()
     {
         if (virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running)
         {
-            if (virtualAppliance->suspendable())
-            {   //  Try to suspend first...
-                try
-                {
-                    virtualAppliance->suspend();
-                }
-                catch (...)
-                {   //  TODO report exception to the user?
-                    virtualAppliance->stop();
-                }
+            //  Try to suspend first...
+            try
+            {
+                virtualAppliance->suspend();
             }
-            else
-            {   //  Stop outright
+            catch (...)
+            {   //  TODO report exception to the user?
                 virtualAppliance->stop();
             }
         }
@@ -481,6 +487,18 @@ void MainWindow::_onResumeVm()
     _refresh();
 }
 
+void MainWindow::_onResetVm()
+{
+    if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
+        _currentVirtualAppliance->state() != hadesvm::core::VirtualAppliance::State::Running)
+    {   //  Nothing to do
+        return;
+    }
+
+    _currentVirtualAppliance->reset();
+    _refresh();
+}
+
 void MainWindow::_onConfigureVm()
 {
     if (!_virtualAppliances.contains(_currentVirtualAppliance) ||
@@ -523,13 +541,22 @@ void MainWindow::_onCurrentVmChanged(int)
 
 void MainWindow::_onRefreshTimerTick()
 {
-    //  Stop any running VAs that want to be wtopped...
+    //  Stop any running VAs that want to be stopped
     for (auto virtualAppliance : _virtualAppliances)
     {
         if (virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
             virtualAppliance->stopRequested())
         {
             virtualAppliance->stop();
+        }
+    }
+    //  Reset any running VAs that want to be reset
+    for (auto virtualAppliance : _virtualAppliances)
+    {
+        if (virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
+            virtualAppliance->resetRequested())
+        {
+            virtualAppliance->reset();
         }
     }
     //  If any VA window represents a non-Running VA, kill that VA window

@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("HadesVM");
 
     QApplication a(argc, argv);
+    a.setWindowIcon(QIcon(":/hadesvm/gui/images/objects/ComputerLarge.png"));   //  doesn't work on Linux
 
     /*  TODO kill off - this is debug code
     const unsigned Iterations = 1'000'000;

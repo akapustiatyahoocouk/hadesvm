@@ -53,6 +53,10 @@ ProcessorCore::ProcessorCore(Processor * processor, uint8_t id, const Features &
               &_ihaHw,
               &_iscHw},
         _flags(),
+        //  Timing characteristics
+        _memoryBusToProcessorClockRatio(1),
+        _ioBusToProcessorClockRatio(1),
+        //  Misc
         _cyclesToStall(0)
 {
     Q_ASSERT(_processor != nullptr);
@@ -84,6 +88,10 @@ ProcessorCore::~ProcessorCore() noexcept
 //  Operations
 void ProcessorCore::reset()
 {
+    //  Adjust timing characteristics (important for 1st reset on startup)
+    _memoryBusToProcessorClockRatio = qMax(1u, _processor->clockFrequency().toHz() / _processor->_memoryBus->clockFrequency().toHz());
+    _ioBusToProcessorClockRatio = qMax(1u, _processor->clockFrequency().toHz() / _processor->_ioBus->clockFrequency().toHz());
+
     //  1.  The W flag of each DMA channel's $state register is set to 0.
     //      (not applicable for processor cores)
 

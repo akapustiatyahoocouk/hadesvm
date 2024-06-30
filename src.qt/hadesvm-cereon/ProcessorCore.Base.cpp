@@ -4603,7 +4603,8 @@ unsigned ProcessorCore::_handleInB(uint32_t instruction) throws(ProgramInterrupt
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInUB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4637,7 +4638,8 @@ unsigned ProcessorCore::_handleInUB(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4671,7 +4673,8 @@ unsigned ProcessorCore::_handleInH(uint32_t instruction) throws(ProgramInterrupt
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInUH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4705,7 +4708,8 @@ unsigned ProcessorCore::_handleInUH(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4739,7 +4743,8 @@ unsigned ProcessorCore::_handleInW(uint32_t instruction) throws(ProgramInterrupt
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInUW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4773,7 +4778,8 @@ unsigned ProcessorCore::_handleInUW(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleInL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4806,7 +4812,8 @@ unsigned ProcessorCore::_handleInL(uint32_t instruction) throws(ProgramInterrupt
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleOutB(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4839,7 +4846,8 @@ unsigned ProcessorCore::_handleOutB(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleOutH(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4872,7 +4880,8 @@ unsigned ProcessorCore::_handleOutH(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleOutW(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4905,7 +4914,8 @@ unsigned ProcessorCore::_handleOutW(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleOutL(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4938,7 +4948,8 @@ unsigned ProcessorCore::_handleOutL(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleTstp(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4966,7 +4977,8 @@ unsigned ProcessorCore::_handleTstp(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 unsigned ProcessorCore::_handleSetp(uint32_t instruction) throws(ProgramInterrupt, HardwareInterrupt)
@@ -4994,7 +5006,8 @@ unsigned ProcessorCore::_handleSetp(uint32_t instruction) throws(ProgramInterrup
         _translateAndThrowIO(ioError);
     }
     //  Done
-    return 1;
+    Q_ASSERT(_ioBusToProcessorClockRatio > 0);
+    return _ioBusToProcessorClockRatio;
 }
 
 //////////

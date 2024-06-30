@@ -29,9 +29,6 @@ namespace hadesvm
             //  The component category to which this component belongs.
             virtual ComponentCategory * category() const = 0;
 
-            //  Checks if a component of this type can be "suspended".
-            virtual bool        suspendable() const = 0;
-
             //  TODO document
             virtual bool        isCompatibleWith(VirtualArchitecture * architecture) const = 0;
             virtual bool        isCompatibleWith(VirtualApplianceType * type) const = 0;

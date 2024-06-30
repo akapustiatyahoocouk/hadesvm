@@ -69,6 +69,7 @@ namespace hadesvm
             void                _onStopVm();
             void                _onSuspendVm();
             void                _onResumeVm();
+            void                _onResetVm();
             void                _onConfigureVm();
             void                _onHelpAbout();
             void                _onCurrentVmChanged(int);

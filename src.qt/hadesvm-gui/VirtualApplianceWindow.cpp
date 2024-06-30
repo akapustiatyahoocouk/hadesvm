@@ -24,6 +24,14 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
 
     _ui->setupUi(this);
 
+    _ui->toolBar->addAction(_ui->actionStopVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionSuspendVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionResetVm);
+    _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionFullScreen);
+
     this->setWindowTitle(_virtualAppliance->name());
 
     //  Create UIs for all VM components/adapters
@@ -66,7 +74,8 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
     connect(_ui->tabWidget->tabBar(), &QTabBar::customContextMenuRequested,
             this, &VirtualApplianceWindow::_onCustomContextMenuRequested);
 
-    //  Start statistics refreshes
+    //  Start refreshes
+    _refresh();
     _refreshTimer.setInterval(1000);  //  1sec
     connect(&_refreshTimer, &QTimer::timeout, this, &VirtualApplianceWindow::_onRefreshTimerTick);
     _refreshTimer.start();
@@ -92,9 +101,11 @@ VirtualApplianceWindow::~VirtualApplianceWindow()
 //  Implementatiuon helpers
 void VirtualApplianceWindow::_refresh()
 {
-    _ui->actionStop->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
-    _ui->actionSuspend->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
-                                   _virtualAppliance->suspendable());
+    _ui->actionStopVm->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
+    _ui->actionSuspendVm->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
+    _ui->actionResetVm->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running);
+    _ui->actionFullScreen->setEnabled(_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running &&
+                                      _displayWidgetsByTabIndex.contains(_ui->tabWidget->currentIndex()));
 
     //  Statistics on the Home tab
     if (_virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Running)
@@ -171,6 +182,18 @@ void VirtualApplianceWindow::_onSuspendVm()
     _refresh();
 }
 
+void VirtualApplianceWindow::_onResetVm()
+{
+    _virtualAppliance->reset();
+    _refresh();
+}
+
+void VirtualApplianceWindow::_onFullScreen()
+{
+    FullScreenWindow * fsw = new FullScreenWindow();
+    fsw->setVisible(true);
+}
+
 void VirtualApplianceWindow::_onRefreshTimerTick()
 {
     _refresh();
@@ -199,5 +222,13 @@ void VirtualApplianceWindow::_onCustomContextMenuRequested(const QPoint &point)
     }
 }
 
+void VirtualApplianceWindow::_onCurrentTabChanged()
+{
+    if (_displayWidgetsByTabIndex.contains(_ui->tabWidget->currentIndex()))
+    {   //  When switching to a tab that hosts a DisplayWidget, focus that DisplayWidget
+        _displayWidgetsByTabIndex[_ui->tabWidget->currentIndex()]->setFocus();
+    }
+    _refresh();
+}
 
 //  End of hadesvm-gui/VirtualApplianceWindow.cpp

@@ -53,9 +53,12 @@ namespace hadesvm
         private slots:
             void                _onStopVm();
             void                _onSuspendVm();
+            void                _onResetVm();
+            void                _onFullScreen();
 
             void                _onRefreshTimerTick();
             void                _onCustomContextMenuRequested(const QPoint &point);
+            void                _onCurrentTabChanged();
         };
     }
 }

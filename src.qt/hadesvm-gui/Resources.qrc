@@ -3,5 +3,37 @@
         <file>images/objects/ComputerHuge.png</file>
         <file>images/objects/ComputerLarge.png</file>
         <file>images/objects/ComputerSmall.png</file>
+        <file>images/actions/AboutLarge.png</file>
+        <file>images/actions/AboutSmall.png</file>
+        <file>images/actions/CloseLarge.png</file>
+        <file>images/actions/CloseSmall.png</file>
+        <file>images/actions/ConfigureLarge.png</file>
+        <file>images/actions/ConfigureSmall.png</file>
+        <file>images/actions/ExitLarge.png</file>
+        <file>images/actions/ExitSmall.png</file>
+        <file>images/actions/NewLarge.png</file>
+        <file>images/actions/NewSmall.png</file>
+        <file>images/actions/OpenLarge.png</file>
+        <file>images/actions/OpenSmall.png</file>
+        <file>images/actions/ResetLarge.png</file>
+        <file>images/actions/ResetSmall.png</file>
+        <file>images/actions/ResumeLarge.png</file>
+        <file>images/actions/ResumeSmall.png</file>
+        <file>images/actions/StartLarge.png</file>
+        <file>images/actions/StartSmall.png</file>
+        <file>images/actions/StopLarge.png</file>
+        <file>images/actions/StopSmall.png</file>
+        <file>images/actions/SuspendLalre.png</file>
+        <file>images/actions/SuspendSmall.png</file>
+        <file>images/actions/OkLarge.png</file>
+        <file>images/actions/OkSmall.png</file>
+        <file>images/actions/AddLarge.png</file>
+        <file>images/actions/AddSmall.png</file>
+        <file>images/actions/RemoveLarge.png</file>
+        <file>images/actions/RemoveSmall.png</file>
+        <file>images/actions/MakeFullScreenLarge.png</file>
+        <file>images/actions/MakeFullScreenSmall.png</file>
+        <file>images/actions/MakeWindowedLarge.png</file>
+        <file>images/actions/MakeWindowedSmall.png</file>
     </qresource>
 </RCC>

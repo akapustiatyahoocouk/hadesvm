@@ -3,6 +3,7 @@ include(../hadesvm.pri)
 SOURCES += \
     AboutDialog.cpp \
     ConfigureVirtualApplianceDialog.cpp \
+    FullScreenWindow.cpp \
     Main.cpp \
     MainWindow.cpp \
     NewVirtualApplianceDialog.cpp \
@@ -12,6 +13,7 @@ HEADERS += \
     API.hpp \
     AboutDialog.hpp \
     ConfigureVirtualApplianceDialog.hpp \
+    FullScreenWindow.hpp \
     MainWindow.hpp \
     NewVirtualApplianceDialog.hpp \
     VirtualApplianceWindow.hpp

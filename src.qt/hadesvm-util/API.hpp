@@ -42,6 +42,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QBackingStore>
 #include <QCloseEvent>
 #include <QColor>
 #include <QDialog>
@@ -59,7 +60,9 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPaintDeviceWindow>
 #include <QPainter>
+#include <QPushButton>
 #include <QQueue>
 #include <QRandomGenerator>
 #include <QRecursiveMutex>

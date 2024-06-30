@@ -144,10 +144,6 @@ namespace hadesvm
             //  Must only be called from the QApplication's main thread
             void                    stop() noexcept;
 
-            //  TODO document
-            //  Must only be called from the QApplication's main thread
-            bool                    suspendable() const noexcept;
-
             //  Suspends the VA if Running, otherwise has no effect.
             //  Must only be called from the QApplication's main thread
             void                    suspend() throws(VirtualApplianceException);
@@ -156,17 +152,23 @@ namespace hadesvm
             //  Must only be called from the QApplication's main thread
             void                    resume() throws(VirtualApplianceException);
 
+            //  Performs a live reset of a Running VA; has no effect if the
+            //  VA is not in the Running state.
+            void                    reset();
+
             //////////
             //  Operations (runtime state)
         public:
-            //  True iff "stop" has been requested for this VA.
+            //  True iff "stop"/"reset" has been requested for this VA.
             bool                    stopRequested() const { return _stopRequested; }
+            bool                    resetRequested() const { return _resetRequested; }
 
-            //  Requests this VA to "stop" as soon as practicable.
+            //  Requests this VA to "stop"/"reset" as soon as practicable.
             //  Can be called from any thread, including one of the VA's
             //  own worker threads. This allows a running VA to schedule
             //  its own termination.
             void                    requestStop();
+            void                    requestReset();
 
             //////////
             //  Operations (runtime statistics)
@@ -192,6 +194,7 @@ namespace hadesvm
 
             //  Runtime state
             std::atomic<bool>       _stopRequested;
+            std::atomic<bool>       _resetRequested;
 
             //  Runtime statistics
             hadesvm::util::Spinlock _statisticsGuard;
@@ -221,7 +224,6 @@ namespace hadesvm
                 //  IComponent (general; largely unused)
             public:
                 virtual ComponentType * componentType() const override { return _drivenComponent->componentType(); }
-                virtual bool            suspendable() const override { return _drivenComponent->suspendable(); }
                 virtual VirtualAppliance *  virtualAppliance() const override { return _drivenComponent->virtualAppliance(); }
                 virtual QString         displayName() const override { return _drivenComponent->displayName(); }
                 virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override {}

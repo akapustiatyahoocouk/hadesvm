@@ -153,7 +153,6 @@ namespace hadesvm
                 //  hadesvm::core::ComponentType
             public:
                 virtual hadesvm::core::ComponentCategory *  category() const override;
-                virtual bool    suspendable() const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual Kis1Controller *    createComponent() override;
@@ -510,7 +509,6 @@ namespace hadesvm
                 //  hadesvm::core::ComponentType
             public:
                 virtual hadesvm::core::ComponentCategory *  category() const override;
-                virtual bool    suspendable() const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualArchitecture * architecture) const override;
                 virtual bool    isCompatibleWith(hadesvm::core::VirtualApplianceType * type) const override;
                 virtual Kis1Keyboard *  createComponent() override;

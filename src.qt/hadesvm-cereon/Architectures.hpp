@@ -11,7 +11,7 @@ namespace hadesvm
     {
         //////////
         //  The "Cereon Workstation" architecture
-    class HADESVM_CEREON_PUBLIC CereonWorkstationArchitecture final : public hadesvm::core::VirtualArchitecture
+        class HADESVM_CEREON_PUBLIC CereonWorkstationArchitecture final : public hadesvm::core::VirtualArchitecture
         {
             HADESVM_DECLARE_SINGLETON(CereonWorkstationArchitecture)
 

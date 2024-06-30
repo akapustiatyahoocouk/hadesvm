@@ -13,9 +13,11 @@
   <property name="windowTitle">
    <string>TODO</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="Resources.qrc">
-    <normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</normaloff>:/hadesvm/gui/images/objects/ComputerLarge.png</iconset>
+  <property name="iconSize">
+   <size>
+    <width>16</width>
+    <height>16</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QFormLayout" name="formLayout">
@@ -69,28 +71,86 @@
      <x>0</x>
      <y>0</y>
      <width>433</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuVm">
     <property name="title">
      <string>&amp;VM</string>
     </property>
-    <addaction name="actionStop"/>
+    <addaction name="actionStopVm"/>
     <addaction name="separator"/>
-    <addaction name="actionSuspend"/>
+    <addaction name="actionSuspendVm"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetVm"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>Vie&amp;w</string>
+    </property>
+    <addaction name="actionFullScreen"/>
    </widget>
    <addaction name="menuVm"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionSuspend">
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="actionSuspendVm">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/hadesvm/gui/images/actions/SuspendSmall.png</normaloff>:/hadesvm/gui/images/actions/SuspendSmall.png</iconset>
+   </property>
    <property name="text">
     <string>S&amp;uspend</string>
    </property>
   </action>
-  <action name="actionStop">
+  <action name="actionStopVm">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/hadesvm/gui/images/actions/StopSmall.png</normaloff>:/hadesvm/gui/images/actions/StopSmall.png</iconset>
+   </property>
    <property name="text">
     <string>S&amp;top</string>
+   </property>
+  </action>
+  <action name="actionResetVm">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/hadesvm/gui/images/actions/ResetSmall.png</normaloff>:/hadesvm/gui/images/actions/ResetSmall.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/hadesvm/gui/images/actions/MakeFullScreenSmall.png</normaloff>:/hadesvm/gui/images/actions/MakeFullScreenSmall.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Full-screen</string>
    </property>
   </action>
  </widget>
@@ -99,7 +159,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>actionStop</sender>
+   <sender>actionStopVm</sender>
    <signal>triggered()</signal>
    <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
    <slot>_onStopVm()</slot>
@@ -115,7 +175,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionSuspend</sender>
+   <sender>actionSuspendVm</sender>
    <signal>triggered()</signal>
    <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
    <slot>_onSuspendVm()</slot>
@@ -130,9 +190,60 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionResetVm</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
+   <slot>_onResetVm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFullScreen</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
+   <slot>_onFullScreen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>hadesvm::gui::VirtualApplianceWindow</receiver>
+   <slot>_onCurrentTabChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>134</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>_onStopVm()</slot>
   <slot>_onSuspendVm()</slot>
+  <slot>_onResetVm()</slot>
+  <slot>_onFullScreen()</slot>
+  <slot>_onCurrentTabChanged()</slot>
  </slots>
 </ui>
