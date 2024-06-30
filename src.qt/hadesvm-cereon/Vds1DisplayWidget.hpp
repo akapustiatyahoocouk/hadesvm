@@ -32,6 +32,8 @@ namespace hadesvm
             //  QWidget
         protected:
             virtual void        paintEvent(QPaintEvent * event) override;
+            virtual void        keyPressEvent(QKeyEvent * event) override;
+            virtual void        keyReleaseEvent(QKeyEvent * event) override;
 
             //////////
             //  hadesvm::core::DisplayWidget

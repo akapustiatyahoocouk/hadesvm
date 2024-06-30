@@ -11,6 +11,7 @@ linux-g++ {
     QMAKE_CXXFLAGS_RELEASE += -O3
 }
 win32-msvc {
+    #   TODO try removing /wd4710 /wd4711 when switching to MSVC2022
     QMAKE_CXXFLAGS += /GS- /std:c++latest /Za /Zc:rvalueCast /Wall /WX /wd4710 /wd4711
 }
 

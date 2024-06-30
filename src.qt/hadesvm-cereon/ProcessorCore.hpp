@@ -544,7 +544,8 @@ namespace hadesvm
             void                _storeLongWord(uint64_t address, uint64_t value);
 
             //  Helpers (interrupt handling)
-            [[noreturn]] void   _translateAndThrow(MemoryAccessError memoryAccessError);
+            Q_NORETURN void     _translateAndThrow(MemoryAccessError memoryAccessError) throws(ProgramInterrupt);
+            Q_NORETURN void     _translateAndThrow(IoError ioError) throws(ProgramInterrupt);
             void                _handleTimerInterrupt();
             void                _handleIoInterrupt(uint64_t interruptStatusCode);
             void                _handleSvcInterrupt();

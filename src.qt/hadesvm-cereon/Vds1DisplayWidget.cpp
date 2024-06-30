@@ -71,7 +71,7 @@ void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
     }
 
     QRect g = this->geometry();
-    qDebug() << g;
+    //  TODO kill off qDebug() << g;
 
     /*  TODO kill off - this is debug code
     QElapsedTimer elapsedTimer;
@@ -105,6 +105,22 @@ void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
     qint64 actualNsElapsed = elapsedTimer.nsecsElapsed();
     qDebug() << "Vds1DisplayWidget::paintEvent took " << actualNsElapsed << " ns";
     */
+}
+
+void Vds1DisplayWidget::keyPressEvent(QKeyEvent * event)
+{
+    qDebug() << "keyPressEvent: "
+             << "nativeScanCode=" << event->nativeScanCode()
+             << "nativeVirtualKey=" << event->nativeVirtualKey();
+    event->accept();
+}
+
+void Vds1DisplayWidget::keyReleaseEvent(QKeyEvent * event)
+{
+    qDebug() << "keyReleaseEvent: "
+             << "nativeScanCode=" << event->nativeScanCode()
+             << "nativeVirtualKey=" << event->nativeVirtualKey();
+    event->accept();
 }
 
 //////////

@@ -10,6 +10,13 @@ namespace hadesvm
     namespace cereon
     {
         //////////
+        //  Thrown if an I/O fails
+        enum class IoError
+        {
+            HardwareFault       //  other error
+        };
+
+        //////////
         //  An I/O interrupt.
         //  Can be in one of two states - "standalone" or "pending in an I/O port".
         //  A "pending" interrupt cannot be destroyed.
@@ -31,10 +38,10 @@ namespace hadesvm
             //  Operations
         public:
             //  The I/O port number where the interrupt has occurred
-            uint16_t            getIoPortNumber() const { return _ioPortNumber; }
+            uint16_t            ioPortNumber() const { return _ioPortNumber; }
 
             //  The ISC of the I/O interrupt
-            uint16_t            getInterruptStatusCode() const { return _interruptStatusCode; }
+            uint16_t            interruptStatusCode() const { return _interruptStatusCode; }
 
             //////////
             //  Implementation
@@ -117,8 +124,8 @@ namespace hadesvm
             //  the read/write call again and again until it finally succeeds -
             //  and the I/O port implementation MUST ensure that it eventually
             //  succeeds.
-            virtual bool        readByte(uint8_t & value) = 0;
-            virtual bool        writeByte(uint8_t value) = 0;
+            virtual bool        readByte(uint8_t & value) throws(IoError) = 0;
+            virtual bool        writeByte(uint8_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -141,8 +148,8 @@ namespace hadesvm
             //  the read/write call again and again until it finally succeeds -
             //  and the I/O port implementation MUST ensure that it eventually
             //  succeeds.
-            virtual bool        readHalfWord(uint16_t & value) = 0;
-            virtual bool        writeHalfWord(uint16_t value) = 0;
+            virtual bool        readHalfWord(uint16_t & value) throws(IoError) = 0;
+            virtual bool        writeHalfWord(uint16_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -165,8 +172,8 @@ namespace hadesvm
             //  the read/write call again and again until it finally succeeds -
             //  and the I/O port implementation MUST ensure that it eventually
             //  succeeds.
-            virtual bool        readWord(uint32_t & value) = 0;
-            virtual bool        writeWord(uint32_t value) = 0;
+            virtual bool        readWord(uint32_t & value) throws(IoError) = 0;
+            virtual bool        writeWord(uint32_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -189,8 +196,8 @@ namespace hadesvm
             //  the read/write call again and again until it finally succeeds -
             //  and the I/O port implementation MUST ensure that it eventually
             //  succeeds.
-            virtual bool        readLongWord(uint64_t & value) = 0;
-            virtual bool        writeLongWord(uint64_t value) = 0;
+            virtual bool        readLongWord(uint64_t & value) throws(IoError) = 0;
+            virtual bool        writeLongWord(uint64_t value) throws(IoError) = 0;
         };
 
         //////////
@@ -302,20 +309,20 @@ namespace hadesvm
             //  If there is no I/O port at the specified address, "read" returns
             //  0 and "write" is ignored, and both are deemed a "success".
             //  Thread-safe; IoBus serialises accesses.
-            bool                readByte(uint16_t address, uint8_t & value);
-            bool                readHalfWord(uint16_t address, uint16_t & value);
-            bool                readWord(uint16_t address, uint32_t & value);
-            bool                readLongWord(uint16_t address, uint64_t & value);
+            bool                readByte(uint16_t address, uint8_t & value) throws(IoError);
+            bool                readHalfWord(uint16_t address, uint16_t & value) throws(IoError);
+            bool                readWord(uint16_t address, uint32_t & value) throws(IoError);
+            bool                readLongWord(uint16_t address, uint64_t & value) throws(IoError);
 
-            bool                writeByte(uint16_t address, uint8_t value);
-            bool                writeHalfWord(uint16_t address, uint16_t value);
-            bool                writeWord(uint16_t address, uint32_t value);
-            bool                writeLongWord(uint16_t address, uint64_t value);
+            bool                writeByte(uint16_t address, uint8_t value) throws(IoError);
+            bool                writeHalfWord(uint16_t address, uint16_t value) throws(IoError);
+            bool                writeWord(uint16_t address, uint32_t value) throws(IoError);
+            bool                writeLongWord(uint16_t address, uint64_t value) throws(IoError);
 
             //  Implementation of TSTP/SETP instruction behaviour
             //  Thread-safe; IoBus serialises accesses.
-            uint64_t            testPortStatus(uint16_t address);
-            void                setPortStatus(uint16_t address, uint64_t status);
+            uint64_t            testPortStatus(uint16_t address) throws(IoError);
+            void                setPortStatus(uint16_t address, uint64_t status) throws(IoError);
 
             //  Returns the next I/O interrupt ready to handle (converting it from
             //  Pending to Standalone); the caller should "delete" the returned

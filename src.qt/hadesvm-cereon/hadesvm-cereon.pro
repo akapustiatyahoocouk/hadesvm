@@ -13,6 +13,10 @@ SOURCES += \
     IoBus.cpp \
     IoBusEditor.cpp \
     IoPort.cpp \
+    Kis1Controller.cpp \
+    Kis1Keyboard.cpp \
+    Kis1KeyboardLayout.cpp \
+    Kis1UkExtendedKeyboardLayout.cpp \
     MemoryBus.cpp \
     MemoryBusEditor.cpp \
     Plugins.cpp \
@@ -43,6 +47,7 @@ HEADERS += \
     Cmos1Editor.hpp \
     Io.hpp \
     IoBusEditor.hpp \
+    Kis1.hpp \
     Linkage.hpp \
     Memory.hpp \
     MemoryBusEditor.hpp \

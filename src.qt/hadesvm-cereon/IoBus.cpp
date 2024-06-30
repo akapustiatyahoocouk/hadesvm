@@ -294,7 +294,7 @@ void IoBus::detachIoPort(IIoPort * ioPort)
     }
 }
 
-bool IoBus::readByte(uint16_t address, uint8_t & value)
+bool IoBus::readByte(uint16_t address, uint8_t & value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -309,7 +309,7 @@ bool IoBus::readByte(uint16_t address, uint8_t & value)
     }
 }
 
-bool IoBus::readHalfWord(uint16_t address, uint16_t & value)
+bool IoBus::readHalfWord(uint16_t address, uint16_t & value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -324,7 +324,7 @@ bool IoBus::readHalfWord(uint16_t address, uint16_t & value)
     }
 }
 
-bool IoBus::readWord(uint16_t address, uint32_t & value)
+bool IoBus::readWord(uint16_t address, uint32_t & value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -339,7 +339,7 @@ bool IoBus::readWord(uint16_t address, uint32_t & value)
     }
 }
 
-bool IoBus::readLongWord(uint16_t address, uint64_t & value)
+bool IoBus::readLongWord(uint16_t address, uint64_t & value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -354,7 +354,7 @@ bool IoBus::readLongWord(uint16_t address, uint64_t & value)
     }
 }
 
-bool IoBus::writeByte(uint16_t address, uint8_t value)
+bool IoBus::writeByte(uint16_t address, uint8_t value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -373,7 +373,7 @@ bool IoBus::writeByte(uint16_t address, uint8_t value)
     return true;    //  I/O port does not exist - write is suppressed
 }
 
-bool IoBus::writeHalfWord(uint16_t address, uint16_t value)
+bool IoBus::writeHalfWord(uint16_t address, uint16_t value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -384,7 +384,7 @@ bool IoBus::writeHalfWord(uint16_t address, uint16_t value)
     return true;    //  I/O port does not exist - write is suppressed
 }
 
-bool IoBus::writeWord(uint16_t address, uint32_t value)
+bool IoBus::writeWord(uint16_t address, uint32_t value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -395,7 +395,7 @@ bool IoBus::writeWord(uint16_t address, uint32_t value)
     return true;    //  I/O port does not exist - write is suppressed
 }
 
-bool IoBus::writeLongWord(uint16_t address, uint64_t value)
+bool IoBus::writeLongWord(uint16_t address, uint64_t value) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -406,7 +406,7 @@ bool IoBus::writeLongWord(uint16_t address, uint64_t value)
     return true;    //  I/O port does not exist - write is suppressed
 }
 
-uint64_t IoBus::testPortStatus(uint16_t address)
+uint64_t IoBus::testPortStatus(uint16_t address) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 
@@ -416,7 +416,7 @@ uint64_t IoBus::testPortStatus(uint16_t address)
         if (IoInterrupt * ioInterrupt = _ioPorts[address]->releasePendingIoInterrupt())
         {
             result |= 0x02; //  was pending
-            result |= static_cast<uint32_t>(ioInterrupt->getInterruptStatusCode()) << 16;
+            result |= static_cast<uint32_t>(ioInterrupt->interruptStatusCode()) << 16;
             delete ioInterrupt; //  handled!
         }
         if (_ioPorts[address]->interruptsEnabled())
@@ -428,7 +428,7 @@ uint64_t IoBus::testPortStatus(uint16_t address)
     return 0;   //  not there
 }
 
-void IoBus::setPortStatus(uint16_t address, uint64_t status)
+void IoBus::setPortStatus(uint16_t address, uint64_t status) throws(IoError)
 {
     QMutexLocker lock(&_accessGuard);
 

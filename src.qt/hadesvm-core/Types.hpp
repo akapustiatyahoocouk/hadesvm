@@ -29,7 +29,7 @@ namespace hadesvm
         public:
             MemorySize() : _numberOfUnits(0), _unit(Unit::B) {}
             MemorySize(uint64_t numberOfUnits, Unit unit);
-            virtual ~MemorySize() = default;
+            ~MemorySize() = default;
 
             //////////
             //  Operators
@@ -89,7 +89,7 @@ namespace hadesvm
         public:
             ClockFrequency() : _numberOfUnits(0), _unit(Unit::Hz) {}
             ClockFrequency(uint64_t numberOfUnits, Unit unit);
-            virtual ~ClockFrequency() = default;
+            ~ClockFrequency() = default;
 
             //////////
             //  Operators
@@ -152,7 +152,7 @@ namespace hadesvm
         public:
             TimeInterval() : _numberOfUnits(0), _unit(Unit::S) {}
             TimeInterval(uint64_t numberOfUnits, Unit unit);
-            virtual ~TimeInterval() = default;
+            ~TimeInterval() = default;
 
             //////////
             //  Operators

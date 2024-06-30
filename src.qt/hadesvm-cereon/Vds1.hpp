@@ -1,7 +1,7 @@
 //
 //  hadesvm-cereon/Vds1.hpp
 //
-//  The Cereon VDS1 controller
+//  The Cereon VDS1 subsystem
 //
 //////////
 
@@ -33,64 +33,6 @@ namespace hadesvm
             //////////
             //  Types
         public:
-            /*  TODO kill off
-            //  The editor of VDS1 properties
-            class EDP_CEREON_PUBLIC PropertiesEditor : public edp::core::ComponentPropertiesEditor
-            {
-                CARL_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(PropertiesEditor)
-
-                //////////
-                //  Construction/destruction
-            public:
-                explicit PropertiesEditor(carl::Window * parent);
-
-                //////////
-                //  edp::core::ComponentPropertiesEditor
-            public:
-                virtual edp::core::ComponentType *  getComponentType() const override;
-                virtual Vds1Controller *    getEditedComponent() const override;
-                virtual bool                setEditedComponent(edp::core::Component * component) override;
-
-                //////////
-                //  Implementation
-            private:
-                Vds1Controller *            _vds1Controller;  //  nullptr == none
-
-                //  Helpers
-                void                        _refresh();
-                void                        _startListeningToChangeEvents();
-                void                        _stopListeningToChangeEvents();
-
-                //////////
-                //  Resources
-            private:
-                carl::GridBagLayout         _layout;
-
-                //////////
-                //  Controls
-            private:
-                carl::Label                 _statePortLabel;
-                carl::TextField             _statePortTextField;
-                carl::Label                 _commandPortLabel;
-                carl::TextField             _commandPortTextField;
-                carl::Label                 _dataPortLabel;
-                carl::TextField             _dataPortTextField;
-                carl::Label                 _numberOfCompartmentsLabel;
-                carl::DropDownList          _numberOfCompartmentsDropDownList;  //  value == index + 1
-                carl::Label                 _clockFrequecyLabel;
-                edp::core::ClockFrequencyField  _clockFrequencyField;
-
-                //////////
-                //  Event handlers
-            private:
-                void                        _onStatePortTextFieldTextChanged(carl::EventArgs & args);
-                void                        _onCommandPortTextFieldTextChanged(carl::EventArgs & args);
-                void                        _onDataPortTextFieldTextChanged(carl::EventArgs & args);
-                void                        _onNumberOfCompartmentsDropDownListSelectedItemChanged(carl::EventArgs & args);
-                void                        _onClockFrequencyFieldValueChanged(carl::EventArgs & args);
-            };
-            */
-
             //  The type of a Cereon VDS1 component
             class HADESVM_CEREON_PUBLIC Type : public hadesvm::core::ComponentType
             {
@@ -594,70 +536,6 @@ namespace hadesvm
             //  Runtime state
             //  TODO what ? Kis1Keyboard *              _kis1Keyboard = nullptr;
             Vds1Controller::_VideoSignal *  _videoSignal = nullptr;
-
-#if 0   //  TODO what ?
-            //  UI
-            class _DisplaySurface : public hadesvm::core::ComponentUiTraits::FullScreenWidget
-            {
-                CARL_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_DisplaySurface)
-
-                //////////
-                //  Construction/destruction
-            public:
-                _DisplaySurface(carl::Window * parent, Vds1Display * vds1Display);
-                virtual ~_DisplaySurface() noexcept;
-
-                //////////
-                //  hadesvm::core::ComponentUiTraits::FullScreenWidget
-            public:
-                virtual carl::String    getDisplayName() const override;
-                virtual carl::Image     getSmallImage() const override;
-
-                //////////
-                //  Implementation
-            private:
-                Vds1Display * const     _vds1Display;
-                carl::Image             _offScreenImage;
-
-                carl::List<carl::Color> _lastRenderedPixels;
-                carl::List<carl::Color> _newPixels;
-
-                carl::Timer             _refreshTimer;
-
-                //////////
-                //  Event handlers
-            private:
-                void                    _onPaint(carl::PaintEventArgs & args);
-                void                    _onRefreshTimerTick(carl::EventArgs & args);
-                void                    _onMousePressed(carl::MouseEventArgs & args);
-                void                    _onKeyPressed(carl::KeyEventArgs & args);
-                void                    _onKeyReleased(carl::KeyEventArgs & args);
-            };
-
-            class _UiTraits : public hadesvm::core::ComponentUiTraits
-            {
-                CARL_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(_UiTraits)
-
-                //////////
-                //  Construction/destruction
-            public:
-                explicit _UiTraits(Vds1Display * vds1Display);
-                virtual ~_UiTraits();
-
-                //////////
-                //  hadesvm::core::ComponentUiTraits
-            public:
-                virtual carl::List<FullScreenWidget *>   getFullScreenWidgets() const override;
-
-                //////////
-                //  Implementation
-            private:
-                Vds1Display * const     _vds1Display;
-                carl::Frame *           _hiddenFrame;   //  ...initial parent for aggregated widgets
-                _DisplaySurface *       _displaySurface;
-            };
-#endif
-            //  TODO what ? carl::List<_UiTraits *>     _allUiTraits;   //  ...created for this component
         };
     }
 }

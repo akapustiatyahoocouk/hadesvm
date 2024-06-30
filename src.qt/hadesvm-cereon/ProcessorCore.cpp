@@ -593,7 +593,7 @@ void ProcessorCore::_storeLongWord(uint64_t address , uint64_t value)
 
 //////////
 //  Implementation helpers (interrupt handling)
-Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccessError)
+Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccessError) throws(ProgramInterrupt)
 {
     switch (memoryAccessError)
     {
@@ -606,6 +606,16 @@ Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccess
         case MemoryAccessError::HardwareFault:
         default:
             throw HardwareInterrupt::MEMORY;
+    }
+}
+
+Q_NORETURN void ProcessorCore::_translateAndThrow(IoError ioError) throws(ProgramInterrupt)
+{
+    switch (ioError)
+    {
+        case IoError::HardwareFault:
+        default:
+            throw HardwareInterrupt::IO;
     }
 }
 

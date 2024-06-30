@@ -4588,14 +4588,21 @@ unsigned ProcessorCore::_handleInB(uint32_t instruction) throws(ProgramInterrupt
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint8_t value;
-    if (!_processor->_ioBus->readByte(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint8_t value;
+        if (!_processor->_ioBus->readByte(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::signExtendInt8(value);
     }
-    _r[r2] = Alu::signExtendInt8(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4616,14 +4623,21 @@ unsigned ProcessorCore::_handleInUB(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint8_t value;
-    if (!_processor->_ioBus->readByte(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint8_t value;
+        if (!_processor->_ioBus->readByte(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::zeroExtendInt8(value);
     }
-    _r[r2] = Alu::zeroExtendInt8(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4644,14 +4658,21 @@ unsigned ProcessorCore::_handleInH(uint32_t instruction) throws(ProgramInterrupt
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint16_t value;
-    if (!_processor->_ioBus->readHalfWord(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint16_t value;
+        if (!_processor->_ioBus->readHalfWord(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::signExtendInt16(value);
     }
-    _r[r2] = Alu::signExtendInt16(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4672,14 +4693,21 @@ unsigned ProcessorCore::_handleInUH(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint16_t value;
-    if (!_processor->_ioBus->readHalfWord(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint16_t value;
+        if (!_processor->_ioBus->readHalfWord(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::zeroExtendInt16(value);
     }
-    _r[r2] = Alu::zeroExtendInt16(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4700,14 +4728,21 @@ unsigned ProcessorCore::_handleInW(uint32_t instruction) throws(ProgramInterrupt
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint32_t value;
-    if (!_processor->_ioBus->readWord(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint32_t value;
+        if (!_processor->_ioBus->readWord(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::signExtendInt32(value);
     }
-    _r[r2] = Alu::signExtendInt32(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4728,14 +4763,21 @@ unsigned ProcessorCore::_handleInUW(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint32_t value;
-    if (!_processor->_ioBus->readWord(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint32_t value;
+        if (!_processor->_ioBus->readWord(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = Alu::zeroExtendInt32(value);
     }
-    _r[r2] = Alu::zeroExtendInt32(value);
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4756,14 +4798,21 @@ unsigned ProcessorCore::_handleInL(uint32_t instruction) throws(ProgramInterrupt
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    uint64_t value;
-    if (!_processor->_ioBus->readLongWord(static_cast<uint16_t>(_r[r1]), value))
-    {   //  I/O port is not ready to provide a value - stall the CPU by
-        //  re-executing the IN instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        uint64_t value;
+        if (!_processor->_ioBus->readLongWord(static_cast<uint16_t>(_r[r1]), value))
+        {   //  I/O port is not ready to provide a value - stall the CPU by
+            //  re-executing the IN instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+        _r[r2] = value;
     }
-    _r[r2] = value;
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4784,11 +4833,18 @@ unsigned ProcessorCore::_handleOutB(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    if (!_processor->_ioBus->writeByte(static_cast<uint16_t>(_r[r1]), static_cast<uint8_t>(_r[r2])))
-    {   //  I/O port is not ready to accept a value - stall the CPU by
-        //  re-executing the OUT instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        if (!_processor->_ioBus->writeByte(static_cast<uint16_t>(_r[r1]), static_cast<uint8_t>(_r[r2])))
+        {   //  I/O port is not ready to accept a value - stall the CPU by
+            //  re-executing the OUT instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
     }
     //  Done
     return 1;
@@ -4810,11 +4866,18 @@ unsigned ProcessorCore::_handleOutH(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    if (!_processor->_ioBus->writeHalfWord(static_cast<uint16_t>(_r[r1]), static_cast<uint16_t>(_r[r2])))
-    {   //  I/O port is not ready to accept a value - stall the CPU by
-        //  re-executing the OUT instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        if (!_processor->_ioBus->writeHalfWord(static_cast<uint16_t>(_r[r1]), static_cast<uint16_t>(_r[r2])))
+        {   //  I/O port is not ready to accept a value - stall the CPU by
+            //  re-executing the OUT instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
     }
     //  Done
     return 1;
@@ -4836,11 +4899,18 @@ unsigned ProcessorCore::_handleOutW(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    if (!_processor->_ioBus->writeWord(static_cast<uint16_t>(_r[r1]), static_cast<uint32_t>(_r[r2])))
-    {   //  I/O port is not ready to accept a value - stall the CPU by
-        //  re-executing the OUT instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        if (!_processor->_ioBus->writeWord(static_cast<uint16_t>(_r[r1]), static_cast<uint32_t>(_r[r2])))
+        {   //  I/O port is not ready to accept a value - stall the CPU by
+            //  re-executing the OUT instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
     }
     //  Done
     return 1;
@@ -4862,11 +4932,18 @@ unsigned ProcessorCore::_handleOutL(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    if (!_processor->_ioBus->writeLongWord(static_cast<uint16_t>(_r[r1]), _r[r2]))
-    {   //  I/O port is not ready to accept a value - stall the CPU by
-        //  re-executing the OUT instruction
-        _r[_IpRegister] -= 4;
-        return 1;
+    try
+    {
+        if (!_processor->_ioBus->writeLongWord(static_cast<uint16_t>(_r[r1]), _r[r2]))
+        {   //  I/O port is not ready to accept a value - stall the CPU by
+            //  re-executing the OUT instruction
+            _r[_IpRegister] -= 4;
+            return 1;
+        }
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
     }
     //  Done
     return 1;
@@ -4888,7 +4965,14 @@ unsigned ProcessorCore::_handleTstp(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    _r[r2] = _processor->_ioBus->testPortStatus(static_cast<uint16_t>(_r[r1]));
+    try
+    {
+        _r[r2] = _processor->_ioBus->testPortStatus(static_cast<uint16_t>(_r[r1]));
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }
@@ -4909,7 +4993,14 @@ unsigned ProcessorCore::_handleSetp(uint32_t instruction) throws(ProgramInterrup
     {
         _raiseProgramInterrupt(ProgramInterrupt::PRIVILEGED);
     }
-    _processor->_ioBus->setPortStatus(static_cast<uint16_t>(_r[r1]), _r[r2]);
+    try
+    {
+        _processor->_ioBus->setPortStatus(static_cast<uint16_t>(_r[r1]), _r[r2]);
+    }
+    catch (IoError ioError)
+    {
+        _translateAndThrow(ioError);
+    }
     //  Done
     return 1;
 }

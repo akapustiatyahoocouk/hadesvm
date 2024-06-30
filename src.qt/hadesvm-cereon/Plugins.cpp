@@ -51,6 +51,10 @@ namespace
         hadesvm::core::ComponentType::register(Cmos1::Type::instance());
         hadesvm::core::ComponentType::register(Vds1Controller::Type::instance());
         hadesvm::core::ComponentType::register(Vds1Display::Type::instance());
+        hadesvm::core::ComponentType::register(Kis1Controller::Type::instance());
+        hadesvm::core::ComponentType::register(Kis1Keyboard::Type::instance());
+
+        Kis1KeyboardLayout::register(Kis1UkExtendedKeyboardLayout::instance());
     }
 }
 
