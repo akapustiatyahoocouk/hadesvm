@@ -54,7 +54,7 @@ void Kis1KeyboardEditor::loadComponentConfiguration()
 {
     _ui->controllerStatePortLineEdit->setText(hadesvm::util::toString(_kis1Keyboard->controllerStatePortAddress(), "%04X"));
     _ui->controllerCompartmentComboBox->setCurrentIndex(_kis1Keyboard->controllerCompartmentNumber());
-    _ui->layoutComboBox->setCurrentIndex(_keyboardLayouts.indexOf(_kis1Keyboard->layout()));
+    _ui->layoutComboBox->setCurrentIndex(static_cast<int>(_keyboardLayouts.indexOf(_kis1Keyboard->layout())));
 }
 
 bool Kis1KeyboardEditor::canSaveComponentConfiguration() const

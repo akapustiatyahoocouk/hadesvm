@@ -83,6 +83,11 @@ namespace hadesvm
         public:
             virtual Code        code() const override;
             virtual Kis1ScanCode    translateKey(uint32_t nativeScanCode, uint32_t nativeVirtualKey) override;
+
+            //////////
+            //  Implementation
+        private:
+            QMap<uint32_t, uint8_t> _kis1ScanCodesForNativeScanCodes;
         };
 
         //  The "UK" keyboard layout
@@ -101,6 +106,11 @@ namespace hadesvm
         public:
             virtual Code        code() const override;
             virtual Kis1ScanCode    translateKey(uint32_t nativeScanCode, uint32_t nativeVirtualKey) override;
+
+            //////////
+            //  Implementation
+        private:
+            QMap<uint32_t, uint8_t> _kis1ScanCodesForNativeScanCodes;
         };
 
         //////////
