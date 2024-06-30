@@ -4601,7 +4601,7 @@ unsigned ProcessorCore::_handleInB(uint32_t instruction) throws(ProgramInterrupt
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4636,7 +4636,7 @@ unsigned ProcessorCore::_handleInUB(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4671,7 +4671,7 @@ unsigned ProcessorCore::_handleInH(uint32_t instruction) throws(ProgramInterrupt
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4706,7 +4706,7 @@ unsigned ProcessorCore::_handleInUH(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4741,7 +4741,7 @@ unsigned ProcessorCore::_handleInW(uint32_t instruction) throws(ProgramInterrupt
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4776,7 +4776,7 @@ unsigned ProcessorCore::_handleInUW(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4811,7 +4811,7 @@ unsigned ProcessorCore::_handleInL(uint32_t instruction) throws(ProgramInterrupt
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4844,7 +4844,7 @@ unsigned ProcessorCore::_handleOutB(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4877,7 +4877,7 @@ unsigned ProcessorCore::_handleOutH(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4910,7 +4910,7 @@ unsigned ProcessorCore::_handleOutW(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4943,7 +4943,7 @@ unsigned ProcessorCore::_handleOutL(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4971,7 +4971,7 @@ unsigned ProcessorCore::_handleTstp(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;
@@ -4999,7 +4999,7 @@ unsigned ProcessorCore::_handleSetp(uint32_t instruction) throws(ProgramInterrup
     }
     catch (IoError ioError)
     {
-        _translateAndThrow(ioError);
+        _translateAndThrowIO(ioError);
     }
     //  Done
     return 1;

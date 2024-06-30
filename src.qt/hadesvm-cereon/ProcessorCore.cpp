@@ -247,7 +247,7 @@ uint32_t ProcessorCore::_fetchInstruction(uint64_t address) throws(ProgramInterr
     }
     catch (MemoryAccessError err)
     {   //  OOPS! Translate & re-throw
-        _translateAndThrow(err);
+        _translateAndThrowI(err);
     }
 }
 
@@ -269,7 +269,7 @@ uint64_t ProcessorCore::_fetchLongWord(uint64_t address) throws(ProgramInterrupt
     }
     catch (MemoryAccessError err)
     {   //  OOPS! Translate & re-throw
-        _translateAndThrow(err);
+        _translateAndThrowD(err);
     }
 }
 
@@ -286,7 +286,7 @@ uint8_t ProcessorCore::_loadByte(uint64_t address)
     }
     catch (MemoryAccessError err)
     {   //  OOPS! Translate & re-throw
-        _translateAndThrow(err);
+        _translateAndThrowD(err);
     }
 }
 
@@ -304,7 +304,7 @@ uint16_t ProcessorCore::_loadHalfWord(uint64_t address)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -347,7 +347,7 @@ uint32_t ProcessorCore::_loadWord(uint64_t address)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -394,7 +394,7 @@ uint64_t ProcessorCore::_loadLongWord(uint64_t address)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -448,7 +448,7 @@ void ProcessorCore::_storeByte(uint64_t address, uint8_t value)
     }
     catch (MemoryAccessError err)
     {   //  OOPS! Translate & re-throw
-        _translateAndThrow(err);
+        _translateAndThrowD(err);
     }
 }
 
@@ -466,7 +466,7 @@ void ProcessorCore::_storeHalfWord(uint64_t address, uint16_t value)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -507,7 +507,7 @@ void ProcessorCore::_storeWord(uint64_t address, uint32_t value)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -552,7 +552,7 @@ void ProcessorCore::_storeLongWord(uint64_t address , uint64_t value)
         }
         catch (MemoryAccessError err)
         {   //  OOPS! Translate & re-throw
-            _translateAndThrow(err);
+            _translateAndThrowD(err);
         }
     }
     else if (_features.has(Feature::UnalignedOperand))
@@ -593,7 +593,7 @@ void ProcessorCore::_storeLongWord(uint64_t address , uint64_t value)
 
 //////////
 //  Implementation helpers (interrupt handling)
-Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccessError) throws(ProgramInterrupt)
+Q_NORETURN void ProcessorCore::_translateAndThrowI(MemoryAccessError memoryAccessError) throws(ProgramInterrupt)
 {
     switch (memoryAccessError)
     {
@@ -609,7 +609,23 @@ Q_NORETURN void ProcessorCore::_translateAndThrow(MemoryAccessError memoryAccess
     }
 }
 
-Q_NORETURN void ProcessorCore::_translateAndThrow(IoError ioError) throws(ProgramInterrupt)
+Q_NORETURN void ProcessorCore::_translateAndThrowD(MemoryAccessError memoryAccessError) throws(ProgramInterrupt)
+{
+    switch (memoryAccessError)
+    {
+        case MemoryAccessError::InvalidAddress:
+            throw ProgramInterrupt::DADDRESS;
+        case MemoryAccessError::InvalidAlignment:
+            throw ProgramInterrupt::DALIGN;
+        case MemoryAccessError::AccessDenied:
+            throw ProgramInterrupt::DACCESS;
+        case MemoryAccessError::HardwareFault:
+        default:
+            throw HardwareInterrupt::MEMORY;
+    }
+}
+
+Q_NORETURN void ProcessorCore::_translateAndThrowIO(IoError ioError) throws(ProgramInterrupt)
 {
     switch (ioError)
     {

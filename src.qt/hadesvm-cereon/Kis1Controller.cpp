@@ -551,15 +551,16 @@ bool Kis1Controller::_CurrentDevicePort::readByte(uint8_t & value)
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
             value = _kis1Controller->_currentDevice;
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_CurrentDevicePort::writeByte(uint8_t value)
@@ -585,6 +586,7 @@ bool Kis1Controller::_CurrentDevicePort::writeByte(uint8_t value)
             return true;
         default:
             failure();
+            return false;
     }
 }
 
@@ -599,15 +601,16 @@ bool Kis1Controller::_InterruptMaskPort::readByte(uint8_t & value)
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
             value = _kis1Controller->_interruptMask;
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_InterruptMaskPort::writeByte(uint8_t value)
@@ -624,15 +627,16 @@ bool Kis1Controller::_InterruptMaskPort::writeByte(uint8_t value)
             //  ...and perform state change with simulated register write delay
             _kis1Controller->_operationalState = _OperationalState::_ChangingInterruptMask;
             _kis1Controller->_timeout = _RegisterWriteDelay;
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  In any other state writes to INTERRUPT_MASK are suppressed
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 //////////
@@ -646,15 +650,16 @@ bool Kis1Controller::_InputSourcePort::readByte(uint8_t & value)
         case _OperationalState::_Ready:
         case _OperationalState::_InputReady:
             value = _kis1Controller->_inputSource;
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_InputSourcePort::writeByte(uint8_t /*value*/)
@@ -681,15 +686,16 @@ bool Kis1Controller::_DeviceStatePort::readByte(uint8_t & value)
             {   //  No such keyboard
                 value = 0;
             }
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_DeviceStatePort::writeByte(uint8_t value)
@@ -708,15 +714,16 @@ bool Kis1Controller::_DeviceStatePort::writeByte(uint8_t value)
                 _kis1Controller->_operationalState = _OperationalState::_ChangingDeviceState;
                 _kis1Controller->_timeout = _RegisterWriteDelay;
             }   //  else device does not exist - suppress the write
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Not ready to handle the write - suppress it
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 //////////
@@ -735,15 +742,16 @@ bool Kis1Controller::_DataInPort::readByte(uint8_t & value)
                     (currentKeyboard != nullptr) ?
                         currentKeyboard->readDataIn() :
                         0);
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_DataInPort::writeByte(uint8_t /*value*/)
@@ -767,15 +775,16 @@ bool Kis1Controller::_LayoutPort::readByte(uint8_t & value)
                     (currentKeyboard != nullptr) ?
                         currentKeyboard->layout()->code() :
                         Kis1KeyboardLayout::Code::Unknown);
-            return true;
+            break;
         case _OperationalState::_ChangingCurrentDevice:
         case _OperationalState::_ChangingInterruptMask:
         case _OperationalState::_ChangingDeviceState:
             //  Unpredictable value
-            return true;
+            break;
         default:
             failure();
     }
+    return true;
 }
 
 bool Kis1Controller::_LayoutPort::writeByte(uint8_t /*value*/)
