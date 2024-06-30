@@ -534,7 +534,7 @@ namespace hadesvm
             StretchMode         _stretchMode = StretchMode::Fill;
 
             //  Runtime state
-            //  TODO what ? Kis1Keyboard *              _kis1Keyboard = nullptr;
+            Kis1Keyboard *      _kis1Keyboard = nullptr;
             Vds1Controller::_VideoSignal *  _videoSignal = nullptr;
         };
     }

@@ -158,6 +158,16 @@ void Vds1Display::connect() throws(hadesvm::core::VirtualApplianceException)
         throw hadesvm::core::VirtualApplianceException("TODO proper error message");
     }
 
+    //  TODO what if there are multiple VDS1/KIS1 controllers ?
+    for (Kis1Keyboard * kis1Keyboard : virtualAppliance()->componentsImplementing<Kis1Keyboard>())
+    {
+        if (kis1Keyboard->controllerCompartmentNumber() == controllerCompartmentNumber())
+        {   //  This one!
+            _kis1Keyboard = kis1Keyboard;
+            break;
+        }
+    }
+
     _state = State::Connected;
 }
 
@@ -217,6 +227,8 @@ void Vds1Display::disconnect() noexcept
     {   //  OOPS! Can't
         return;
     }
+
+    _kis1Keyboard = nullptr;
 
     _state = State::Constructed;
 }

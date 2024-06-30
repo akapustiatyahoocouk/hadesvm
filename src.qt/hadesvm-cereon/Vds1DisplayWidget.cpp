@@ -113,6 +113,10 @@ void Vds1DisplayWidget::keyPressEvent(QKeyEvent * event)
              << "nativeScanCode=" << event->nativeScanCode()
              << "nativeVirtualKey=" << event->nativeVirtualKey();
     event->accept();
+    if (_vds1Display->_kis1Keyboard != nullptr)
+    {
+        _vds1Display->_kis1Keyboard->handleKeyPressed(event);
+    }
 }
 
 void Vds1DisplayWidget::keyReleaseEvent(QKeyEvent * event)
@@ -121,6 +125,15 @@ void Vds1DisplayWidget::keyReleaseEvent(QKeyEvent * event)
              << "nativeScanCode=" << event->nativeScanCode()
              << "nativeVirtualKey=" << event->nativeVirtualKey();
     event->accept();
+    if (_vds1Display->_kis1Keyboard != nullptr)
+    {
+        _vds1Display->_kis1Keyboard->handleKeyReleased(event);
+    }
+}
+
+bool Vds1DisplayWidget::focusNextPrevChild(bool /*next*/)
+{
+    return false;
 }
 
 //////////
