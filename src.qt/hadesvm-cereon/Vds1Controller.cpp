@@ -50,7 +50,11 @@ Vds1Controller::~Vds1Controller() noexcept
 //  hadesvm::core::Component
 QString Vds1Controller::displayName() const
 {
-    return hadesvm::util::toString(_clockFrequency) + " " + Type::instance()->displayName();
+    return hadesvm::util::toString(_clockFrequency) +
+           " " +
+           Type::instance()->displayName() +
+           " @ " +
+           hadesvm::util::toString(_statePortAddress, "%04X");
 }
 
 void Vds1Controller::serialiseConfiguration(QDomElement componentElement) const

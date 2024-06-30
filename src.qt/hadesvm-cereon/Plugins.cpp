@@ -54,7 +54,8 @@ namespace
         hadesvm::core::ComponentType::register(Kis1Controller::Type::instance());
         hadesvm::core::ComponentType::register(Kis1Keyboard::Type::instance());
 
-        Kis1KeyboardLayout::register(Kis1UkExtendedKeyboardLayout::instance());
+        Kis1KeyboardLayout::register(Kis1UnitedKingdomExtendedKeyboardLayout::instance());
+        Kis1KeyboardLayout::register(Kis1UnitedKingdomKeyboardLayout::instance());
     }
 }
 

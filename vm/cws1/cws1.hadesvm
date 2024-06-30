@@ -10,5 +10,6 @@
   <Component ClockFrequency="2MHz" CommandPortAddress="0201" DataPortAddress="0202" NumberOfCompartments="1" StatePortAddress="0200" Type="CereonVds1Controller"/>
   <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0200" StretchMode="IntegralStretch" Type="CereonVds1Display"/>
   <Component ClockFrequency="10KHz" CurrentDevicePortAddress="0281" DataInPortAddress="0285" DeviceStatePortAddress="0284" InputSourcePortAddress="0283" InterruptMaskPortAddress="0282" LayoutPortAddress="0286" NumberOfCompartments="1" StatePortAddress="0280" Type="CereonKis1Controller"/>
+  <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0280" Layout="UnitedKingdomExtended" Type="CereonKis1Keyboard"/>
  </Components>
 </VirtualMachine>

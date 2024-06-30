@@ -12,7 +12,7 @@ namespace hadesvm
     namespace cereon
     {
         //////////
-        //  The editor for a Vds1Controller component
+        //  The editor for a Kis1Controller component
         namespace Ui { class Kis1ControllerEditor; }
 
         class HADESVM_CEREON_PUBLIC Kis1ControllerEditor final : public hadesvm::core::ComponentEditor

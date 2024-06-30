@@ -16,8 +16,10 @@ SOURCES += \
     Kis1Controller.cpp \
     Kis1ControllerEditor.cpp \
     Kis1Keyboard.cpp \
+    Kis1KeyboardEditor.cpp \
     Kis1KeyboardLayout.cpp \
-    Kis1UkExtendedKeyboardLayout.cpp \
+    Kis1UnitedKingdomExtendedKeyboardLayout.cpp \
+    Kis1UnitedKingdomKeyboardLayout.cpp \
     MemoryBus.cpp \
     MemoryBusEditor.cpp \
     Plugins.cpp \
@@ -50,6 +52,7 @@ HEADERS += \
     IoBusEditor.hpp \
     Kis1.hpp \
     Kis1ControllerEditor.hpp \
+    Kis1KeyboardEditor.hpp \
     Linkage.hpp \
     Memory.hpp \
     MemoryBusEditor.hpp \
@@ -69,6 +72,7 @@ FORMS += \
     Cmos1Editor.ui \
     IoBusEditor.ui \
     Kis1ControllerEditor.ui \
+    Kis1KeyboardEditor.ui \
     MemoryBusEditor.ui \
     ProcessorEditor.ui \
     ResidentRamUnitEditor.ui \

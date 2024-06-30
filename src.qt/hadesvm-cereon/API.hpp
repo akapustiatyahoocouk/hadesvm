@@ -38,5 +38,6 @@
 #include "hadesvm-cereon/Vds1DisplayEditor.hpp"
 #include "hadesvm-cereon/Vds1DisplayWidget.hpp"
 #include "hadesvm-cereon/Kis1ControllerEditor.hpp"
+#include "hadesvm-cereon/Kis1KeyboardEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

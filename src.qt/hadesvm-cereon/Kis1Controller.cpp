@@ -59,7 +59,11 @@ Kis1Controller::~Kis1Controller() noexcept
 //  hadesvm::core::Component
 QString Kis1Controller::displayName() const
 {
-    return hadesvm::util::toString(_clockFrequency) + " " + Type::instance()->displayName();
+    return hadesvm::util::toString(_clockFrequency) +
+           " " +
+           Type::instance()->displayName() +
+           " @ " +
+           hadesvm::util::toString(_statePortAddress, "%04X");
 }
 
 void Kis1Controller::serialiseConfiguration(QDomElement componentElement) const

@@ -66,7 +66,7 @@ Kis1KeyboardLayout * Kis1KeyboardLayout::system()
     QLocale locale = qGuiApp->inputMethod()->locale();
     qDebug() << locale;
     //  TODO
-    return Kis1UkExtendedKeyboardLayout::instance();
+    return Kis1UnitedKingdomExtendedKeyboardLayout::instance();
 }
 
 //  End of hadesvm-cereon/Kis1KeyboardLayout.cpp

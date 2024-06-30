@@ -68,9 +68,27 @@ namespace hadesvm
         };
 
         //  The "UK extended" keyboard layout
-        class HADESVM_CEREON_PUBLIC Kis1UkExtendedKeyboardLayout final : public Kis1KeyboardLayout
+        class HADESVM_CEREON_PUBLIC Kis1UnitedKingdomExtendedKeyboardLayout final : public Kis1KeyboardLayout
         {
-            HADESVM_DECLARE_SINGLETON(Kis1UkExtendedKeyboardLayout)
+            HADESVM_DECLARE_SINGLETON(Kis1UnitedKingdomExtendedKeyboardLayout)
+
+            //////////
+            //  hadesvm::util::StockObject
+        public:
+            virtual QString     mnemonic() const override;
+            virtual QString     displayName() const override;
+
+            //////////
+            //  Kis1KeyboardLayout
+        public:
+            virtual Code        code() const override;
+            virtual Kis1ScanCode    translateKey(uint32_t nativeScanCode, uint32_t nativeVirtualKey) override;
+        };
+
+        //  The "UK" keyboard layout
+        class HADESVM_CEREON_PUBLIC Kis1UnitedKingdomKeyboardLayout final : public Kis1KeyboardLayout
+        {
+            HADESVM_DECLARE_SINGLETON(Kis1UnitedKingdomKeyboardLayout)
 
             //////////
             //  hadesvm::util::StockObject
