@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::cereon::Kis1ControllerEditor</class>
+ <widget class="QWidget" name="hadesvm::cereon::Kis1ControllerEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>337</width>
+    <height>183</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="statePortLabel">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>0</y>
+     <width>41</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>STATE:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="statePortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>0</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="portsLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ports (hex):</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="currentDevicePortLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>CURRENT_DEVICE:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="currentDevicePortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>30</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="interruptMaskPortLabel">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>30</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>INTERRUPT_MASK:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="interruptMaskPortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>30</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="inputSourcePortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>60</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="inputSourcePortLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>101</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>INPUT_SOURCE:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="deviceStatePortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>60</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="deviceStatePortLabel">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>60</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DEVICE_STATE:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="dataInPortLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DATA_IN:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="dataInPortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>90</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="layoutPortLabel">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>90</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>LAYOUT:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="layoutPortLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>90</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="clockUnitComboBox">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>120</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="clockNumberOfUnitsLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>120</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="clockLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>120</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Clock:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="compartmentsLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>150</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Compartments:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="compartmentsComboBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>150</y>
+     <width>72</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>statePortLineEdit</tabstop>
+  <tabstop>currentDevicePortLineEdit</tabstop>
+  <tabstop>interruptMaskPortLineEdit</tabstop>
+  <tabstop>inputSourcePortLineEdit</tabstop>
+  <tabstop>deviceStatePortLineEdit</tabstop>
+  <tabstop>dataInPortLineEdit</tabstop>
+  <tabstop>layoutPortLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>statePortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onStatePortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>currentDevicePortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onCurrentDevicePortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interruptMaskPortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onInterruptMaskPortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inputSourcePortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onInputSourcePortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deviceStatePortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onDeviceStatePortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataInPortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onDataInPortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layoutPortLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onLayoutPortLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockNumberOfUnitsLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>91</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clockUnitComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>hadesvm::cereon::Kis1ControllerEditor</receiver>
+   <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>315</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>91</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onStatePortLineEditTextChanged(QString)</slot>
+  <slot>_onCurrentDevicePortLineEditTextChanged(QString)</slot>
+  <slot>_onInterruptMaskPortLineEditTextChanged(QString)</slot>
+  <slot>_onInputSourcePortLineEditTextChanged(QString)</slot>
+  <slot>_onDeviceStatePortLineEditTextChanged(QString)</slot>
+  <slot>_onDataInPortLineEditTextChanged(QString)</slot>
+  <slot>_onLayoutPortLineEditTextChanged(QString)</slot>
+  <slot>_onClockNumberOfUnitsLineEditTextChanged(QString)</slot>
+  <slot>_onClockUnitComboBoxCurrentIndexChanged(int)</slot>
+ </slots>
+</ui>

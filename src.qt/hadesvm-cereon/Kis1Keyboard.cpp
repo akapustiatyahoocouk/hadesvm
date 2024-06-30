@@ -62,7 +62,7 @@ void Kis1Keyboard::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Kis1Keyboard::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Kis1Keyboard::createEditor(QWidget * /*parent*/)
 {
     return nullptr; //TODO new Kis1KeyboardEditor(parent, this);
 }
@@ -86,6 +86,29 @@ void Kis1Keyboard::connect() throws(hadesvm::core::VirtualApplianceException)
     if (_state != State::Constructed)
     {   //  OOPS! Can't
         return;
+    }
+
+    //  If a KIS1 controller does not exist at _controllerStatePortAddress
+    //  or has less than _controllerCompartmentNumber compartments, it's an error
+    QList<Kis1Controller*> kis1Controllers;
+    for (auto kis1Controller : virtualAppliance()->componentsImplementing<Kis1Controller>())
+    {
+        if (kis1Controller->statePortAddress() == _controllerStatePortAddress)
+        {
+            kis1Controllers.append(kis1Controller);
+        }
+    }
+    if (kis1Controllers.count() == 0)
+    {
+        throw hadesvm::core::VirtualApplianceException("TODO proper error message");
+    }
+    if (kis1Controllers.count() > 1)
+    {
+        throw hadesvm::core::VirtualApplianceException("TODO proper error message");
+    }
+    if (_controllerCompartmentNumber >= kis1Controllers[0]->numberOfCompartments())
+    {
+        throw hadesvm::core::VirtualApplianceException("TODO proper error message");
     }
 
     _state = State::Connected;

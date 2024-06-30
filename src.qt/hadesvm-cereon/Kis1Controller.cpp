@@ -136,7 +136,7 @@ void Kis1Controller::deserialiseConfiguration(QDomElement componentElement)
 
 hadesvm::core::ComponentEditor * Kis1Controller::createEditor(QWidget * parent)
 {
-    return nullptr; //TODO new Kis1ControllerEditor(parent, this);
+    return new Kis1ControllerEditor(parent, this);
 }
 
 Kis1Controller::Ui * Kis1Controller::createUi()
@@ -300,6 +300,77 @@ void Kis1Controller::onClockTick() noexcept
 IoPortList Kis1Controller::ioPorts()
 {
     return _ioPorts;
+}
+
+//////////
+//  Operations (configuration)
+void Kis1Controller::setStatePortAddress(uint16_t statePortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _statePortAddress = statePortAddress;
+}
+
+void Kis1Controller::setCurrentDevicePortAddress(uint16_t currentDevicePortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _currentDevicePortAddress = currentDevicePortAddress;
+}
+
+void Kis1Controller::setInterruptMaskPortAddress(uint16_t interruptMaskPortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _interruptMaskPortAddress = interruptMaskPortAddress;
+}
+
+void Kis1Controller::setInputSourcePortAddress(uint16_t inputSourcePortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _inputSourcePortAddress = inputSourcePortAddress;
+}
+
+void Kis1Controller::setDeviceStatePortAddress(uint16_t deviceStatePortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _deviceStatePortAddress = deviceStatePortAddress;
+}
+
+void Kis1Controller::setDataInPortAddress(uint16_t dataInPortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _dataInPortAddress = dataInPortAddress;
+}
+
+void Kis1Controller::setLayoutPortAddress(uint16_t  layoutPortAddress)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    _layoutPortAddress = layoutPortAddress;
+}
+
+void Kis1Controller::setNumberOfCompartments(unsigned numberOfCompartments)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    if (numberOfCompartments >= 1 && numberOfCompartments <= 256)
+    {
+        _numberOfCompartments = numberOfCompartments;
+    }
+}
+
+void Kis1Controller::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency)
+{
+    Q_ASSERT(_state == State::Constructed);
+
+    if (clockFrequency.toHz() > 0)
+    {   //  TODO min/max
+        _clockFrequency = clockFrequency;
+    }
 }
 
 //////////

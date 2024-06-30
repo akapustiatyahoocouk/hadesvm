@@ -101,11 +101,15 @@ void IoBus::connect() throws(hadesvm::core::VirtualApplianceException)
     {   //  Cleanup & re-throw
         for (int i = 0; i < 65536; i++)
         {
-            _ioPorts[i] = nullptr;
-            _byteIoPorts[i] = nullptr;
-            _halfWordIoPorts[i] = nullptr;
-            _wordIoPorts[i] = nullptr;
-            _longWordIoPorts[i] = nullptr;
+            if (_ioPorts[i] != nullptr)
+            {   //  TODO detachIoPort(_ioPorts[i])
+                _ioPorts[i]->_ioBus = nullptr;
+                _ioPorts[i] = nullptr;
+                _byteIoPorts[i] = nullptr;
+                _halfWordIoPorts[i] = nullptr;
+                _wordIoPorts[i] = nullptr;
+                _longWordIoPorts[i] = nullptr;
+            }
         }
         throw;
     }
@@ -201,7 +205,7 @@ void IoBus::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequen
 //////////
 //  Operations
 void IoBus::attachIoPort(IIoPort * ioPort) throws(hadesvm::core::VirtualApplianceException)
-{
+{   //  TODO make this method private ?
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
     Q_ASSERT(ioPort != nullptr);
     Q_ASSERT(ioPort->_ioBus == nullptr); //  not yet attached

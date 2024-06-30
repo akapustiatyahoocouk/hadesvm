@@ -87,14 +87,14 @@ void Vds1ControllerEditor::saveComponentConfiguration()
         _vds1Controller->setDataPortAddress(dataPortAddress);
     }
 
-    _vds1Controller->setNumberOfCompartments(_ui->compartmentsComboBox->currentIndex() + 1);
-
     uint64_t clockNumberOfUnits = 0;
     if (hadesvm::util::fromString(_ui->clockNumberOfUnitsLineEdit->text(), clockNumberOfUnits) &&
         clockNumberOfUnits > 0)
     {
         _vds1Controller->setClockFrequency(hadesvm::core::ClockFrequency(clockNumberOfUnits, _selectedClockFrequencyUnit()));
     }
+
+    _vds1Controller->setNumberOfCompartments(_ui->compartmentsComboBox->currentIndex() + 1);
 }
 
 //////////

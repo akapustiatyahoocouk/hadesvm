@@ -14,6 +14,7 @@ SOURCES += \
     IoBusEditor.cpp \
     IoPort.cpp \
     Kis1Controller.cpp \
+    Kis1ControllerEditor.cpp \
     Kis1Keyboard.cpp \
     Kis1KeyboardLayout.cpp \
     Kis1UkExtendedKeyboardLayout.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
     Io.hpp \
     IoBusEditor.hpp \
     Kis1.hpp \
+    Kis1ControllerEditor.hpp \
     Linkage.hpp \
     Memory.hpp \
     MemoryBusEditor.hpp \
@@ -66,6 +68,7 @@ LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 FORMS += \
     Cmos1Editor.ui \
     IoBusEditor.ui \
+    Kis1ControllerEditor.ui \
     MemoryBusEditor.ui \
     ProcessorEditor.ui \
     ResidentRamUnitEditor.ui \
