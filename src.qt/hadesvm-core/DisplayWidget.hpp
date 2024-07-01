@@ -40,6 +40,9 @@ namespace hadesvm
             //  this QMenu. Returns nullptr if this DisplayWidget has no
             //  "control" (context) menu.
             virtual QMenu *     controlMenu() const = 0;
+
+            //  TODO document
+            virtual QImage      currentImage() const = 0;
         };
     }
 }

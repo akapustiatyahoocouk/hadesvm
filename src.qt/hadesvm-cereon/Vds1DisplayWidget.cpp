@@ -156,6 +156,11 @@ QMenu * Vds1DisplayWidget::controlMenu() const
     return &_controlMenu;
 }
 
+QImage Vds1DisplayWidget::currentImage() const
+{
+    return _offScreenBuffer;
+}
+
 //////////
 //  Signal handlers
 void Vds1DisplayWidget::_onRefreshTimerTick()

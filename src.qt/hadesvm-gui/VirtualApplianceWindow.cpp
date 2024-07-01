@@ -85,6 +85,8 @@ VirtualApplianceWindow::~VirtualApplianceWindow()
 {
     _refreshTimer.stop();
 
+    delete _fullScreenWindow;   //  "delete nullptr" is safe
+
     while (_ui->tabWidget->count() != 0)
     {
         _ui->tabWidget->removeTab(0);
@@ -149,6 +151,12 @@ void VirtualApplianceWindow::_refresh()
         }
         _ui->statusbar->showMessage(vaSpeedText);
     }
+
+    if (_fullScreenWindow != nullptr && !_fullScreenWindow->isExposed())
+    {
+        delete _fullScreenWindow;
+        _fullScreenWindow = nullptr;
+    }
 }
 
 //////////
@@ -190,13 +198,20 @@ void VirtualApplianceWindow::_onResetVm()
 
 void VirtualApplianceWindow::_onFullScreen()
 {
-    FullScreenWindow * fsw = new FullScreenWindow();
-    fsw->setVisible(true);
+    delete _fullScreenWindow;   //  "delete nullptr" is safe
+    if (_displayWidgetsByTabIndex.contains(_ui->tabWidget->currentIndex()))
+    {
+        _fullScreenWindow = new FullScreenWindow(_displayWidgetsByTabIndex[_ui->tabWidget->currentIndex()]);
+        _fullScreenWindow->setVisible(true);
+    }
 }
 
 void VirtualApplianceWindow::_onRefreshTimerTick()
 {
-    _refresh();
+    if (_fullScreenWindow != nullptr)
+    {   //  NOT obscured by a full-screen representation
+        _refresh();
+    }
 }
 
 void VirtualApplianceWindow::_onCustomContextMenuRequested(const QPoint &point)

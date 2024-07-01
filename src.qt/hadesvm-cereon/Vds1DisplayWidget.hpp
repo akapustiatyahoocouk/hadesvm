@@ -41,6 +41,7 @@ namespace hadesvm
         public:
             virtual QString     displayName() const override;
             virtual QMenu *     controlMenu() const override;
+            virtual QImage      currentImage() const override;
 
             //////////
             //  Implementation

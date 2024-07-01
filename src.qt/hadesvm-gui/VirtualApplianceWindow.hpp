@@ -11,6 +11,8 @@ namespace hadesvm
 {
     namespace gui
     {
+        class FullScreenWindow;
+
         //////////
         //  The "running VA" window
         namespace Ui { class VirtualApplianceWindow; }
@@ -47,6 +49,8 @@ namespace hadesvm
         private:
             Ui::VirtualApplianceWindow *    _ui;
             QTimer              _refreshTimer;
+
+            FullScreenWindow *  _fullScreenWindow = nullptr;
 
             //////////
             //  Signal handlers
