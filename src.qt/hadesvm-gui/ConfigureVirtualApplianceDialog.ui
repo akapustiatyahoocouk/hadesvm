@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>482</width>
-    <height>384</height>
+    <width>493</width>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,6 +56,44 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
+    <widget class="QFrame" name="generalPropertiesFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="startAutomaticallyCheckBox">
+        <property name="text">
+         <string>Start automatically when HadesVM starts</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="startFullScreenCheckBox">
+        <property name="text">
+         <string>Start in full-screen mode</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
     <widget class="QFrame" name="configurationFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -88,35 +126,6 @@
       <property name="spacing">
        <number>4</number>
       </property>
-      <item row="0" column="0" colspan="2">
-       <widget class="QTreeWidget" name="configurationTreeWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <attribute name="headerVisible">
-         <bool>false</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="addComponentPushButton">
-        <property name="text">
-         <string>Add component</string>
-        </property>
-        <property name="icon">
-         <iconset resource="Resources.qrc">
-          <normaloff>:/hadesvm/gui/images/actions/AddSmall.png</normaloff>:/hadesvm/gui/images/actions/AddSmall.png</iconset>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QPushButton" name="removeComponentPushButton">
         <property name="text">
@@ -150,10 +159,39 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QTreeWidget" name="configurationTreeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="addComponentPushButton">
+        <property name="text">
+         <string>Add component</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Resources.qrc">
+          <normaloff>:/hadesvm/gui/images/actions/AddSmall.png</normaloff>:/hadesvm/gui/images/actions/AddSmall.png</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -166,7 +204,7 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="6" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -178,6 +216,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>nameLineEdit</tabstop>
+  <tabstop>locationLineEdit</tabstop>
+  <tabstop>architectureLineEdit</tabstop>
+  <tabstop>startAutomaticallyCheckBox</tabstop>
+  <tabstop>startFullScreenCheckBox</tabstop>
+  <tabstop>configurationTreeWidget</tabstop>
+  <tabstop>addComponentPushButton</tabstop>
+  <tabstop>removeComponentPushButton</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources.qrc"/>
  </resources>

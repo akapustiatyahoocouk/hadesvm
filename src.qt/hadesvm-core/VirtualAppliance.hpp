@@ -63,12 +63,19 @@ namespace hadesvm
             QString                 location() const;
             QString                 directory() const;
             VirtualArchitecture *   architecture() const;
+            bool                    startAutomatically() const;
+            void                    setStartAutomatically(bool startAutomatically);
+            bool                    startFullScreen() const;
+            void                    setStartFullScreen(bool startFullScreen);
 
             //  TODO document
             //  Must only be called from the QApplication's main thread
             QString                 toRelativePath(const QString & path);
             QString                 toAbsolutePath(const QString & path);
 
+            //////////
+            //  Operations (VA components)
+        public:
             //  TODO document
             //  Must only be called from the QApplication's main thread
             ComponentList           compatibleComponents() const;
@@ -188,6 +195,10 @@ namespace hadesvm
             const QString           _directory; //  full path to VM configuration file's containg dir
             VirtualArchitecture *const  _architecture;
 
+            bool                    _startAutomatically;
+            bool                    _startFullScreen;
+
+            //  VA components
             ComponentList           _compatibleComponents;  //  ...bound to this VM
             ComponentList           _adaptedComponents;     //  ...bound to this VM
             ComponentAdaptorList    _componentAdaptors;     //  ...bound to this VM

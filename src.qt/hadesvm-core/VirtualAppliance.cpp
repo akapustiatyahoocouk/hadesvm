@@ -21,10 +21,14 @@ const QString VirtualAppliance::PreferredExtension = ".hadesvm";
 VirtualAppliance::VirtualAppliance(const QString & name, const QString & location,
                                    VirtualArchitecture * architecture)
     :   _state(State::Stopped),
+        //  Configuration
         _name(name),
         _location(QFileInfo(location).absoluteFilePath()),
         _directory(QFileInfo(_location).absolutePath()),
         _architecture(architecture),
+        _startAutomatically(false),
+        _startFullScreen(false),
+        //  VA components
         _compatibleComponents(),
         _adaptedComponents(),
         _componentAdaptors(),
@@ -71,6 +75,8 @@ void VirtualAppliance::save() throws(VirtualApplianceException)
     rootElement.setAttribute("Name", name());
     rootElement.setAttribute("Architecture", architecture()->mnemonic());
     rootElement.setAttribute("Version", "1");
+    rootElement.setAttribute("StartAutomatically", hadesvm::util::toString(_startAutomatically));
+    rootElement.setAttribute("StartFullScreen", hadesvm::util::toString(_startFullScreen));
     document.appendChild(rootElement);
 
     //  Set up "components" element
@@ -175,6 +181,8 @@ VirtualAppliance * VirtualAppliance::load(const QString & location)
 
     //  Create an initially empty VA
     std::unique_ptr<VirtualAppliance> va{type->createVirtualAppliance(name, fi.absoluteFilePath(), architecture)};
+    hadesvm::util::fromString(rootElement.attribute("StartAutomatically"), va->_startAutomatically);
+    hadesvm::util::fromString(rootElement.attribute("StartFullScreen"), va->_startFullScreen);
 
     //  Process <Components> element
     for (QDomElement componentsElement = rootElement.firstChildElement("Components");
@@ -272,6 +280,34 @@ VirtualArchitecture * VirtualAppliance::architecture() const
     return _architecture;
 }
 
+bool VirtualAppliance::startAutomatically() const
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    return _startAutomatically;
+}
+
+void VirtualAppliance::setStartAutomatically(bool startAutomatically)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    _startAutomatically = startAutomatically;
+}
+
+bool VirtualAppliance::startFullScreen() const
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    return _startFullScreen;
+}
+
+void VirtualAppliance::setStartFullScreen(bool startFullScreen)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    _startFullScreen = startFullScreen;
+}
+
 QString VirtualAppliance::toRelativePath(const QString & path)
 {
     QDir baseDir(_directory);
@@ -307,6 +343,8 @@ QString VirtualAppliance::toAbsolutePath(const QString & path)
     return absolutePath;
 }
 
+//////////
+//  Operations (VA components)
 ComponentList VirtualAppliance::compatibleComponents() const
 {
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());

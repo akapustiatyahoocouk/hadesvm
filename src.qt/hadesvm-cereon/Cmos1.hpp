@@ -131,7 +131,8 @@ namespace hadesvm
 
             //  Runtime state - accessed from CPU worker threads (via I/O ports)
             //  and CMOS1 worker thread (directly)
-            hadesvm::util::Spinlock _runtimeStateGuard;
+            //hadesvm::util::Spinlock _runtimeStateGuard;
+            QMutex              _runtimeStateGuard;
             IoPortList          _ioPorts;   //  fixed at runtime
             char                _content[256];
             std::atomic<bool>   _contentNeedsSaving;

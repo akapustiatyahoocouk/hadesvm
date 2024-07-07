@@ -110,7 +110,7 @@ bool hadesvm::util::fromString<bool>(const QString & s, qsizetype & scan, bool &
         scan += 2;
         return true;
     }
-    if (scan <= s.length())
+    if (scan < s.length())
     {
         if (s[scan].toUpper() == 'T')
         {

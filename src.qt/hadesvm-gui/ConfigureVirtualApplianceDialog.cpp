@@ -40,6 +40,8 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     _ui->nameLineEdit->setText(_virtualAppliance->name());
     _ui->locationLineEdit->setText(_virtualAppliance->location());
     _ui->architectureLineEdit->setText(_virtualAppliance->architecture()->displayName());
+    _ui->startAutomaticallyCheckBox->setChecked(_virtualAppliance->startAutomatically());
+    _ui->startFullScreenCheckBox->setChecked(_virtualAppliance->startFullScreen());
 
     //  Save configuration in case the user cancels the dialog
     _saveComponentConfigurations();
@@ -387,6 +389,8 @@ void ConfigureVirtualApplianceDialog::_onOk()
 {
     //  Apply the changes
     _virtualAppliance->setName(_ui->nameLineEdit->text());
+    _virtualAppliance->setStartAutomatically(_ui->startAutomaticallyCheckBox->isChecked());
+    _virtualAppliance->setStartFullScreen(_ui->startFullScreenCheckBox->isChecked());
     for (auto editor : _componentEditors.values())
     {
         editor->saveComponentConfiguration();

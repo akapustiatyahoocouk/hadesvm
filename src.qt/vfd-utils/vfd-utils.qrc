@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/vfd-utils">
+        <file>data/boot-sector-cereon-workstation-hades-be.bin</file>
+        <file>data/boot-sector-cereon-workstation-hades-le.bin</file>
+        <file>data/boot-sector-ibmpc-hades.bin</file>
+    </qresource>
+</RCC>

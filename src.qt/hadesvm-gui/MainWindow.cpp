@@ -217,6 +217,24 @@ void MainWindow::_loadVirtualAppliance()
         }
         _virtualAppliances.append(va.release());
     }
+
+    //  Of all VAs set to "start automatically", only one can "start
+    //  full screen"
+    hadesvm::core::VirtualAppliance * fullScreenAutostarted = nullptr;
+    for (auto virtualAppliance : _virtualAppliances)
+    {
+        if (virtualAppliance->startAutomatically() && virtualAppliance->startFullScreen())
+        {
+            if (fullScreenAutostarted == nullptr)
+            {
+                fullScreenAutostarted = virtualAppliance;
+            }
+            else
+            {
+                virtualAppliance->setStartFullScreen(false);
+            }
+        }
+    }
 }
 
 //////////

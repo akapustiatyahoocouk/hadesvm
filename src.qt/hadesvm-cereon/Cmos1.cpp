@@ -411,8 +411,9 @@ uint8_t Cmos1::_AddressPort::readByte() throws(IoError)
     _cmos1->_clockTicksToDelay = 1;
 
     //  Perform read
+    uint8_t result = _cmos1->_currentAddress;
     _cmos1->_operationalState = _OperationalState::_ReadingAddress;
-    return _cmos1->_currentAddress;
+    return result;
 }
 
 void Cmos1::_AddressPort::writeByte(uint8_t value) throws(IoError)
@@ -429,8 +430,8 @@ void Cmos1::_AddressPort::writeByte(uint8_t value) throws(IoError)
     _cmos1->_clockTicksToDelay = 1;
 
     //  Perform write
-    _cmos1->_operationalState = _OperationalState::_WritingAddress;
     _cmos1->_currentAddress = value;
+    _cmos1->_operationalState = _OperationalState::_WritingAddress;
 }
 
 //////////
@@ -450,8 +451,9 @@ uint8_t Cmos1::_DataPort::readByte() throws(IoError)
             _cmos1->_readDelay.toNs() * _cmos1->_clockFrequency.toHz() / 1000000000);
 
     //  Perform read
+    uint8_t result = _cmos1->_content[_cmos1->_currentAddress];
     _cmos1->_operationalState = (_cmos1->_clockTicksToDelay > 0) ? _OperationalState::_ReadingData : _OperationalState::_Ready;
-    return _cmos1->_content[_cmos1->_currentAddress];
+    return result;
 }
 
 void Cmos1::_DataPort::writeByte(uint8_t value) throws(IoError)
@@ -469,8 +471,8 @@ void Cmos1::_DataPort::writeByte(uint8_t value) throws(IoError)
             _cmos1->_writeDelay.toNs() * _cmos1->_clockFrequency.toHz() / 1000000000);
 
     //  Perform write
-    _cmos1->_operationalState = (_cmos1->_clockTicksToDelay > 0) ? _OperationalState::_WritingData : _OperationalState::_Ready;
     _cmos1->_content[_cmos1->_currentAddress] = value;
+    _cmos1->_operationalState = (_cmos1->_clockTicksToDelay > 0) ? _OperationalState::_WritingData : _OperationalState::_Ready;
 }
 
 //////////
