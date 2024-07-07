@@ -1317,7 +1317,8 @@ bool Fat12FileSystem::_setFileSize(unsigned int lbaSector, unsigned int entryInd
     if (newClusterCount == oldClusterCount)
     {   //  If we don't need to change cluster count, things are easy.
         //  Just update the file size
-        directoryEntryImpl._size = size;
+        assert(static_cast<uint32_t>(size) == size);
+        directoryEntryImpl._size = static_cast<uint32_t>(size);
         _writeDirectoryEntry(lbaSector, entryIndex, directoryEntryImpl);
         return true;
     }
@@ -1327,7 +1328,8 @@ bool Fat12FileSystem::_setFileSize(unsigned int lbaSector, unsigned int entryInd
         //  Shortening the cluster chain - reduce the file size first, then
         //  mark extra clusters "free". This order ensures we can recover if
         //  an operation encounters a failure (e.g. floppy forced out)
-        directoryEntryImpl._size = size;
+        assert(static_cast<uint32_t>(size) == size);
+        directoryEntryImpl._size = static_cast<uint32_t>(size);
         _writeDirectoryEntry(lbaSector, entryIndex, directoryEntryImpl);
 
         unsigned int clusterIndex = directoryEntryImpl._firstCluster;
@@ -1382,7 +1384,8 @@ bool Fat12FileSystem::_setFileSize(unsigned int lbaSector, unsigned int entryInd
             nextClusterIndex = _readFatEntry(clusterIndex);
         }
         //  Now we can update the file size - the cluster chain is long enough to accomodate it
-        directoryEntryImpl._size = size;
+        assert(static_cast<uint32_t>(size) == size);
+        directoryEntryImpl._size = static_cast<uint32_t>(size);
         _writeDirectoryEntry(lbaSector, entryIndex, directoryEntryImpl);
         //  Done
         return true;
@@ -1410,8 +1413,8 @@ void Fat12FileSystem::_writeBytes(const _DirectoryEntryImpl & directoryEntryImpl
     {
         uint32_t secondClusterOffset = (firstCluster + 1) * bytesPerCluster;
         size_t firstClusterByteCount = secondClusterOffset - offset;
-        _writeBytes(directoryEntryImpl, offset, bytes, (uint32_t)firstClusterByteCount);
-        _writeBytes(directoryEntryImpl, secondClusterOffset, bytes + firstClusterByteCount, (uint32_t)(numBytes - firstClusterByteCount));
+        _writeBytes(directoryEntryImpl, offset, bytes, static_cast<uint32_t>(firstClusterByteCount));
+        _writeBytes(directoryEntryImpl, secondClusterOffset, bytes + firstClusterByteCount, static_cast<uint32_t>(numBytes - firstClusterByteCount));
         return;
     }
 
