@@ -665,8 +665,8 @@ bool Fat12FileSystem::_DirectoryEntryImpl::_match(const char * fileName) const
     //  Build the true filename represented by this entry
     _storeFullName(fullName);
     //  Compare
-#if defined Q_CC_MSVC
-    return stricmp(fullName, fileName) == 0;
+#if defined _MSC_VER
+    return _stricmp(fullName, fileName) == 0;
 #else
     return strcasecmp(fullName, fileName) == 0;
 #endif

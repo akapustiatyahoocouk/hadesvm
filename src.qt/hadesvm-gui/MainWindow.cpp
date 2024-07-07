@@ -15,6 +15,7 @@ MainWindow::MainWindow()
         //  Implementation
         _virtualAppliances(),
         _currentVirtualAppliance(nullptr),
+        _virtualAppliancesToStart(),
         _virtualApplianceWindows(),
         _settings(this),
         //  Controls & resources
@@ -233,6 +234,14 @@ void MainWindow::_loadVirtualAppliance()
             {
                 virtualAppliance->setStartFullScreen(false);
             }
+        }
+    }
+    //  Schedule autostarts
+    for (auto virtualAppliance : _virtualAppliances)
+    {
+        if (virtualAppliance->startAutomatically())
+        {
+            _virtualAppliancesToStart.enqueue(virtualAppliance);
         }
     }
 }
@@ -585,6 +594,26 @@ void MainWindow::_onRefreshTimerTick()
             delete _virtualApplianceWindows[virtualAppliance];
             _virtualApplianceWindows.remove(virtualAppliance);
             break;
+        }
+    }
+
+    //  If any VA is scheduled to auto-start, do it
+    if (!_virtualAppliancesToStart.isEmpty())
+    {
+        hadesvm::core::VirtualAppliance * virtualAppliance = _virtualAppliancesToStart.dequeue();
+        if (virtualAppliance->state() == hadesvm::core::VirtualAppliance::State::Stopped)
+        {
+            try
+            {
+                virtualAppliance->start();
+                auto virtualApplianceWindow = new VirtualApplianceWindow(virtualAppliance);
+                _virtualApplianceWindows.insert(virtualAppliance, virtualApplianceWindow);
+                virtualApplianceWindow->setVisible(true);
+            }
+            catch (const hadesvm::core::VirtualApplianceException &)
+            {   //  OOPS! Suppress TODO but log ?
+            }
+            _refresh();
         }
     }
 

@@ -40,6 +40,7 @@ namespace hadesvm
         private:
             hadesvm::core::VirtualApplianceList _virtualAppliances;
             hadesvm::core::VirtualAppliance *   _currentVirtualAppliance;
+            QQueue<hadesvm::core::VirtualAppliance*>    _virtualAppliancesToStart;  //  autostart support
 
             QMap<hadesvm::core::VirtualAppliance*, VirtualApplianceWindow*> _virtualApplianceWindows;   //  for a;ll Running VAs
 

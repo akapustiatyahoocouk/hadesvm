@@ -126,6 +126,7 @@ uint16_t Vfd::readUInt16(unsigned int lbaSector, unsigned int offset, ByteOrder 
             b1 = static_cast<uint16_t>(readUInt8(lbaSector, offset + 1) << 8);
             break;
         default:
+            b0 = b1 = 0;  //  ...to shut up the compiler
             assert(false);
     }
     return b0 | b1;
@@ -150,6 +151,7 @@ uint32_t Vfd::readUInt32(unsigned int lbaSector, unsigned int offset, ByteOrder 
             b3 = static_cast<uint32_t>(readUInt8(lbaSector, offset + 3) << 24);
             break;
         default:
+            b0 = b1 = b2 = b3 = 0;  //  ...to shut up the compiler
             assert(false);
     }
     return b0 | b1 | b2 | b3;

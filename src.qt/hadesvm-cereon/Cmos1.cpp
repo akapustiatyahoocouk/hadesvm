@@ -55,7 +55,11 @@ Cmos1::~Cmos1() noexcept
 //  hadesvm::core::Component
 QString Cmos1::displayName() const
 {
-    return hadesvm::util::toString(_clockFrequency) + " " + Type::instance()->displayName();
+    return hadesvm::util::toString(_clockFrequency) +
+           " " +
+           Type::instance()->displayName() +
+           " @ " +
+           hadesvm::util::toString(_statePortAddress, "%04X");
 }
 
 void Cmos1::serialiseConfiguration(QDomElement componentElement) const

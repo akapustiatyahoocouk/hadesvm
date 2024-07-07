@@ -56,3 +56,9 @@ compile_commands.json
 
 *_qmlcache.qrc
 /vm/cws1/cmos1.dat
+/src.qt/vfd-utils/data/boot-sector-ibmpc-hades.bin.hxx
+/src.qt/vfd-utils/data/boot-sector-cereon-workstation-hades-be.bin.hxx
+/src.qt/vfd-utils/data/boot-sector-cereon-workstation-hades-le.bin.hxx
+/src.qt/vfd-utils/data/boot-sector-ibmpc-hades.bin.hxx
+/src.qt/vfd-utils/data/boot-sector-cereon-workstation-hades-be.bin.hxx
+/src.qt/vfd-utils/data/boot-sector-cereon-workstation-hades-le.bin.hxx

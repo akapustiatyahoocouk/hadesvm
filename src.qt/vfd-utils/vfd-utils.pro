@@ -1,4 +1,8 @@
 include(../hadesvm.pri)
+QT -= core gui widgets xml network
+win32-msvc {
+    QMAKE_CXXFLAGS += /wd5045
+}
 
 CONFIG += cmdline
 
@@ -27,8 +31,7 @@ HEADERS += \
     types.hpp \
     vfd.hpp
 
-RESOURCES += \
-    vfd-utils.qrc
+RESOURCES +=
 
 DATADIR = ../../../src.qt/vfd-utils/data
 
@@ -50,3 +53,8 @@ PRE_TARGETDEPS += $$DATADIR/boot-sector-cereon-workstation-hades-be.bin.hxx \
                   $$DATADIR/boot-sector-cereon-workstation-hades-le.bin.hxx \
                   $$DATADIR/boot-sector-ibmpc-hades.bin.hxx
 QMAKE_EXTRA_TARGETS += bs1 bs2 bs3
+
+DISTFILES += \
+    data/boot-sector-cereon-workstation-hades-be.bin \
+    data/boot-sector-cereon-workstation-hades-le.bin \
+    data/boot-sector-ibmpc-hades.bin

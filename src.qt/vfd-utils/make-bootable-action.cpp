@@ -108,6 +108,7 @@ bool MakeBootableAction::execute(Vfd *& currentVfd)
             loadAddress = bootLoaderEntryPointAddress = 0x00030000;
             break;
         default:
+            loadAddress = 0;    //  ...to shut up the compiler
             assert(false);
     }
 
@@ -140,6 +141,7 @@ bool MakeBootableAction::execute(Vfd *& currentVfd)
                 pageToLoadAt = static_cast<uint16_t>(loadAddress >> 9);
                 break;
             default:
+                pageToLoadAt = 0;   //  ...to shut up the compiler
                 assert(false);
         }
         _LoadMapEntry loadMapEntry(static_cast<unsigned>(endClusterIndex - startClusterIndex),
@@ -223,6 +225,7 @@ bool MakeBootableAction::execute(Vfd *& currentVfd)
             terminator = CereonWorkstationLittleEndianTerminator;
             break;
         default:
+            terminator = CereonWorkstationLittleEndianTerminator;   //  ...to shut up the compiler
             assert(false);
     }
     if (loadMapChannel->write(terminator, 8) != 8)
@@ -253,7 +256,7 @@ bool MakeBootableAction::execute(Vfd *& currentVfd)
             loadTable[0] = fileSystem.getLbaSectorForClusterNumber(loadMapClusterNumbers[0]);
             break;
         case Platform::CereonWorkstationBigEndian:
-#if defined Q_CC_MSVC
+#if defined _MSC_VER
             loadTable[0] = _byteswap_uint64(fileSystem.getLbaSectorForClusterNumber(loadMapClusterNumbers[0]));
 #else
             loadTable[0] = std::byteswap<uint64_t>(fileSystem.getLbaSectorForClusterNumber(loadMapClusterNumbers[0]));

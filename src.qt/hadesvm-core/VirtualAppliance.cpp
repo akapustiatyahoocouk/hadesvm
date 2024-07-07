@@ -683,7 +683,9 @@ void VirtualAppliance::_initializeComponents() throws(VirtualApplianceException)
         for (auto component : _compatibleComponents)
         {
             Q_ASSERT(component->state() == Component::State::Connected);
+            qDebug() << "Initializing " << component->displayName();
             component->initialize();
+            qDebug() << "Done initializing " << component->displayName();
             Q_ASSERT(component->state() == Component::State::Initialized);
         }
         for (auto component : _adaptedComponents)
