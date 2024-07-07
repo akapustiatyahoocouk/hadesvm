@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" StartAutomatically="true" StartFullScreen="false" Version="1">
+<VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" StartAutomatically="false" StartFullScreen="true" Version="1">
  <Components>
   <Component ClockFrequency="20MHz" Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamUnit"/>

@@ -37,6 +37,7 @@ namespace hadesvm
             //  Implementation
         private:
             hadesvm::core::VirtualAppliance *   _virtualAppliance;
+            bool                _autoFullScreen;
 
             QMap<hadesvm::core::IComponent*, hadesvm::core::IComponent::Ui*>    _componentUis;
             QMap<int, hadesvm::core::DisplayWidget*> _displayWidgetsByTabIndex;

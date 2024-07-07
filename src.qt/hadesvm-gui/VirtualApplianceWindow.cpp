@@ -14,6 +14,7 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
     :   QMainWindow(nullptr),
         //  Implementation
         _virtualAppliance(virtualAppliance),
+        _autoFullScreen(virtualAppliance->startFullScreen()),
         _componentUis(),
         _displayWidgetsByTabIndex(),
         //  Controls & resources
@@ -59,6 +60,7 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
             displayWidgets.append(displayWidget);
         }
     }
+    int initialTabIndex = -1;
     std::sort(displayWidgets.begin(),
               displayWidgets.end(),
               [](auto a, auto b) { return a->displayName() < b->displayName(); });
@@ -66,6 +68,14 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
     {
         int tabIndex = _ui->tabWidget->addTab(displayWidget, displayWidget->displayName());
         _displayWidgetsByTabIndex.insert(tabIndex, displayWidget);
+        if (initialTabIndex == -1)
+        {
+            initialTabIndex = tabIndex;
+        }
+    }
+    if (initialTabIndex != -1)
+    {
+        _ui->tabWidget->setCurrentIndex(initialTabIndex);
     }
 
     //  Set up tab bar event handling
@@ -152,11 +162,13 @@ void VirtualApplianceWindow::_refresh()
         _ui->statusbar->showMessage(vaSpeedText);
     }
 
+    /*  TODO kill off - every next "full screen" attempt deletes the previous _fullScreenWindow
     if (_fullScreenWindow != nullptr && !_fullScreenWindow->isExposed())
     {
         delete _fullScreenWindow;
         _fullScreenWindow = nullptr;
     }
+    */
 }
 
 //////////
@@ -208,6 +220,11 @@ void VirtualApplianceWindow::_onFullScreen()
 
 void VirtualApplianceWindow::_onRefreshTimerTick()
 {
+    if (_autoFullScreen)
+    {
+        _autoFullScreen = false;
+        _onFullScreen();
+    }
     if (_fullScreenWindow != nullptr)
     {   //  NOT obscured by a full-screen representation
         _refresh();
