@@ -12,7 +12,7 @@ namespace hadesvm
     namespace gui
     {
         //////////
-        //  The model "About" dialog
+        //  The modal "About" dialog
         namespace Ui { class AboutDialog; }
 
         class AboutDialog final : public QDialog

@@ -67,6 +67,8 @@ namespace hadesvm
             void                    setStartAutomatically(bool startAutomatically);
             bool                    startFullScreen() const;
             void                    setStartFullScreen(bool startFullScreen);
+            bool                    startMinimized() const;
+            void                    setStartMinimized(bool startMinimized);
 
             //  TODO document
             //  Must only be called from the QApplication's main thread
@@ -197,6 +199,7 @@ namespace hadesvm
 
             bool                    _startAutomatically;
             bool                    _startFullScreen;
+            bool                    _startMinimized;
 
             //  VA components
             ComponentList           _compatibleComponents;  //  ...bound to this VM

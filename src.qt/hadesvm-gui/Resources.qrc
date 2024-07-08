@@ -37,5 +37,7 @@
         <file>images/actions/MakeWindowedSmall.png</file>
         <file>images/actions/RestoreLarge.png</file>
         <file>images/actions/RestoreSmall.png</file>
+        <file>images/actions/PreferencesLarge.png</file>
+        <file>images/actions/PreferencesSmall.png</file>
     </qresource>
 </RCC>

@@ -42,6 +42,7 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     _ui->architectureLineEdit->setText(_virtualAppliance->architecture()->displayName());
     _ui->startAutomaticallyCheckBox->setChecked(_virtualAppliance->startAutomatically());
     _ui->startFullScreenCheckBox->setChecked(_virtualAppliance->startFullScreen());
+    _ui->startMinimizedCheckBox->setChecked(_virtualAppliance->startMinimized());
 
     //  Save configuration in case the user cancels the dialog
     _saveComponentConfigurations();
@@ -335,6 +336,24 @@ void ConfigureVirtualApplianceDialog::_onNameChanged(QString)
     _refresh();
 }
 
+void ConfigureVirtualApplianceDialog::_onStartFullScreenCheckBoxClicked()
+{
+    if (_ui->startFullScreenCheckBox->isChecked())
+    {
+        _ui->startMinimizedCheckBox->setChecked(false);
+    }
+    _refresh();
+}
+
+void ConfigureVirtualApplianceDialog::_onStartMinimizedCheckBoxClicked()
+{
+    if (_ui->startMinimizedCheckBox->isChecked())
+    {
+        _ui->startFullScreenCheckBox->setChecked(false);
+    }
+    _refresh();
+}
+
 void ConfigureVirtualApplianceDialog::_onConfigurationTreeWidgetSelectionChanged()
 {
     _refresh();
@@ -391,6 +410,7 @@ void ConfigureVirtualApplianceDialog::_onOk()
     _virtualAppliance->setName(_ui->nameLineEdit->text());
     _virtualAppliance->setStartAutomatically(_ui->startAutomaticallyCheckBox->isChecked());
     _virtualAppliance->setStartFullScreen(_ui->startFullScreenCheckBox->isChecked());
+    _virtualAppliance->setStartMinimized(_ui->startMinimizedCheckBox->isChecked());
     for (auto editor : _componentEditors.values())
     {
         editor->saveComponentConfiguration();

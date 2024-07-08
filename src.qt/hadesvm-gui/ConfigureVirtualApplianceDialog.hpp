@@ -91,6 +91,8 @@ namespace hadesvm
             //  Signal handlers
         private slots:
             void                _onNameChanged(QString);
+            void                _onStartFullScreenCheckBoxClicked();
+            void                _onStartMinimizedCheckBoxClicked();
             void                _onConfigurationTreeWidgetSelectionChanged();
             void                _onAddComponentPushButtonClicked();
             void                _onRemoveComponentPushButtonClicked();

@@ -7,6 +7,8 @@ SOURCES += \
     Main.cpp \
     MainWindow.cpp \
     NewVirtualApplianceDialog.cpp \
+    Preferences.cpp \
+    PreferencesDialog.cpp \
     VirtualApplianceWindow.cpp
 
 HEADERS += \
@@ -16,6 +18,8 @@ HEADERS += \
     FullScreenWindow.hpp \
     MainWindow.hpp \
     NewVirtualApplianceDialog.hpp \
+    Preferences.hpp \
+    PreferencesDialog.hpp \
     VirtualApplianceWindow.hpp
 
 FORMS += \
@@ -23,6 +27,7 @@ FORMS += \
     ConfigureVirtualApplianceDialog.ui \
     MainWindow.ui \
     NewVirtualApplianceDialog.ui \
+    PreferencesDialog.ui \
     VirtualApplianceWindow.ui
 
 LIBS += -L$$DESTDIR -lhadesvm-kernel -lhadesvm-core -lhadesvm-util

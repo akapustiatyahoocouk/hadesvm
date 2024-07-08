@@ -5,6 +5,7 @@
 //
 //////////
 #include "hadesvm-gui/API.hpp"
+using namespace hadesvm::gui;
 
 //////////
 //  App entry point
@@ -43,8 +44,15 @@ int main(int argc, char *argv[])
 
     hadesvm::util::PluginManager::loadPlugins();
 
-    hadesvm::gui::MainWindow w;
-    w.show();
+    MainWindow w;
+    if (Preferences::startMinimized())
+    {
+        w.showMinimized();
+    }
+    else
+    {
+        w.show();
+    }
     return a.exec();
 }
 

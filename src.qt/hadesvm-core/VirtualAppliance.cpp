@@ -28,6 +28,7 @@ VirtualAppliance::VirtualAppliance(const QString & name, const QString & locatio
         _architecture(architecture),
         _startAutomatically(false),
         _startFullScreen(false),
+        _startMinimized(false),
         //  VA components
         _compatibleComponents(),
         _adaptedComponents(),
@@ -77,6 +78,7 @@ void VirtualAppliance::save() throws(VirtualApplianceException)
     rootElement.setAttribute("Version", "1");
     rootElement.setAttribute("StartAutomatically", hadesvm::util::toString(_startAutomatically));
     rootElement.setAttribute("StartFullScreen", hadesvm::util::toString(_startFullScreen));
+    rootElement.setAttribute("StartMinimized", hadesvm::util::toString(_startMinimized));
     document.appendChild(rootElement);
 
     //  Set up "components" element
@@ -183,6 +185,7 @@ VirtualAppliance * VirtualAppliance::load(const QString & location)
     std::unique_ptr<VirtualAppliance> va{type->createVirtualAppliance(name, fi.absoluteFilePath(), architecture)};
     hadesvm::util::fromString(rootElement.attribute("StartAutomatically"), va->_startAutomatically);
     hadesvm::util::fromString(rootElement.attribute("StartFullScreen"), va->_startFullScreen);
+    hadesvm::util::fromString(rootElement.attribute("StartMinimized"), va->_startMinimized);
 
     //  Process <Components> element
     for (QDomElement componentsElement = rootElement.firstChildElement("Components");
@@ -306,6 +309,28 @@ void VirtualAppliance::setStartFullScreen(bool startFullScreen)
     Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
 
     _startFullScreen = startFullScreen;
+    if (_startFullScreen)
+    {
+        _startMinimized = false;
+    }
+}
+
+bool VirtualAppliance::startMinimized() const
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    return _startMinimized;
+}
+
+void VirtualAppliance::setStartMinimized(bool startMinimized)
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    _startMinimized = startMinimized;
+    if (_startMinimized)
+    {
+        _startFullScreen = false;
+    }
 }
 
 QString VirtualAppliance::toRelativePath(const QString & path)

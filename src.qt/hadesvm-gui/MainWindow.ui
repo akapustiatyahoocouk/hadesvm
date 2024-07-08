@@ -188,8 +188,15 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuVm"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -306,6 +313,21 @@
    </property>
    <property name="text">
     <string>&amp;Reset</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/hadesvm/gui/images/actions/PreferencesSmall.png</normaloff>:/hadesvm/gui/images/actions/PreferencesSmall.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Preferences</string>
+   </property>
+   <property name="iconText">
+    <string>Preferences</string>
+   </property>
+   <property name="toolTip">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>
@@ -585,6 +607,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionPreferences</sender>
+   <signal>triggered()</signal>
+   <receiver>hadesvm::gui::MainWindow</receiver>
+   <slot>_onPreferences()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>_onNewVm()</slot>
@@ -599,5 +637,6 @@
   <slot>_onResumeVm()</slot>
   <slot>_onCurrentVmChanged(int)</slot>
   <slot>_onResetVm()</slot>
+  <slot>_onPreferences()</slot>
  </slots>
 </ui>

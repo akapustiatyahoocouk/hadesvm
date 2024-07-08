@@ -37,6 +37,8 @@ MainWindow::MainWindow()
     _ui->toolBar->addSeparator();
     _ui->toolBar->addAction(_ui->actionConfigureVm);
     _ui->toolBar->addSeparator();
+    _ui->toolBar->addAction(_ui->actionPreferences);
+    _ui->toolBar->addSeparator();
     _ui->toolBar->addAction(_ui->actionAbout);
 
     //  Restore size & position TODO
@@ -71,6 +73,7 @@ void MainWindow::moveEvent(QMoveEvent * event)
     QMainWindow::moveEvent(event);
 
     qDebug() << this->geometry();
+    qDebug() << this->mapToGlobal(QPoint(0, 0));
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event)
@@ -78,6 +81,7 @@ void MainWindow::resizeEvent(QResizeEvent * event)
     QMainWindow::resizeEvent(event);
 
     qDebug() << this->geometry();
+    qDebug() << this->mapToGlobal(QPoint(0, 0));
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
@@ -449,7 +453,14 @@ void MainWindow::_onStartVm()
         _currentVirtualAppliance->start();
         auto virtualApplianceWindow = new VirtualApplianceWindow(_currentVirtualAppliance);
         _virtualApplianceWindows.insert(_currentVirtualAppliance, virtualApplianceWindow);
-        virtualApplianceWindow->setVisible(true);
+        if (_currentVirtualAppliance->startMinimized())
+        {
+            virtualApplianceWindow->showMinimized();
+        }
+        else
+        {
+            virtualApplianceWindow->setVisible(true);
+        }
     }
     catch (const hadesvm::core::VirtualApplianceException & ex)
     {
@@ -549,6 +560,12 @@ void MainWindow::_onConfigureVm()
     }
 }
 
+void MainWindow::_onPreferences()
+{
+    PreferencesDialog dlg(this);
+    dlg.exec();
+}
+
 void MainWindow::_onHelpAbout()
 {
     AboutDialog dlg(this);
@@ -608,7 +625,14 @@ void MainWindow::_onRefreshTimerTick()
                 virtualAppliance->start();
                 auto virtualApplianceWindow = new VirtualApplianceWindow(virtualAppliance);
                 _virtualApplianceWindows.insert(virtualAppliance, virtualApplianceWindow);
-                virtualApplianceWindow->setVisible(true);
+                if (virtualAppliance->startMinimized())
+                {
+                    virtualApplianceWindow->showMinimized();
+                }
+                else
+                {
+                    virtualApplianceWindow->setVisible(true);
+                }
             }
             catch (const hadesvm::core::VirtualApplianceException &)
             {   //  OOPS! Suppress TODO but log ?

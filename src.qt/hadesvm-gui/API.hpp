@@ -14,11 +14,13 @@
 
 //////////
 //  hadesvm-gui components
+#include "hadesvm-gui/Preferences.hpp"
 #include "hadesvm-gui/FullScreenWindow.hpp"
 #include "hadesvm-gui/VirtualApplianceWindow.hpp"
 #include "hadesvm-gui/MainWindow.hpp"
 #include "hadesvm-gui/NewVirtualApplianceDialog.hpp"
 #include "hadesvm-gui/ConfigureVirtualApplianceDialog.hpp"
+#include "hadesvm-gui/PreferencesDialog.hpp"
 #include "hadesvm-gui/AboutDialog.hpp"
 
 //  End of hadesvm-gui/API.hpp
