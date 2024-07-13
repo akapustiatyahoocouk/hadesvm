@@ -733,6 +733,7 @@ namespace hadesvm
             //////////
             //  Implementation helpers
         private:
+            void                _performReset();
             static unsigned     _getCommandLength(uint8_t commandByte);
             void                _raiseBusyOffInterrupt();
             void                _raiseInputReadyOnInterrupt();

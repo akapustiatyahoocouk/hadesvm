@@ -18,7 +18,6 @@ namespace hadesvm
         class HADESVM_CEREON_PUBLIC Fdc1ControllerEditor final : public hadesvm::core::ComponentEditor
         {
             Q_OBJECT
-
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Fdc1ControllerEditor)
 
             //////////

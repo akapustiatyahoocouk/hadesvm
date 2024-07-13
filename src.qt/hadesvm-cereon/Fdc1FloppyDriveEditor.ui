@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>hadesvm::cereon::Fdc1FloppyDriveEditor</class>
+ <widget class="QWidget" name="hadesvm::cereon::Fdc1FloppyDriveEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>325</width>
+    <height>86</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QComboBox" name="channelComboBox">
+   <property name="geometry">
+    <rect>
+     <x>101</x>
+     <y>0</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="channelLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Compartment:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="browsePushButton">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>30</y>
+     <width>31</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="diskImagePathLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>30</y>
+     <width>191</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="diskImagePathLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>30</y>
+     <width>101</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Floppy image:</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="mountOnStartupCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>60</y>
+     <width>221</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Mount automatically on start-up</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>browsePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>hadesvm::cereon::Fdc1FloppyDriveEditor</receiver>
+   <slot>_onBrowsePushButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>diskImagePathLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>hadesvm::cereon::Fdc1FloppyDriveEditor</receiver>
+   <slot>_onDiskImagePathLineEditTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_onBrowsePushButtonClicked()</slot>
+  <slot>_onDiskImagePathLineEditTextChanged(QString)</slot>
+ </slots>
+</ui>

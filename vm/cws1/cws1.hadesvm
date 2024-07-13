@@ -3,7 +3,7 @@
  <Components>
   <Component ClockFrequency="20MHz" Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamUnit"/>
-  <Component ContentFilePath="./rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomUnit"/>
+  <Component ContentFilePath="/home/akapusti/Projects/Cereon/RomBios/Workstation/img/debug-be/rombios.img" Size="1MB" StartAddress="FFFFFFFFFFF00000" Type="CereonResidentRomUnit"/>
   <Component ByteOrder="BigEndian" CanChangeByteOrder="false" ClockFrequency="40MHz" Id="00" IsPrimaryProcessor="true" RestartAddress="FFFFFFFFFFF00000" Type="Cereon1P1B"/>
   <Component ClockFrequency="10MHz" Type="CereonIoBus"/>
   <Component AddressPortAddress="0111" ClockFrequency="1MHz" ContentFilePath="./cmos1.dat" DataPortAddress="0112" InterruptMaskPortAddress="0113" ReadDelay="1us" StatePortAddress="0110" Type="CereonCmos1" WriteDelay="10ms"/>
@@ -12,5 +12,6 @@
   <Component ClockFrequency="10KHz" CurrentDevicePortAddress="0281" DataInPortAddress="0285" DeviceStatePortAddress="0284" InputSourcePortAddress="0283" InterruptMaskPortAddress="0282" LayoutPortAddress="0286" NumberOfCompartments="1" StatePortAddress="0280" Type="CereonKis1Controller"/>
   <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0280" Layout="UnitedKingdomExtended" Type="CereonKis1Keyboard"/>
   <Component ClockFrequency="1MHz" DataPortAddress="03F1" InterruptMaskPortAddress="03F2" StateAndControlPortAddress="03F0" Type="CereonFdc1Controller"/>
+  <Component Channel="0" DiskImagePath="/home/akapusti/Projects/Cereon/Software/MiniBasic/img/debug-be/bootdisk.flp" Mounted="true" Type="CereonFdc1FloppyDrive"/>
  </Components>
 </VirtualMachine>

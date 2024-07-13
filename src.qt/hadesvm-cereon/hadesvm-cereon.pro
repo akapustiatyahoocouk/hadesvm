@@ -12,6 +12,7 @@ SOURCES += \
     Fdc1Controller.cpp \
     Fdc1ControllerEditor.cpp \
     Fdc1FloppyDrive.cpp \
+    Fdc1FloppyDriveEditor.cpp \
     Features.cpp \
     IoBus.cpp \
     IoBusEditor.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     Cmos1Editor.hpp \
     Fdc1.hpp \
     Fdc1ControllerEditor.hpp \
+    Fdc1FloppyDriveEditor.hpp \
     Io.hpp \
     IoBusEditor.hpp \
     Kis1.hpp \
@@ -78,6 +80,7 @@ LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 FORMS += \
     Cmos1Editor.ui \
     Fdc1ControllerEditor.ui \
+    Fdc1FloppyDriveEditor.ui \
     IoBusEditor.ui \
     Kis1ControllerEditor.ui \
     Kis1KeyboardEditor.ui \

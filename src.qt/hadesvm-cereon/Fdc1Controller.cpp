@@ -35,6 +35,8 @@ Fdc1Controller::Fdc1Controller()
     _ioPorts.append(&_stateAndControlPort);
     _ioPorts.append(&_dataPort);
     _ioPorts.append(&_interruptMaskPort);
+
+    _floppyDrives[0] = _floppyDrives[1] = _floppyDrives[2] = _floppyDrives[3] = nullptr;
 }
 
 Fdc1Controller::~Fdc1Controller() noexcept
@@ -200,17 +202,7 @@ void Fdc1Controller::reset() noexcept
         return;
     }
 
-    _interruptMask = 0;
-    _currentDeviceIndex = 0;
-    _operationalState = _OperationalState::_Idle;
-    _numCommandBytes = 0;
-    _numResultBytes = 0;
-    _nextResultByte = 0;
-    _pendingInterruptConditions = 0;
-
-    _asyncResult = nullptr;
-
-    delete _stateAndControlPort.releasePendingIoInterrupt();
+    _performReset();
 }
 
 //////////
@@ -355,6 +347,21 @@ Fdc1Controller * Fdc1Controller::Type::createComponent()
 
 //////////
 //  Implementation helpers
+void Fdc1Controller::_performReset()
+{
+    _interruptMask = 0;
+    _currentDeviceIndex = 0;
+    _operationalState = _OperationalState::_Idle;
+    _numCommandBytes = 0;
+    _numResultBytes = 0;
+    _nextResultByte = 0;
+    _pendingInterruptConditions = 0;
+
+    _asyncResult = nullptr;
+
+    delete _stateAndControlPort.releasePendingIoInterrupt();
+}
+
 unsigned Fdc1Controller::_getCommandLength(uint8_t commandByte)
 {
     if ((commandByte & 0xFE) == 0x3E)
@@ -640,7 +647,7 @@ void Fdc1Controller::_StateAndControlPort::writeByte(uint8_t value)
     //  RESET ?
     if ((value & 0x80) != 0)
     {   //  Yes, all other bits are ignored
-        _fdc1Controller->reset();
+        _fdc1Controller->_performReset();
         return;
     }
 
