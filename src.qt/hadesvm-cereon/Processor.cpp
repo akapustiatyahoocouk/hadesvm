@@ -228,6 +228,16 @@ void Processor::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Processor::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    for (size_t i = 0; i < _numCores; i++)
+    {
+        _coresAsArray[i]->reset();
+    }
+}
+
 //////////
 //  hadesvm::core::IClockedComponentAspect
 void Processor::onClockTick() noexcept

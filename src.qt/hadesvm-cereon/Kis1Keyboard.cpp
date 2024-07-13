@@ -174,6 +174,23 @@ void Kis1Keyboard::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Kis1Keyboard::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    _numLockOn = false;
+    _capsLockOn = false;
+    _scrollLockOn = false;
+
+    QMutexLocker lock(&_readyInputQueueGuard);
+    _readyInputQueue.clear();
+}
+
 //////////
 //  Operations (configuration)
 void Kis1Keyboard::setControllerStatePortAddress(uint16_t controllerStatePortAddress)

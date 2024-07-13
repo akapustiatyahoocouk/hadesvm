@@ -276,6 +276,13 @@ void Kernel::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Kernel::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    failure_with_message("Not yet implemented");
+}
+
 //////////
 //  Operations (configuration)
 void Kernel::setNodeName(const QString & nodeName)

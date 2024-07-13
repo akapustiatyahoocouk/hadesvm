@@ -233,6 +233,18 @@ void Vds1Display::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Vds1Display::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    //  NOthing here... TODO really?
+}
+
 //////////
 //  hadesvm::cereon::Vds1Display::Type
 HADESVM_IMPLEMENT_SINGLETON(Vds1Display::Type)

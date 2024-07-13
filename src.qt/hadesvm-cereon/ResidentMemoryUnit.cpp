@@ -134,6 +134,18 @@ void ResidentMemoryUnit::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void ResidentMemoryUnit::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    //  Nothing here - a soft reset does not wipe dynamic memory
+}
+
 //////////
 //  IMemoryBlock
 uint8_t ResidentMemoryUnit::loadByte(size_t offset) throws(MemoryAccessError)

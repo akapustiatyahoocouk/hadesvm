@@ -145,6 +145,11 @@ namespace hadesvm
             //  This disconnects Component from other components of the same VA.
             //  Must only be called from the QApplication's main thread
             virtual void        disconnect() noexcept = 0;
+
+            //  Performs a live (soft) "reset" of an Initialized (NOT Running!!!)
+            //  component.
+            //  Must only be called from the QApplication's main thread
+            virtual void        reset() noexcept = 0;
         };
 
         //////////

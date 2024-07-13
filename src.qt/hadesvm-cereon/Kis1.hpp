@@ -185,6 +185,7 @@ namespace hadesvm
             virtual void        stop() noexcept override;
             virtual void        deinitialize() noexcept override;
             virtual void        disconnect() noexcept override;
+            virtual void        reset() noexcept override;
 
             //////////
             //  hadesvm::core::IClockedComponent
@@ -541,6 +542,7 @@ namespace hadesvm
             virtual void        stop() noexcept override;
             virtual void        deinitialize() noexcept override;
             virtual void        disconnect() noexcept override;
+            virtual void        reset() noexcept override;
 
             //////////
             //  Operations (configuration)

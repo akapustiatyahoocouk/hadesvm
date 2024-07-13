@@ -95,7 +95,7 @@
 #include "hadesvm-util/Macros.hpp"
 
 //  Platform
-#include "hadesvm-util/Spinlock.hpp"
+#include "hadesvm-util/Sync.hpp"
 
 //  TODO
 #include "hadesvm-util/Exceptions.hpp"

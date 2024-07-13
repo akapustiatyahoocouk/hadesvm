@@ -306,6 +306,26 @@ void Vds1Controller::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Vds1Controller::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    for (_Compartment * compartment : _allCompartments)
+    {
+        compartment->reset();
+    }
+    _currentCompartment = _allCompartments[0];
+    _operationalState = _OperationalState::_Ready;
+    _commandBytes.clear();
+    _resultBytes.clear();
+    _executeDelay = 0;
+}
+
 //////////
 //  hadesvm::cereon::Vds1Controller::Type
 HADESVM_IMPLEMENT_SINGLETON(Vds1Controller::Type)

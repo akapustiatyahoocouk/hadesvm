@@ -9,6 +9,9 @@ SOURCES += \
     Cereon1P1B.cpp \
     Cmos1.cpp \
     Cmos1Editor.cpp \
+    Fdc1Controller.cpp \
+    Fdc1ControllerEditor.cpp \
+    Fdc1FloppyDrive.cpp \
     Features.cpp \
     IoBus.cpp \
     IoBusEditor.cpp \
@@ -49,6 +52,8 @@ HEADERS += \
     Classes.hpp \
     Cmos1.hpp \
     Cmos1Editor.hpp \
+    Fdc1.hpp \
+    Fdc1ControllerEditor.hpp \
     Io.hpp \
     IoBusEditor.hpp \
     Kis1.hpp \
@@ -72,6 +77,7 @@ LIBS += -L$$DESTDIR -lhadesvm-ieee754 -lhadesvm-core -lhadesvm-util
 
 FORMS += \
     Cmos1Editor.ui \
+    Fdc1ControllerEditor.ui \
     IoBusEditor.ui \
     Kis1ControllerEditor.ui \
     Kis1KeyboardEditor.ui \

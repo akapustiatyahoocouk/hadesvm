@@ -28,6 +28,7 @@
 #include "hadesvm-cereon/Cmos1.hpp"
 #include "hadesvm-cereon/Vds1.hpp"
 #include "hadesvm-cereon/Kis1.hpp"
+#include "hadesvm-cereon/Fdc1.hpp"
 
 #include "hadesvm-cereon/MemoryBusEditor.hpp"
 #include "hadesvm-cereon/ResidentRamUnitEditor.hpp"
@@ -40,5 +41,6 @@
 #include "hadesvm-cereon/Vds1DisplayWidget.hpp"
 #include "hadesvm-cereon/Kis1ControllerEditor.hpp"
 #include "hadesvm-cereon/Kis1KeyboardEditor.hpp"
+#include "hadesvm-cereon/Fdc1ControllerEditor.hpp"
 
 //  End of hadesvm-cereon/API.hpp

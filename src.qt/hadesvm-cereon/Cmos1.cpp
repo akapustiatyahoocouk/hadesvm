@@ -236,6 +236,20 @@ void Cmos1::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Cmos1::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Connected)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    _operationalState = _OperationalState::_Ready;
+    _clockTicksToDelay = 0;
+    _currentAddress = 0;
+}
+
 //////////
 //  hadesvm::core::IClockedComponentAspect
 void Cmos1::onClockTick() noexcept

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" StartAutomatically="true" StartFullScreen="true" StartMinimized="false" Version="1">
+<VirtualMachine Architecture="CereonWorkstation" Name="Cereon Workstation #1" StartAutomatically="false" StartFullScreen="false" StartMinimized="false" Version="1">
  <Components>
   <Component ClockFrequency="20MHz" Type="CereonMemoryBus"/>
   <Component Size="64MB" StartAddress="0000000000000000" Type="CereonResidentRamUnit"/>
@@ -11,5 +11,6 @@
   <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0200" StretchMode="IntegralStretch" Type="CereonVds1Display"/>
   <Component ClockFrequency="10KHz" CurrentDevicePortAddress="0281" DataInPortAddress="0285" DeviceStatePortAddress="0284" InputSourcePortAddress="0283" InterruptMaskPortAddress="0282" LayoutPortAddress="0286" NumberOfCompartments="1" StatePortAddress="0280" Type="CereonKis1Controller"/>
   <Component ControllerCompartmentNumber="0" ControllerStatePortAddress="0280" Layout="UnitedKingdomExtended" Type="CereonKis1Keyboard"/>
+  <Component ClockFrequency="1MHz" DataPortAddress="03F1" InterruptMaskPortAddress="03F2" StateAndControlPortAddress="03F0" Type="CereonFdc1Controller"/>
  </Components>
 </VirtualMachine>

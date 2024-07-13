@@ -163,6 +163,18 @@ void MemoryBus::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void MemoryBus::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    //  Nothing to do here
+}
+
 //////////
 //  Operations (configuration)
 void MemoryBus::setClockFrequency(const hadesvm::core::ClockFrequency & clockFrequency)

@@ -21,6 +21,6 @@ HEADERS += \
     Math.hpp \
     Plugin.hpp \
     PluginManager.hpp \
-    Spinlock.hpp \
     StockObject.hpp \
+    Sync.hpp \
     ToString.hpp

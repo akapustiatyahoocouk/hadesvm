@@ -256,6 +256,26 @@ void Kis1Controller::disconnect() noexcept
     _state = State::Constructed;
 }
 
+void Kis1Controller::reset() noexcept
+{
+    Q_ASSERT(QApplication::instance()->thread() == QThread::currentThread());
+
+    if (_state != State::Initialized)
+    {   //  OOPS! Can't
+        return;
+    }
+
+    _operationalState = _OperationalState::_Ready;
+    _timeout = 0;
+    _currentDevice = 0;
+    _interruptMask = 0;
+    _inputSource = 0;
+    _busyOffInterrputPending = false;
+    _inputReadyOnInterrputPending = false;
+
+    delete _statePort.releasePendingIoInterrupt(); //  in case one exists
+}
+
 //////////
 //  hadesvm::core::IClockedComponent
 void Kis1Controller::onClockTick() noexcept

@@ -953,6 +953,12 @@ void VirtualAppliance::_FrequencyDivider::onClockTick() noexcept
     }
 }
 
+void VirtualAppliance::_FrequencyDivider::reset() noexcept
+{
+    _d = 2 * _dy - _dx;
+    _x = _y = 0;
+}
+
 //////////
 //  VirtualAppliance::_WorkerThread
 VirtualAppliance::_WorkerThread::_WorkerThread(VirtualAppliance * virtualAppliance)
