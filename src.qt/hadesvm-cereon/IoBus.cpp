@@ -373,8 +373,12 @@ void IoBus::writeByte(uint16_t address, uint8_t value) throws(IoError)
     /*  TODO kill off - this is debug code  */
     if (address == 65535)
     {
-        static QTextStream ts(stdout);
+        static QTextStream ts(stdout,
+                              QTextStream::OpenModeFlag::WriteOnly |
+                              QTextStream::OpenModeFlag::Text |
+                              QTextStream::OpenModeFlag::Unbuffered);
         ts << static_cast<char>(value);
+        fflush(stdout);
         return;
     }
 
