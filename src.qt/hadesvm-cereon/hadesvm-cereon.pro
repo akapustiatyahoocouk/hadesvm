@@ -94,3 +94,6 @@ FORMS += \
     Vds1ControllerEditor.ui \
     Vds1DisplayEditor.ui \
     Vds1DisplayWidget.ui
+
+RESOURCES += \
+    Resources.qrc

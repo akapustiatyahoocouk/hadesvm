@@ -78,6 +78,16 @@ VirtualApplianceWindow::VirtualApplianceWindow(hadesvm::core::VirtualAppliance *
         _ui->tabWidget->setCurrentIndex(initialTabIndex);
     }
 
+    //  Create status bar widgets for components
+    for (auto ui : _componentUis.values())
+    {
+        for (auto statusBarWidget : ui->statusBarWidgets())
+        {
+            _ui->statusbar->addPermanentWidget(statusBarWidget);
+            statusBarWidget->setToolTip(statusBarWidget->displayName());
+        }
+    }
+
     //  Set up tab bar event handling
     _ui->tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
 

@@ -70,8 +70,8 @@ void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
         return;
     }
 
-    QRect g = this->geometry();
-    //  TODO kill off qDebug() << g;
+    QRect rc = this->rect();
+    //  TODO kill off qDebug() << rc;
 
     /*  TODO kill off - this is debug code
     QElapsedTimer elapsedTimer;
@@ -99,7 +99,7 @@ void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
 
     QPainter painter;
     painter.begin(this);
-    painter.drawImage(g, _offScreenBuffer); //  TODO honour the stretch mode
+    painter.drawImage(rc, _offScreenBuffer); //  TODO honour the stretch mode
     painter.end();
     /*  TODO kill off - this is debug code
     qint64 actualNsElapsed = elapsedTimer.nsecsElapsed();

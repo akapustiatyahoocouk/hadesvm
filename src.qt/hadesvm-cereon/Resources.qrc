@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/hadesvm/cereon">
+        <file>images/objects/FloppyDiskLarge.png</file>
+        <file>images/objects/FloppyDiskSmall.png</file>
+    </qresource>
+</RCC>

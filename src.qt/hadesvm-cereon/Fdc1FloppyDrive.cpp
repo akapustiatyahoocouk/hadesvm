@@ -67,7 +67,7 @@ hadesvm::core::ComponentEditor * Fdc1FloppyDrive::createEditor()
 
 Fdc1FloppyDrive::Ui * Fdc1FloppyDrive::createUi()
 {
-    return nullptr;
+    return new Ui(this);
 }
 
 //////////
@@ -432,6 +432,8 @@ bool Fdc1FloppyDrive::_mountImage(const QString & imageFilePath)
 
     //  Adjust drive state to match
     _diskImagePath = imageFilePath;
+    _motorStatus = MotorStatus::Stopped;
+    _operationalState = _OperationalState::_IdleMounted;
 
     //  Done
     return true;
@@ -450,6 +452,7 @@ void Fdc1FloppyDrive::_unmountImage()
 
         //  Adjust drive state to match
         _motorStatus = MotorStatus::Stopped;
+        _operationalState = _OperationalState::_IdleNotMounted;
     }
 }
 
@@ -498,8 +501,10 @@ void Fdc1FloppyDrive::_executeStartMotorCommand(const _StartMotorCommand & comma
     }
 
     //  Simulate start delay & change state
+    _motorStatus = MotorStatus::Starting;
     QThread::msleep(_MotorStartDelayMs);
     _operationalState = _OperationalState::_IdleSpinning;
+    _motorStatus = MotorStatus::Spinning;
 
     //  Inform completion handler
     if (command._completionHandler != nullptr)
@@ -520,8 +525,10 @@ void Fdc1FloppyDrive::_executeStopMotorCommand(const _StopMotorCommand & command
     }
 
     //  Simulate stop delay & change state
+    _motorStatus = MotorStatus::Stopped;
     QThread::msleep(_MotorStopDelayMs);
     _operationalState = _OperationalState::_IdleMounted;
+    _motorStatus = MotorStatus::Stopped;
 
     //  Inform completion handler
     if (command._completionHandler != nullptr)
@@ -645,35 +652,27 @@ void Fdc1FloppyDrive::_executeReadCommand(const _ReadCommand & command)
     }
 
     //  Perform reading
+    _operationalState = _OperationalState::_ReadInProgress;
+
     unsigned startLba = (_currentCylinder * 2 + command._head) * 18 + (command._startSector);
     unsigned bytesToRead = command._sectorsToRead * 512;
     uint8_t dataBytes[512 * 18];
 
-    //  TODO kill off ? try
-    {
-        _mountedFloppyImage->seek(startLba * 512);
-        if (_mountedFloppyImage->read(reinterpret_cast<char*>(dataBytes), bytesToRead) != bytesToRead)
-        {   //  OOPS! Floppy image corrupt...
-            if (command._completionHandler != nullptr)
-            {   //  ...so inform the completion handler...
-                command._completionHandler->onOperationCompleted(this, Fdc1Controller::Status::DataError, nullptr, 0);
-            }
-            return; //  ...and abort
-        }
-    }
-    /*  TODO kill off ?
-    catch (carl::IOException &)
-    {   //  OOPS! I/O error...
+    QThread::msleep(_SectorReadWriteTimeMs * command._sectorsToRead);
+    if (_mountedFloppyImage == nullptr ||
+        !_mountedFloppyImage->seek(startLba * 512) ||
+        _mountedFloppyImage->read(reinterpret_cast<char*>(dataBytes), bytesToRead) != bytesToRead)
+    {   //  OOPS! Floppy image corrupt...
         if (command._completionHandler != nullptr)
         {   //  ...so inform the completion handler...
             command._completionHandler->onOperationCompleted(this, Fdc1Controller::Status::DataError, nullptr, 0);
         }
+        _operationalState = _OperationalState::_IdleSpinning;
         return; //  ...and abort
     }
-    */
-    //  TODO simulate rotational + read delay
 
     //  Success...
+    _operationalState = _OperationalState::_IdleSpinning;
     if (command._completionHandler != nullptr)
     {   //  ...so inform the completion handler
         command._completionHandler->onOperationCompleted(this, Fdc1Controller::Status::NoError, dataBytes, bytesToRead);
@@ -713,27 +712,26 @@ void Fdc1FloppyDrive::_executeWriteCommand(const _WriteCommand & command)
     }
 
     //  Perform writing
+    _operationalState = _OperationalState::_WriteInProgress;
+
     unsigned startLba = (_currentCylinder * 2 + command._head) * 18 + (command._startSector);
     unsigned bytesToWrite = command._sectorsToWrite * 512;
 
-    //  TODO kill off ? try
-    {
-        _mountedFloppyImage->seek(startLba * 512);
-        _mountedFloppyImage->write(reinterpret_cast<const char*>(command._dataBytes), bytesToWrite);
-    }
-    /*  TODO kill off ?
-    catch (carl::IOException &)
-    {   //  OOPS! I/O error...
+    QThread::msleep(_SectorReadWriteTimeMs * command._sectorsToWrite);
+    if (_mountedFloppyImage == nullptr ||
+        !_mountedFloppyImage->seek(startLba * 512) ||
+        _mountedFloppyImage->write(reinterpret_cast<const char*>(command._dataBytes), bytesToWrite) != bytesToWrite)
+    {   //  OOPS! I/O error!
         if (command._completionHandler != nullptr)
         {   //  ...so inform the completion handler...
             command._completionHandler->onOperationCompleted(this, Fdc1Controller::Status::DataError);
         }
+        _operationalState = _OperationalState::_IdleSpinning;
         return; //  ...and abort
     }
-    */
-    //  TODO simulate rotational + write delay
 
     //  Success...
+    _operationalState = _OperationalState::_IdleSpinning;
     if (command._completionHandler != nullptr)
     {   //  ...so inform the completion handler
         command._completionHandler->onOperationCompleted(this, Fdc1Controller::Status::NoError);
@@ -774,6 +772,23 @@ bool Fdc1FloppyDrive::Type::isCompatibleWith(hadesvm::core::VirtualApplianceType
 Fdc1FloppyDrive * Fdc1FloppyDrive::Type::createComponent()
 {
     return new Fdc1FloppyDrive();
+}
+
+//////////
+//  Fdc1FloppyDrive::Ui
+Fdc1FloppyDrive::Ui::Ui(Fdc1FloppyDrive * fdc1FloppyDrive)
+    :   _fdc1FloppyDrive(fdc1FloppyDrive),
+        _fdc1FloppyDriveStatusBarWidget(new Fdc1FloppyDriveStatusBarWidget(fdc1FloppyDrive)),
+        _displayWidgets(),
+        _statusBarWidgets{_fdc1FloppyDriveStatusBarWidget}
+{
+    Q_ASSERT(_fdc1FloppyDrive != nullptr);
+}
+
+Fdc1FloppyDrive::Ui::~Ui()
+{
+    _fdc1FloppyDriveStatusBarWidget->_canDestruct = true;
+    delete _fdc1FloppyDriveStatusBarWidget;
 }
 
 //////////

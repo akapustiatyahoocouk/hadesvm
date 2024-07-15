@@ -54,6 +54,7 @@
 #include <QFileDialog>
 #include <QHostInfo>
 #include <QIcon>
+#include <QLabel>
 #include <QLibrary>
 #include <QList>
 #include <QMainWindow>

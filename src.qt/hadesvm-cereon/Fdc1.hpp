@@ -15,6 +15,8 @@ namespace hadesvm
         {
             HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Fdc1FloppyDrive)
 
+            friend class Fdc1FloppyDriveStatusBarWidget;
+
             //////////
             //  Constants
         public:
@@ -287,6 +289,10 @@ namespace hadesvm
             static const unsigned   _MotorStopDelayMs = 300;
             static const unsigned   _CalibrateDelayMs = 250;
             static const unsigned   _SeekDelayMs = 10;    //  per track
+
+            static const unsigned   _RotationSpeedRpm = 300;
+            static const unsigned   _AverageRotationalDelayMs = (1000 / (_RotationSpeedRpm / 60)) / 2;
+            static const unsigned   _SectorReadWriteTimeMs = (1000 / (_RotationSpeedRpm / 60)) / 18;
 
             //  Current state
             enum class _OperationalState
