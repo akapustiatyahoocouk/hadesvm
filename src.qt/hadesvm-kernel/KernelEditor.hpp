@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            KernelEditor(QWidget * parent, Kernel * kernel);
+            explicit KernelEditor(Kernel * kernel);
             virtual ~KernelEditor();
 
             //////////

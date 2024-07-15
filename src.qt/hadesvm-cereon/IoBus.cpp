@@ -59,9 +59,9 @@ void IoBus::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * IoBus::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * IoBus::createEditor()
 {
-    return new IoBusEditor(parent, this);
+    return new IoBusEditor(this);
 }
 
 IoBus::Ui * IoBus::createUi()

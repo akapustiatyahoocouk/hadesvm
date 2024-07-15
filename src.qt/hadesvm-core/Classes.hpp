@@ -17,6 +17,7 @@ namespace hadesvm
         class HADESVM_CORE_PUBLIC ComponentEditor;
 
         class HADESVM_CORE_PUBLIC DisplayWidget;
+        class HADESVM_CORE_PUBLIC StatusBarWidget;
 
         class HADESVM_CORE_PUBLIC VirtualArchitecture;
         class HADESVM_CORE_PUBLIC VirtualApplianceType;
@@ -52,6 +53,7 @@ namespace hadesvm
         using RemoteTerminalList = QList<RemoteTerminal*>;
 
         using DisplayWidgetList = QList<DisplayWidget*>;
+        using StatusBarWidgetList = QList<StatusBarWidget*>;
 
     }
 }

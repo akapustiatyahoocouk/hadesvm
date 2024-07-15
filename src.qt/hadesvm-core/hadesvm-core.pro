@@ -18,6 +18,7 @@ SOURCES += \
     RemoteTerminal.cpp \
     RemoteTerminalType.cpp \
     StandardComponentCategories.cpp \
+    StatusBarWidget.cpp \
     TimeInterval.cpp \
     VirtualAppliance.cpp \
     VirtualApplianceTemplate.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     DisplayWidget.hpp \
     Exceptions.hpp \
     Linkage.hpp \
+    StatusBarWidget.hpp \
     Types.hpp \
     VirtualAppliance.hpp \
     VirtualApplianceTemplate.hpp \

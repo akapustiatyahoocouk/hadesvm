@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            ResidentRamUnitEditor(QWidget * parent, ResidentRamUnit * residentRamUnit);
+            explicit ResidentRamUnitEditor(ResidentRamUnit * residentRamUnit);
             virtual ~ResidentRamUnitEditor();
 
             //////////

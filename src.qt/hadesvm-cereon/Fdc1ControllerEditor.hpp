@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Fdc1ControllerEditor(QWidget * parent, Fdc1Controller * fdc1Controller);
+            explicit Fdc1ControllerEditor(Fdc1Controller * fdc1Controller);
             virtual ~Fdc1ControllerEditor();
 
             //////////

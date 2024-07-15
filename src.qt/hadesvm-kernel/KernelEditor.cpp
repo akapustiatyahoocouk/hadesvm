@@ -15,8 +15,8 @@ namespace
 
 //////////
 //  Construction/destruction
-KernelEditor::KernelEditor(QWidget * parent, Kernel * kernel)
-    :   hadesvm::core::ComponentEditor(parent),
+KernelEditor::KernelEditor(Kernel * kernel)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _kernel(kernel),
         //  Controls & resources

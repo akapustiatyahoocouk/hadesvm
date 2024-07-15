@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-MemoryBusEditor::MemoryBusEditor(QWidget * parent, MemoryBus * memoryBus)
-    :   hadesvm::core::ComponentEditor(parent),
+MemoryBusEditor::MemoryBusEditor(MemoryBus * memoryBus)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _memoryBus(memoryBus),
         //  Controls & resources

@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Cmos1Editor(QWidget * parent, Cmos1 * cmos1);
+            explicit Cmos1Editor(Cmos1 * cmos1);
             virtual ~Cmos1Editor();
 
             //////////

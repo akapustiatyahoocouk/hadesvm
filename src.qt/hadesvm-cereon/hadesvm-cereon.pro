@@ -13,6 +13,7 @@ SOURCES += \
     Fdc1ControllerEditor.cpp \
     Fdc1FloppyDrive.cpp \
     Fdc1FloppyDriveEditor.cpp \
+    Fdc1FloppyDriveStatusBarWidget.cpp \
     Features.cpp \
     IoBus.cpp \
     IoBusEditor.cpp \
@@ -56,6 +57,7 @@ HEADERS += \
     Fdc1.hpp \
     Fdc1ControllerEditor.hpp \
     Fdc1FloppyDriveEditor.hpp \
+    Fdc1FloppyDriveStatusBarWidget.hpp \
     Io.hpp \
     IoBusEditor.hpp \
     Kis1.hpp \
@@ -81,6 +83,7 @@ FORMS += \
     Cmos1Editor.ui \
     Fdc1ControllerEditor.ui \
     Fdc1FloppyDriveEditor.ui \
+    Fdc1FloppyDriveStatusBarWidget.ui \
     IoBusEditor.ui \
     Kis1ControllerEditor.ui \
     Kis1KeyboardEditor.ui \

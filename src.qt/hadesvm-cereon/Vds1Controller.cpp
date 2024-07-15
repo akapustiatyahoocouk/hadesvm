@@ -100,9 +100,9 @@ void Vds1Controller::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Vds1Controller::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Vds1Controller::createEditor()
 {
-    return new Vds1ControllerEditor(parent, this);
+    return new Vds1ControllerEditor(this);
 }
 
 Vds1Controller::Ui * Vds1Controller::createUi()

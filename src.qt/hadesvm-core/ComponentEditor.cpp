@@ -9,8 +9,8 @@ using namespace hadesvm::core;
 
 //////////
 //  Construction/destruction
-ComponentEditor::ComponentEditor(QWidget * parent)
-    :   QWidget(parent)
+ComponentEditor::ComponentEditor()
+    :   QWidget(nullptr)
 {
 }
 

@@ -88,9 +88,9 @@ void Processor::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Processor::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Processor::createEditor()
 {
-    return new ProcessorEditor(parent, this);
+    return new ProcessorEditor(this);
 }
 
 Processor::Ui * Processor::createUi()
@@ -345,6 +345,7 @@ void Processor::_WorkerThread::run()
                 hadesvm::core::ClockFrequency::hertz(actualClockFrequencyHz));
         }
 
+        //qDebug() << actualNsElapsed;
         if (actualNsElapsed < idealNsElapsed)
         {   //  Going too fast!
             delayPerTickNs++;
@@ -353,10 +354,6 @@ void Processor::_WorkerThread::run()
         {   //  Going too slow!
             delayPerTickNs--;
         }
-        //qDebug() << actualNsElapsed;
-        //  ...and see how long it actually took to execute the binch
-
-        //usleep(1);
     }
 }
 

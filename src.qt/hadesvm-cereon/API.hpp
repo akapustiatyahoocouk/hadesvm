@@ -43,5 +43,6 @@
 #include "hadesvm-cereon/Kis1KeyboardEditor.hpp"
 #include "hadesvm-cereon/Fdc1ControllerEditor.hpp"
 #include "hadesvm-cereon/Fdc1FloppyDriveEditor.hpp"
+#include "hadesvm-cereon/Fdc1FloppyDriveStatusBarWidget.hpp"
 
 //  End of hadesvm-cereon/API.hpp

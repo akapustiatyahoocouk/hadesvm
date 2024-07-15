@@ -254,18 +254,18 @@ Kis1KeyboardLayout::Code Kis1UnitedKingdomExtendedKeyboardLayout::code() const
     return Code::UnitedKingdomExtended;
 }
 
-Kis1ScanCode Kis1UnitedKingdomExtendedKeyboardLayout::translateKey(uint32_t nativeScanCode, uint32_t nativeVirtualKey)
+Kis1ScanCode Kis1UnitedKingdomExtendedKeyboardLayout::translateKey(uint32_t nativeScanCode, uint32_t /*nativeVirtualKey*/)
 {
     if (_kis1ScanCodesForNativeScanCodes.contains(nativeScanCode))
     {
-        qDebug() << displayName()
-                 << " keyboard layout recognized scan code "
-                 << _kis1ScanCodesForNativeScanCodes[nativeScanCode];
+        //qDebug() << displayName()
+        //         << " keyboard layout recognized scan code "
+        //         << _kis1ScanCodesForNativeScanCodes[nativeScanCode];
         return static_cast<Kis1ScanCode>(_kis1ScanCodesForNativeScanCodes[nativeScanCode]);
     }
-    qDebug() << displayName() << " keyboard layout failed to translate key, "
-             << "nativeScanCode=" << nativeScanCode
-             << ", nativeVirtualKey=" << nativeVirtualKey;
+    //qDebug() << displayName() << " keyboard layout failed to translate key, "
+    //         << "nativeScanCode=" << nativeScanCode
+    //         << ", nativeVirtualKey=" << nativeVirtualKey;
     return Kis1ScanCode::Invalid;
 }
 

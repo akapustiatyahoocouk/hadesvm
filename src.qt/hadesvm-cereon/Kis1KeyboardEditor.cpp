@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-Kis1KeyboardEditor::Kis1KeyboardEditor(QWidget * parent, Kis1Keyboard * kis1Keyboard)
-    :   hadesvm::core::ComponentEditor(parent),
+Kis1KeyboardEditor::Kis1KeyboardEditor(Kis1Keyboard * kis1Keyboard)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _kis1Keyboard(kis1Keyboard),
         _keyboardLayouts(),

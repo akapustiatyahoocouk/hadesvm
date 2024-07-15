@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-ResidentRomUnitEditor::ResidentRomUnitEditor(QWidget * parent, ResidentRomUnit * residentRomUnit)
-    :   ComponentEditor(parent),
+ResidentRomUnitEditor::ResidentRomUnitEditor(ResidentRomUnit * residentRomUnit)
+    :   ComponentEditor(),
         //  Implementation
         _residentRomUnit(residentRomUnit),
         //  Controls & resources

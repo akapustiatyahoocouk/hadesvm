@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Kis1KeyboardEditor(QWidget * parent, Kis1Keyboard * kis1Keyboard);
+            explicit Kis1KeyboardEditor(Kis1Keyboard * kis1Keyboard);
             virtual ~Kis1KeyboardEditor();
 
             //////////

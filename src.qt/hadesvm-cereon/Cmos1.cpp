@@ -121,9 +121,9 @@ void Cmos1::deserialiseConfiguration(QDomElement componentElement)
     _contentFilePath = componentElement.attribute("ContentFilePath");    //  TODO and is not empty
 }
 
-hadesvm::core::ComponentEditor * Cmos1::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Cmos1::createEditor()
 {
-    return new Cmos1Editor(parent, this);
+    return new Cmos1Editor(this);
 }
 
 Cmos1::Ui * Cmos1::createUi()

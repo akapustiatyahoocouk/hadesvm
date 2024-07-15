@@ -138,9 +138,9 @@ void Kis1Controller::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Kis1Controller::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Kis1Controller::createEditor()
 {
-    return new Kis1ControllerEditor(parent, this);
+    return new Kis1ControllerEditor(this);
 }
 
 Kis1Controller::Ui * Kis1Controller::createUi()

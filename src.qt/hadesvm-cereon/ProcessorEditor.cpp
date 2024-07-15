@@ -10,9 +10,11 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-ProcessorEditor::ProcessorEditor(QWidget * parent, Processor * processor)
-    :   ComponentEditor(parent),
+ProcessorEditor::ProcessorEditor(Processor * processor)
+    :   ComponentEditor(),
+        //  Implementation
         _processor(processor),
+        //  Controls & resources
         _ui(new Ui::ProcessorEditor)
 {
     _ui->setupUi(this);

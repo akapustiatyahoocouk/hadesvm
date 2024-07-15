@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Fdc1FloppyDriveEditor(QWidget * parent, Fdc1FloppyDrive * fdc1FloppyDrive);
+            explicit Fdc1FloppyDriveEditor(Fdc1FloppyDrive * fdc1FloppyDrive);
             virtual ~Fdc1FloppyDriveEditor();
 
             //////////

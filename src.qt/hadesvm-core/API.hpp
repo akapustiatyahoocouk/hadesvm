@@ -24,6 +24,7 @@
 #include "hadesvm-core/ComponentEditor.hpp"
 
 #include "hadesvm-core/DisplayWidget.hpp"
+#include "hadesvm-core/StatusBarWidget.hpp"
 
 #include "hadesvm-core/VirtualArchitecture.hpp"
 #include "hadesvm-core/VirtualApplianceType.hpp"

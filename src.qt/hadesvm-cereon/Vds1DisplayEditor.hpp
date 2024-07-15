@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Vds1DisplayEditor(QWidget * parent, Vds1Display * vds1Display);
+            explicit Vds1DisplayEditor(Vds1Display * vds1Display);
             ~Vds1DisplayEditor();
 
             //////////

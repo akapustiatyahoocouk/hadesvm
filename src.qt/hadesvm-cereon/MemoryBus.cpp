@@ -47,9 +47,9 @@ void MemoryBus::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * MemoryBus::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * MemoryBus::createEditor()
 {
-    return new MemoryBusEditor(parent, this);
+    return new MemoryBusEditor(this);
 }
 
 MemoryBus::Ui * MemoryBus::createUi()

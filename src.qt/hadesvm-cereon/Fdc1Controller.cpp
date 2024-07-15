@@ -89,9 +89,9 @@ void Fdc1Controller::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Fdc1Controller::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Fdc1Controller::createEditor()
 {
-    return new Fdc1ControllerEditor(parent, this);
+    return new Fdc1ControllerEditor(this);
 }
 
 Fdc1Controller::Ui * Fdc1Controller::createUi()

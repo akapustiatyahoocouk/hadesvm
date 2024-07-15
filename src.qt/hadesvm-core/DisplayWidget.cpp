@@ -9,8 +9,8 @@ using namespace hadesvm::core;
 
 //////////
 //  Construction/destruction
-DisplayWidget::DisplayWidget(QWidget * parent)
-    :   QWidget(parent)
+DisplayWidget::DisplayWidget()
+    :   QWidget(nullptr)
 {
 }
 

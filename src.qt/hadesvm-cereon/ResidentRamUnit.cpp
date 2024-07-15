@@ -32,9 +32,9 @@ QString ResidentRamUnit::displayName() const
            hadesvm::util::toString(startAddress(), "%016X");
 }
 
-hadesvm::core::ComponentEditor * ResidentRamUnit::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * ResidentRamUnit::createEditor()
 {
-    return new ResidentRamUnitEditor(parent, this);
+    return new ResidentRamUnitEditor(this);
 }
 
 ResidentRamUnit::Ui * ResidentRamUnit::createUi()

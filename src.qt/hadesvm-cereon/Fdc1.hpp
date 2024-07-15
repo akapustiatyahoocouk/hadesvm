@@ -44,6 +44,34 @@ namespace hadesvm
                 virtual Fdc1FloppyDrive *   createComponent() override;
             };
 
+            //  The UI of a Cereon FDC1 floppy drive
+            class HADESVM_CEREON_PUBLIC Ui final : public hadesvm::core::Component::Ui
+            {
+                HADESVM_CANNOT_ASSIGN_OR_COPY_CONSTRUCT(Ui)
+
+                //////////
+                //  Construction/destruction
+            public:
+                explicit Ui(Fdc1FloppyDrive * fdc1FloppyDrive);
+                virtual ~Ui();
+
+                //////////
+                //  hadesvm::core::Component::Ui
+            public:
+                virtual Fdc1FloppyDrive *   component() const override { return _fdc1FloppyDrive; }
+                virtual hadesvm::core::DisplayWidgetList    displayWidgets() const override { return _displayWidgets; }
+                virtual hadesvm::core::StatusBarWidgetList  statusBarWidgets() const override { return _statusBarWidgets; }
+
+                //////////
+                //  Implementation
+            private:
+                Fdc1FloppyDrive *const  _fdc1FloppyDrive;
+
+                Fdc1FloppyDriveStatusBarWidget *const   _fdc1FloppyDriveStatusBarWidget;
+                hadesvm::core::DisplayWidgetList    _displayWidgets;
+                hadesvm::core::StatusBarWidgetList  _statusBarWidgets;
+            };
+
             //  The status of the drive's motor.
             enum class MotorStatus
             {
@@ -180,7 +208,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *        createUi() override;
 
             //////////
@@ -649,7 +677,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *        createUi() override;
 
             //////////

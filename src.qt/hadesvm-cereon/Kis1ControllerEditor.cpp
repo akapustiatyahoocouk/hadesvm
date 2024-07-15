@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-Kis1ControllerEditor::Kis1ControllerEditor(QWidget * parent, Kis1Controller * kis1Controller)
-    :   hadesvm::core::ComponentEditor(parent),
+Kis1ControllerEditor::Kis1ControllerEditor(Kis1Controller * kis1Controller)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _kis1Controller(kis1Controller),
         //  Controls & resources

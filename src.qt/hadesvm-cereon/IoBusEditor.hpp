@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            IoBusEditor(QWidget * parent, IoBus * ioBus);
+            explicit IoBusEditor(IoBus * ioBus);
             virtual ~IoBusEditor();
 
             //////////

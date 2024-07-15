@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            MemoryBusEditor(QWidget * parent, MemoryBus * memoryBus);
+            explicit MemoryBusEditor(MemoryBus * memoryBus);
             virtual ~MemoryBusEditor();
 
             //////////

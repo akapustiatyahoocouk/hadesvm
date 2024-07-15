@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-Fdc1FloppyDriveEditor::Fdc1FloppyDriveEditor(QWidget * parent, Fdc1FloppyDrive * fdc1FloppyDrive)
-    :   hadesvm::core::ComponentEditor(parent),
+Fdc1FloppyDriveEditor::Fdc1FloppyDriveEditor(Fdc1FloppyDrive * fdc1FloppyDrive)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _fdc1FloppyDrive(fdc1FloppyDrive),
         //  Controls & resources

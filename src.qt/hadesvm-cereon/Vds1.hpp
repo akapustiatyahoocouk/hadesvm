@@ -66,7 +66,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *        createUi() override;
 
             //////////
@@ -466,6 +466,7 @@ namespace hadesvm
             public:
                 virtual Vds1Display *   component() const override { return _vds1Display; }
                 virtual hadesvm::core::DisplayWidgetList    displayWidgets() const override { return _displayWidgets; }
+                virtual hadesvm::core::StatusBarWidgetList  statusBarWidgets() const override { return _statusBarWidgets; }
 
                 //////////
                 //  Implementation
@@ -474,6 +475,7 @@ namespace hadesvm
 
                 Vds1DisplayWidget *const            _vds1DisplayWidget;
                 hadesvm::core::DisplayWidgetList    _displayWidgets;
+                hadesvm::core::StatusBarWidgetList  _statusBarWidgets;
             };
 
             //  A visual representation of a Vds1Display in the UI
@@ -497,7 +499,7 @@ namespace hadesvm
             virtual QString     displayName() const override;
             virtual void        serialiseConfiguration(QDomElement componentElement) const override;
             virtual void        deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *        createUi() override;
 
             //////////

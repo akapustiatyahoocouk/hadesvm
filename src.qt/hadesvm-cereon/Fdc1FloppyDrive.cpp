@@ -60,9 +60,9 @@ void Fdc1FloppyDrive::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Fdc1FloppyDrive::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Fdc1FloppyDrive::createEditor()
 {
-    return new Fdc1FloppyDriveEditor(parent, this);
+    return new Fdc1FloppyDriveEditor(this);
 }
 
 Fdc1FloppyDrive::Ui * Fdc1FloppyDrive::createUi()

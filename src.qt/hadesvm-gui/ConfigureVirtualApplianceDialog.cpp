@@ -83,11 +83,12 @@ ConfigureVirtualApplianceDialog::ConfigureVirtualApplianceDialog(hadesvm::core::
     //  Prepare component editors
     for (auto component : _virtualAppliance->components())
     {
-        if (hadesvm::core::ComponentEditor * editor = component->createEditor(_ui->editorsFrame))
+        if (hadesvm::core::ComponentEditor * editor = component->createEditor())
         {
+            editor->setParent(_ui->editorsFrame);
+            editor->move(0, 0);
             editor->loadComponentConfiguration();
             _componentEditors[component] = editor;
-            editor->move(0, 0);
             connect(editor, &hadesvm::core::ComponentEditor::contentChanged,
                     this, &ConfigureVirtualApplianceDialog::_onEditorContentChanged);
         }
@@ -472,11 +473,12 @@ void ConfigureVirtualApplianceDialog::_ComponentCreator::invoke()
     _dlg->_virtualAppliance->addComponent(component);
     _dlg->_addedComponents.append(component);
     //  Editor too ?
-    if (hadesvm::core::ComponentEditor * editor = component->createEditor(_dlg->_ui->editorsFrame))
+    if (hadesvm::core::ComponentEditor * editor = component->createEditor())
     {
+        editor->setParent(_dlg->_ui->editorsFrame);
+        editor->move(0, 0);
         editor->loadComponentConfiguration();
         _dlg->_componentEditors[component] = editor;
-        editor->move(0, 0);
         connect(editor, &hadesvm::core::ComponentEditor::contentChanged,
                 _dlg, &ConfigureVirtualApplianceDialog::_onEditorContentChanged);
         _dlg->_resizeToFitAllEditors();

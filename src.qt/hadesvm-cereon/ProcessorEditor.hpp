@@ -23,7 +23,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            ProcessorEditor(QWidget * parent, Processor * processor);
+            explicit ProcessorEditor(Processor * processor);
             virtual ~ProcessorEditor();
 
             //////////

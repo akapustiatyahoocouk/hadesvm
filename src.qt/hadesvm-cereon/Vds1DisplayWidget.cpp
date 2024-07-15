@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-Vds1DisplayWidget::Vds1DisplayWidget(QWidget * parent, Vds1Display * vds1Display)
-    :   hadesvm::core::DisplayWidget(parent),
+Vds1DisplayWidget::Vds1DisplayWidget(Vds1Display * vds1Display)
+    :   hadesvm::core::DisplayWidget(),
         //  Implementation
         _vds1Display(vds1Display),
         //  Controls & resources
@@ -109,9 +109,9 @@ void Vds1DisplayWidget::paintEvent(QPaintEvent * /*event*/)
 
 void Vds1DisplayWidget::keyPressEvent(QKeyEvent * event)
 {
-    qDebug() << "keyPressEvent: "
-             << "nativeScanCode=" << event->nativeScanCode()
-             << "nativeVirtualKey=" << event->nativeVirtualKey();
+    //qDebug() << "keyPressEvent: "
+    //         << "nativeScanCode=" << event->nativeScanCode()
+    //         << "nativeVirtualKey=" << event->nativeVirtualKey();
     event->accept();
     if (_vds1Display->_kis1Keyboard != nullptr)
     {
@@ -121,9 +121,9 @@ void Vds1DisplayWidget::keyPressEvent(QKeyEvent * event)
 
 void Vds1DisplayWidget::keyReleaseEvent(QKeyEvent * event)
 {
-    qDebug() << "keyReleaseEvent: "
-             << "nativeScanCode=" << event->nativeScanCode()
-             << "nativeVirtualKey=" << event->nativeVirtualKey();
+    //qDebug() << "keyReleaseEvent: "
+    //         << "nativeScanCode=" << event->nativeScanCode()
+    //         << "nativeVirtualKey=" << event->nativeVirtualKey();
     event->accept();
     if (_vds1Display->_kis1Keyboard != nullptr)
     {

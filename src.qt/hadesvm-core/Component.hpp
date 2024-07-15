@@ -62,9 +62,14 @@ namespace hadesvm
                 virtual IComponent *    component() const = 0;
 
                 //  Returns the unordered list of all DisplayWidgets.
-                //  These initially have no "parent" and cannot be directly "delete"'d
-                //  except if the entire Ui instance is deleted.
+                //  These initially have no "parent" and cannot be directly
+                //  "delete"'d except if the entire Ui instance is deleted.
                 virtual DisplayWidgetList   displayWidgets() const = 0;
+
+                //  Returns the unordered list of all StatusBarWidgets.
+                //  These initially have no "parent" and cannot be directly
+                //  "delete"'d except if the entire Ui instance is deleted.
+                virtual StatusBarWidgetList statusBarWidgets() const = 0;
             };
 
             //////////
@@ -100,7 +105,7 @@ namespace hadesvm
             //  Returns nullptr if this component has no configuration
             //  to view/modify in an editor. Otherwise the caller is responsible
             //  for eventually deleting the returned ComponentEditor.
-            virtual ComponentEditor*createEditor(QWidget * parent) = 0;
+            virtual ComponentEditor*createEditor() = 0;
 
             //  Creates a new UI for this Component.
             //  Returns nullptr if this component has no UI. Otherwise the

@@ -85,9 +85,9 @@ void Vds1Display::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Vds1Display::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Vds1Display::createEditor()
 {
-    return new Vds1DisplayEditor(parent, this);
+    return new Vds1DisplayEditor(this);
 }
 
 Vds1Display::Ui * Vds1Display::createUi()
@@ -285,8 +285,9 @@ Vds1Display * Vds1Display::Type::createComponent()
 //  Vds1Display::Ui
 Vds1Display::Ui::Ui(Vds1Display * vds1Display)
     :   _vds1Display(vds1Display),
-        _vds1DisplayWidget(new Vds1DisplayWidget(nullptr, vds1Display)),
-        _displayWidgets{_vds1DisplayWidget}
+        _vds1DisplayWidget(new Vds1DisplayWidget(vds1Display)),
+        _displayWidgets{_vds1DisplayWidget},
+        _statusBarWidgets()
 {
     Q_ASSERT(_vds1Display != nullptr);
 }

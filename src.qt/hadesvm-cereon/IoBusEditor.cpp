@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-IoBusEditor::IoBusEditor(QWidget * parent, IoBus * ioBus)
-    :   hadesvm::core::ComponentEditor(parent),
+IoBusEditor::IoBusEditor(IoBus * ioBus)
+    :   hadesvm::core::ComponentEditor(),
     //  Implementation
     _ioBus(ioBus),
     //  Controls & resources

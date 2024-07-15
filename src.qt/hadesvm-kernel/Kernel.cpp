@@ -96,9 +96,9 @@ void Kernel::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Kernel::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Kernel::createEditor()
 {
-    return new KernelEditor(parent, this);
+    return new KernelEditor(this);
 }
 
 //////////

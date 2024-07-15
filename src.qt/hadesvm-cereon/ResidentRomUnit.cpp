@@ -46,9 +46,9 @@ void ResidentRomUnit::deserialiseConfiguration(QDomElement componentElement)
     _contentFilePath = componentElement.attribute("ContentFilePath");
 }
 
-hadesvm::core::ComponentEditor * ResidentRomUnit::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * ResidentRomUnit::createEditor()
 {
-    return new ResidentRomUnitEditor(parent, this);
+    return new ResidentRomUnitEditor(this);
 }
 
 ResidentRomUnit::Ui * ResidentRomUnit::createUi()

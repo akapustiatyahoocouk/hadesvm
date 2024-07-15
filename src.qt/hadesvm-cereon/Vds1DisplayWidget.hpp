@@ -25,7 +25,7 @@ namespace hadesvm
             //////////
             //  Construction/destruction
         public:
-            Vds1DisplayWidget(QWidget * parent, Vds1Display * vds1Display);
+            explicit Vds1DisplayWidget(Vds1Display * vds1Display);
             virtual ~Vds1DisplayWidget();
 
             //////////

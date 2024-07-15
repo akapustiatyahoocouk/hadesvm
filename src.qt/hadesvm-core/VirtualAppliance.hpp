@@ -242,7 +242,7 @@ namespace hadesvm
                 virtual QString         displayName() const override { return _drivenComponent->displayName(); }
                 virtual void            serialiseConfiguration(QDomElement /*componentElement*/) const override {}
                 virtual void            deserialiseConfiguration(QDomElement /*componentElement*/) override {}
-                virtual ComponentEditor*createEditor(QWidget * /*parent*/) override { return nullptr; }
+                virtual ComponentEditor*createEditor() override { return nullptr; }
                 virtual Ui *            createUi() override { return nullptr; }
 
                 //////////

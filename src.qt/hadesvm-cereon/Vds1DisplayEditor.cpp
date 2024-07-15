@@ -10,8 +10,8 @@ using namespace hadesvm::cereon;
 
 //////////
 //  Construction/destruction
-Vds1DisplayEditor::Vds1DisplayEditor(QWidget * parent, Vds1Display * vds1Display)
-    :   hadesvm::core::ComponentEditor(parent),
+Vds1DisplayEditor::Vds1DisplayEditor(Vds1Display * vds1Display)
+    :   hadesvm::core::ComponentEditor(),
         //  Implementation
         _vds1Display(vds1Display),
         //  Controls & resources

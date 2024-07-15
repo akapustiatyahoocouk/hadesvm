@@ -122,8 +122,7 @@ namespace hadesvm
             virtual QString         displayName() const override;
             virtual void            serialiseConfiguration(QDomElement componentElement) const override;
             virtual void            deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *
-                                    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *            createUi() override;
 
             //////////
@@ -362,8 +361,7 @@ namespace hadesvm
         public:
             virtual Type *          componentType() const override { return Type::instance(); }
             virtual QString         displayName() const override;
-            virtual hadesvm::core::ComponentEditor *
-                                    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *            createUi() override;
         };
 
@@ -418,8 +416,7 @@ namespace hadesvm
             virtual QString         displayName() const override;
             virtual void            serialiseConfiguration(QDomElement componentElement) const override;
             virtual void            deserialiseConfiguration(QDomElement componentElement) override;
-            virtual hadesvm::core::ComponentEditor *
-                                    createEditor(QWidget * parent) override;
+            virtual hadesvm::core::ComponentEditor *    createEditor() override;
             virtual Ui *            createUi() override;
 
             //////////

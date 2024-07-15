@@ -18,6 +18,16 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/hadesvm/gui/images/objects/ComputerLarge.png"));   //  doesn't work on Linux
 
+#if 0   //  TODO what ?
+#ifdef Q_OS_WINDOWS
+    if (/*AttachConsole(ATTACH_PARENT_PROCESS) ||*/ AllocConsole())
+    {
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+    }
+#endif
+#endif
+
     /*  TODO kill off - this is debug code
     const unsigned Iterations = 1'000'000;
 

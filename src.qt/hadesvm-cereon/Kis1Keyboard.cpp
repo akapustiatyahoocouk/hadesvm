@@ -62,9 +62,9 @@ void Kis1Keyboard::deserialiseConfiguration(QDomElement componentElement)
     }
 }
 
-hadesvm::core::ComponentEditor * Kis1Keyboard::createEditor(QWidget * parent)
+hadesvm::core::ComponentEditor * Kis1Keyboard::createEditor()
 {
-    return new Kis1KeyboardEditor(parent, this);
+    return new Kis1KeyboardEditor(this);
 }
 
 Kis1Keyboard::Ui * Kis1Keyboard::createUi()

@@ -19,6 +19,7 @@ namespace hadesvm
         class HADESVM_CEREON_PUBLIC Vds1DisplayWidget;
         class HADESVM_CEREON_PUBLIC Kis1KeyboardLayout;
         class HADESVM_CEREON_PUBLIC Kis1Keyboard;
+        class HADESVM_CEREON_PUBLIC Fdc1FloppyDriveStatusBarWidget;
 
         using ProcessorCoreList = QList<ProcessorCore*>;
         using MemoryBlockList = QList<IMemoryBlock*>;
