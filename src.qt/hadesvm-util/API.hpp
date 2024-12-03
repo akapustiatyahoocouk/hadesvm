@@ -22,9 +22,11 @@
 #elif defined(Q_CC_MSVC)
     #pragma warning(disable:4191)   //  'reinterpret_cast': unsafe conversion from '<T1>' to '<T2>'
     #pragma warning(disable:4250)   //  '<CLASS>': inherits '<METHOD>' via dominance
+    #pragma warning(disable:4309)   //  'initializing': truncation of constant value
     #pragma warning(disable:4646)   //  function declared with 'noreturn' has non-void return type
     #pragma warning(disable:4702)   //  unreachable code TODO MOC-related?
     #pragma warning(disable:4866)   //  compiler may not enforce left-to-right evaluation order for call to 'C++17 operator'
+    #pragma warning(disable:4996)   //  '<FUNCTION>': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
     #pragma warning(disable:5045)   //  Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
 
     #pragma warning(push)
@@ -32,6 +34,7 @@
     #pragma warning(disable:4371)   //  '<CLASS>': layout of class may have changed from a previous version of the compiler due to better packing of member '<MEMBER>'
     #pragma warning(disable:5204)   //  '<CLASS>': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
     #pragma warning(disable:5219)   //  implicit conversion from 'const int' to 'float', possible loss of data
+    #pragma warning(disable:5249)   //  '<FIELD>' of type '<TYPE>' has named enumerators with values that cannot be represented in the given bit field width of '<WIDTH>'.
 #else
     #error Unsupported compiler
 #endif

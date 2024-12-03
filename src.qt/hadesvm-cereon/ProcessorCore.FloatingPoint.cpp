@@ -391,7 +391,7 @@ unsigned ProcessorCore::_handleSqrtF(uint32_t instruction) throws(ProgramInterru
                 _r[r1] = x.toReal64().bitPattern;
                 _raiseProgramInterrupt(ProgramInterrupt::FOPERAND);
             }
-            //  Fall-through
+            [[fallthrough]];
         case hadesvm::ieee754::ValueClass::QuietNan:
             result = x;
             break;
@@ -457,7 +457,7 @@ unsigned ProcessorCore::_handleSqrtD(uint32_t instruction) throws(ProgramInterru
                 _r[r1] = x.bitPattern;
                 _raiseProgramInterrupt(ProgramInterrupt::FOPERAND);
             }
-            //  Fall-through
+            [[fallthrough]];
         case hadesvm::ieee754::ValueClass::QuietNan:
             result = x;
             break;

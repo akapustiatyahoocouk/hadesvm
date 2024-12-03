@@ -1,7 +1,7 @@
 include(../hadesvm.pri)
 QT -= core gui widgets xml network
 win32-msvc {
-    QMAKE_CXXFLAGS += /wd5045
+    QMAKE_CXXFLAGS += /wd5045 /wd4996
 }
 
 CONFIG += cmdline

@@ -154,14 +154,19 @@ void Vds1Controller::_Compartment::_regenerateVideoSignal()
         break;
     case _Text40x24VideoMode:
         failure_with_message("Not yet implemented");
+        break;
     case _Text80x24VideoMode:
         failure_with_message("Not yet implemented");
+        break;
     case _Graph256x192VideoMode:
         failure_with_message("Not yet implemented");
+        break;
     case _Graph512x192VideoMode:
         failure_with_message("Not yet implemented");
+        break;
     case _Graph512x384VideoMode:
         failure_with_message("Not yet implemented");
+        break;
     default:
         failure();
     }

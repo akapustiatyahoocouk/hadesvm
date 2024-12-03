@@ -295,7 +295,7 @@ void Kis1Controller::onClockTick() noexcept
             //  Finished the "write to controller register" operation
             _raiseBusyOffInterrupt();
             _operationalState = _OperationalState::_Ready;
-            //  FALL-THROUGH - may need  to become InputReady if input is available
+            [[fallthrough]];    //  may need  to become InputReady if input is available
 
         case _OperationalState::_Ready:
             //  Is there available input in any keyboard ?
